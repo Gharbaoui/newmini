@@ -27,9 +27,18 @@ int workon_line(char *line, t_completecmd **complete, int numofcmds, int help)
 	{
 		free_words(&commands);
 		free_wcmd(&wcmd, numofcmds);
-		free_comp(&completecmd);
+		free_comp(complete);
+		return help;
 	}
-	print_pipes(wcmd->cmds, numofcmds);
+	help = filter_complete(complete);
+	if (help != SUCCESS)
+	{
+		free_words(&commands);
+		free_wcmd(&wcmd, numofcmds);
+		free_comp(complete);
+		return help;
+	}
+	print_completecmd(*complete);
 	return SUCCESS;
 }
 
@@ -42,6 +51,7 @@ void rest(t_workingcmds **wcmd, t_words **commands)
 /// end rest function
 
 
+// fill commands 
 int fill_commands(t_words **commands, char *line)
 {
 	int is_str;
@@ -85,105 +95,6 @@ void rest_txt_next(char **str, t_words **next)
 {
 	*next = NULL;
 	*str = NULL;
-}
-
-int calcfirst(char *line, char c, int *last, int *is_str)
-{
-	int i;
-	int dq;
-	int  sq;
-
-	*is_str = 0;
-	if (help_short_calcfirst(&i, &dq, &sq, 1) && line[0] == '"') // that first condition just there to make func small in ines
-		dq++;
-	while (line[++i])
-	{
-		if (line[i] == '"' && sq % 2 == 0)
-		{
-			if (i > 0 && backslash(line, i) % 2 == 0)
-				dq++;
-		}
-		else if (line[i] == 39 && dq % 2 == 0) // 39 asci for ' single
-			sq++;
-		if (line[i] == c && (dq % 2 == 0 && sq % 2 == 0))
-			return i;
-		if (line[i] != ' ' && line[i] !=  '|')
-			*is_str = 1;
-	}
-	*last = i;
-	return help_short_calcfirst(&i, &dq, &sq, 0);
-}
-
-
-int help_short_calcfirst(int *i, int *dq, int *sq, int is_first)
-{
-	if (is_first == 1)
-	{
-		*i = -1;
-		*dq = 0;
-		*sq = 0;
-	}else
-	{	
-		if (*dq % 2 != 0 || *sq % 2 != 0)
-			return PARSERROR;
-		return -2;
-	}
-	return 10; // this number has no meaning
-}
-
-int backslash(char *line, int index)
-{
-	int total;
-
-	total = 0;
-	while (--index > 0 && line[index] == 92)
-			total++;
-	return total;
-}
-
-int check_errors(int ern, t_words **words)
-{
-	if (ern != SUCCESS)
-	{
-		free_words(words);
-		return ern;
-	}
-	return 0;
-}
-
-void free_wcmd(t_workingcmds **wcmd, int numofcmds)
-{
-	int i;
-
-	i = -1;
-	while (++i < numofcmds)
-	{
-		if ((*wcmd)->cmds[i])
-			free_words(&(*wcmd)->cmds[i]);
-	}
-	if ((*wcmd)->cmds)
-		free((*wcmd)->cmds);
-	if (*wcmd)
-		free(*wcmd);
-}
-
-void free_words(t_words **words)
-{
-	t_words *next;
-
-	if (*words)
-		next = (*words)->next;
-	while (*words)
-	{
-		if ((*words)->txt)
-		{
-			free((*words)->txt);
-		}
-		free (*words);
-		*words = next;
-		if (next)
-			next = (*words)->next;
-	}
 }
 
 /// count number of commnds and do simple chrck
@@ -231,22 +142,6 @@ void help_short_count(char *help, int *i)
 		(*i)++;
 }
 
-int simplecheck(char *line)
-{
-	int i;
-
-	i = -1;
-	while (line[++i])
-	{
-		if (line[i] != ' ')
-			return 0;
-	}
-	if (i == ft_strlen(line))
-		return 1;
-	if (i == 1)
-		return 1;
-	return 0;
-}
 
 /// fill_wcmd
 int fill_wcmd(t_workingcmds **wcmd, t_words *commands, int numofcmds)
@@ -318,19 +213,6 @@ int fill_pips(t_words **pip, char *line)
     return SUCCESS;
 }
 
-int help_fill_pipes(t_words **pip, char *line, int len)
-{
-	if (!((*pip)->txt = cutstring(line, 0, len)))
-	{
-		free(*pip);
-		*pip = NULL;
-		return MEMERROR;
-	}
-	(*pip)->next = NULL;
-	return SUCCESS;
-}
-
-
 /// fill complete cmd structure
 int fill_completecmd(t_completecmd **compcmd, t_words **pips, int pipindex)
 {
@@ -348,7 +230,9 @@ int fill_completecmd(t_completecmd **compcmd, t_words **pips, int pipindex)
 			return ret;
 		}
 		(*compcmd)->next = NULL;
-		fill_completecmd(&(*compcmd)->next, pips, pipindex + 1);
+		ret = fill_completecmd(&(*compcmd)->next, pips, pipindex + 1);
+		if (ret != SUCCESS)
+			return  ret;
 	}
 	return SUCCESS;	
 }
@@ -385,12 +269,203 @@ int splitlinetowords(char *str, t_cmd **command) // 2 success -1 parsing error 0
 	if (help !=  SUCCESS)
 		return help; // means help =-1 or 0 memory failure or parsing error
 	help = fill_cmdstruct(words, command);
-//	free_words(&words);
-//	if (help != SUCCESS)
-//		return help;
+	free_words(&words);
+	if (help != SUCCESS)
+		return help;
 	return SUCCESS;
 }
 
+
+int fill_cmdstruct(t_words *words, t_cmd **command) // 0 memory failure -1 parsing error 1 success
+{
+	int ret;
+	char *firstword;
+
+	if (!reset_command(command))
+		return 0;
+	if (words)
+	{
+		firstword = words->txt;
+		if (istxt(firstword[0]))
+		{
+			if (!(*command)->command){
+				if (!((*command)->command = ft_strdup(firstword)))
+					return MEMERROR; // memory failure
+			}
+			else
+				if (!fill_command(command, firstword, 1)) // fill txt structure
+					return MEMERROR; // memory failure
+			ret = fill_cmdstruct(words->next, command);
+			if (ret != SUCCESS)
+				return ret;
+		}
+		else{
+			if (opvalid(firstword))
+			{
+				if (!(fill_command(command, firstword, 3)))	// fill op
+					return MEMERROR;
+				words = words->next;
+				if (words)
+					firstword = words->txt;
+				else
+					return PARSERROR;
+				if (istxt(firstword[0]))
+				{
+					if (!(fill_command(command, firstword, 2))) // fill files
+						return MEMERROR;
+					ret = fill_cmdstruct(words->next, command);
+					if (ret != SUCCESS)
+						return ret;
+				}
+				else
+				   return PARSERROR; // parsing error because there is no file after > or < or >>
+			}else
+				return PARSERROR; // parsing error
+		}
+	}
+	return SUCCESS;
+}
+
+int fill_command(t_cmd **command, char *str, int where)
+{
+	// if where 0 we will fill the command->command = str
+	// if 1 fill str to txt to the list
+	// if 2 ''''' files
+	// if 3 ..... ops
+	if (where == 3){
+		if (!fill_cmd_objs(&(*command)->ops, str))
+			return MEMERROR;
+	}else if (where == 2)
+	{
+		if (!fill_cmd_objs(&(*command)->files, str))
+			return MEMERROR;
+	}else if (where == 1)
+	{
+		if (!fill_cmd_objs(&(*command)->txts, str))
+			return MEMERROR;
+	}
+	return 1;
+}
+
+int fill_cmd_objs(t_words **txts, char *str)
+{
+	t_words *help;
+
+	if (!(*txts))
+	{
+		if (!(*txts = malloc(sizeof(t_words))))
+			return  MEMERROR; // memory failure
+		(*txts)->next = NULL;
+		if (!((*txts)->txt = ft_strdup(str)))
+			return 0;
+	}else{
+		help  = *txts;
+		while (help->next)
+			help = help->next;
+		if (!(help->next = malloc(sizeof(t_words))))
+			return 0;
+		help = help->next;
+		if (!(help->txt = ft_strdup(str)))
+			return 0;
+		help->next = NULL;
+	}
+	return 1;
+}
+
+// shared functions 
+int calcfirst(char *line, char c, int *last, int *is_str)
+{
+	int i;
+	int dq;
+	int  sq;
+
+	*is_str = 0;
+	if (help_short_calcfirst(&i, &dq, &sq, 1) && line[0] == '"') // that first condition just there to make func small in ines
+		dq++;
+	while (line[++i])
+	{
+		if (line[i] == '"' && sq % 2 == 0)
+		{
+			if (i > 0 && backslash(line, i) % 2 == 0)
+				dq++;
+		}
+		else if (line[i] == 39 && dq % 2 == 0) // 39 asci for ' single
+			sq++;
+		if (line[i] == c && (dq % 2 == 0 && sq % 2 == 0))
+			return i;
+		if (line[i] != ' ' && line[i] !=  '|') /// 92 for '\'
+			*is_str = 1;
+	}
+	*last = i;
+	return help_short_calcfirst(&i, &dq, &sq, 0);
+}
+
+
+int help_short_calcfirst(int *i, int *dq, int *sq, int is_first)
+{
+	if (is_first == 1)
+	{
+		*i = -1;
+		*dq = 0;
+		*sq = 0;
+	}else
+	{	
+		if (*dq % 2 != 0 || *sq % 2 != 0)
+			return PARSERROR;
+		return -2;
+	}
+	return 10; // this number has no meaning
+}
+
+int backslash(char *line, int index)
+{
+	int total;
+
+	total = 0;
+	while (--index > 0 && line[index] == 92)
+			total++;
+	return total;
+}
+
+int check_errors(int ern, t_words **words)
+{
+	if (ern != SUCCESS)
+	{
+		free_words(words);
+		return ern;
+	}
+	return 0;
+}
+
+int simplecheck(char *line)
+{
+	int i;
+
+	i = -1;
+	while (line[++i])
+	{
+		if (line[i] != ' ')
+			return 0;
+	}
+	if (i == ft_strlen(line))
+		return 1;
+	if (i == 1)
+		return 1;
+	return 0;
+}
+
+
+int help_fill_pipes(t_words **pip, char *line, int len)
+{
+	if (!((*pip)->txt = cutstring(line, 0, len)))
+	{
+		free(*pip);
+		*pip = NULL;
+		return MEMERROR;
+	}
+	(*pip)->next = NULL;
+	return SUCCESS;
+}
 int fill_words(t_words **words, char *str)
 {
 	int start;
@@ -480,100 +555,86 @@ int splitby(char *str, int *index)
 	return 0;
 }
 
-int fill_cmdstruct(t_words *words, t_cmd **command) // 0 memory failure -1 parsing error 1 success
+// all free here 
+void free_wcmd(t_workingcmds **wcmd, int numofcmds)
 {
-	int ret;
-	char *firstword;
+	int i;
 
-	if (!reset_command(command))
-		return 0;
-	if (words)
+	i = -1;
+	while (++i < numofcmds)
 	{
-		firstword = words->txt;
-		if (istxt(firstword[0]))
+		if ((*wcmd)->cmds[i])
+			free_words(&(*wcmd)->cmds[i]);
+	}
+	if ((*wcmd)->cmds)
+		free((*wcmd)->cmds);
+	if (*wcmd)
+		free(*wcmd);
+}
+
+void free_words(t_words **words)
+{
+	t_words *next;
+
+	if (*words)
+		next = (*words)->next;
+	while (*words)
+	{
+		if ((*words)->txt)
 		{
-			if (!(*command)->command){
-				if (!((*command)->command = ft_strdup(firstword)))
-					return MEMERROR; // memory failure
-			}
-			else
-				if (!fill_command(command, firstword, 1)) // fill txt structure
-					return MEMERROR; // memory failure
-			ret = fill_cmdstruct(words->next, command);
-			if (ret != SUCCESS)
-				return ret;
+			free((*words)->txt);
 		}
-		else{
-			if (opvalid(firstword))
-			{
-
-				if (!(fill_command(command, firstword, 3)))	// fill op
-					return MEMERROR;
-				words = words->next;
-				if (words)
-					firstword = words->txt;
-				else
-					return PARSERROR;
-				if (istxt(firstword[0]))
-				{
-					if (!(fill_command(command, firstword, 2))) // fill files
-						return MEMERROR;
-					ret = fill_cmdstruct(words->next, command);
-					if (ret != SUCCESS)
-						return ret;
-				}
-				else
-				   return PARSERROR; // parsing error because there is no file after > or < or >>
-			}else
-				return PARSERROR; // parsing error
-		}
+		free (*words);
+		*words = next;
+		if (*words)
+			next = (*words)->next;
 	}
-	return SUCCESS;
 }
 
-int fill_command(t_cmd **command, char *str, int where)
+
+void free_cmdstr(t_cmd **cmd)
 {
-	// if where 0 we will fill the command->command = str
-	// if 1 fill str to txt to the list
-	// if 2 ''''' files
-	// if 3 ..... ops
-	if (where == 3){
-		if (!fill_cmd_objs(&(*command)->ops, str))
-			return MEMERROR;
-	}else if (where == 2)
+	if (*cmd)
 	{
-		if (!fill_cmd_objs(&(*command)->files, str))
-			return MEMERROR;
-	}else if (where == 1)
-	{
-		if (!fill_cmd_objs(&(*command)->txts, str))
-			return MEMERROR;
+		if ((*cmd)->command)
+			free((*cmd)->command);
+		if ((*cmd)->txts)
+			free_words(&(*cmd)->txts);
+		if ((*cmd)->files)
+			free_words(&(*cmd)->files);
+		if ((*cmd)->ops)
+			free_words(&(*cmd)->ops);
+		free(*cmd);
 	}
-	return 1;
 }
 
-int fill_cmd_objs(t_words **txts, char *str)
+void free_pipcmd(t_pipcmd **pipcmd)
 {
-	t_words *help;
-
-	if (!(*txts))
+	t_pipcmd *next;
+	
+	if (*pipcmd)
+		next = (*pipcmd)->next;
+	while (*pipcmd)
 	{
-		if (!(*txts = malloc(sizeof(t_words))))
-			return  MEMERROR; // memory failure
-		(*txts)->next = NULL;
-		if (!((*txts)->txt = ft_strdup(str)))
-			return 0;
-	}else{
-		help  = *txts;
-		while (help->next)
-			help = help->next;
-		if (!(help->next = malloc(sizeof(t_words))))
-			return 0;
-		help = help->next;
-		if (!(help->txt = ft_strdup(str)))
-			return 0;
-		help->next = NULL;
+		free_cmdstr(&(*pipcmd)->cmd);
+		*pipcmd = next;
+		if (*pipcmd)
+			next = (*pipcmd)->next;
 	}
-	return 1;
+}
+
+void free_comp(t_completecmd **cmp)
+{
+	t_completecmd *next;
+	
+	if (*cmp)
+		next = *cmp;
+	while (*cmp)
+	{
+		free_pipcmd(&(*cmp)->splcommand);
+		*cmp = next;
+		if (*cmp)
+			next = (*cmp)->next;
+	}
 }
 

@@ -1,7 +1,6 @@
 #include "minishell.h"
 int main(int argc, char **argv, char **env)
 {
-	printf("%d\n", getpid());
 	bash_loop(env);
 }
 

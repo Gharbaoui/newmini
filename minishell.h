@@ -12,7 +12,7 @@
 
 // structres
 typedef struct txts{
-	cha&ir *txt;
+	char *txt;
 	struct txts *next;
 } t_words;
 
@@ -92,4 +92,23 @@ int ft_cmpstr(char *s1, char *s2);
 int reset_command(t_cmd **command);
 int fill_cmdstruct(t_words *words, t_cmd **command);
 char *ft_strdup(char *str);
+void free_cmdstr(t_cmd **cmd);
+void free_pipcmd(t_pipcmd **pipcmd);
+void free_comp(t_completecmd **cmp);
+// filter complete
+int filter_complete(t_completecmd **completecmd);
+int filter_pipcmd(t_pipcmd **pipcmd);
+int filter_cmd(t_cmd **cmd);
+int modify_str(char **str);
+int addtowords(t_words **words, char *str, int start, int end);
+void addtmptowords(t_words **words, t_words **word);
+int modify_ln(t_words **words);
+char *cleanWord(t_words *words, int size);
+void free_w(t_words **words);
 
+
+void print_cmd(t_cmd *cmd, int level);
+void print_oldwords(t_words *word, int level, char *name);
+void print_pipcmd(t_pipcmd *pipcmd);
+void print_completecmd(t_completecmd *complete);
+// 62 68
