@@ -6,11 +6,18 @@
 #define BUFFER_SIZE 15
 #define ENVSIZE 50
 
+#define EMPTYENV 3
 #define SUCCESS 2
 #define PARSERROR -1
 #define MEMERROR 0
 
 // structres
+typedef struct envs{
+	char *env_name;
+	char *env_value;
+	struct envs *next;
+}t_envs;
+
 typedef struct txts{
 	char *txt;
 	struct txts *next;
@@ -97,7 +104,7 @@ void free_pipcmd(t_pipcmd **pipcmd);
 void free_comp(t_completecmd **cmp);
 // filter complete
 int filter_complete(t_completecmd **completecmd);
-int filter_pipcmd(t_pipcmd **pipcmd);
+int filter_pipcmd1(t_pipcmd **pipcmd);
 int filter_cmd(t_cmd **cmd);
 int modify_str(char **str);
 int addtowords(t_words **words, char *str, int start, int end);
@@ -105,6 +112,23 @@ void addtmptowords(t_words **words, t_words **word);
 int modify_ln(t_words **words);
 char *cleanWord(t_words *words, int size);
 void free_w(t_words **words);
+//// gather_env
+int fill_envtable(t_envs ***envtable, char **env);
+int rest_envt(t_envs ***envtable);
+int hash_env_name(char *env_name);
+int add_toenvtable(t_envs ***envtable, char *line);
+int add_node_to(t_envs **head, t_envs **current);
+void free_envlist(t_envs **envlist);
+void free_env(t_envs ***envtable);
+void free_one_env(t_envs **oneenv);
+void print_tables(t_envs **table);
+void print_one_oft(t_envs *ln);
+t_envs *make_node_env(int *ern, char *line);
+t_envs *get_env(int *found, int *ern, char *env_name, t_envs **table);
+t_envs *look_inln(int *found, int *ern, char *env_name, t_envs *lnenv);
+int delete_exactfromln(t_envs **list, char *key, int *found);
+int delete_env(t_envs ***table, char *env_name, int *founded);
+
 
 
 void print_cmd(t_cmd *cmd, int level);

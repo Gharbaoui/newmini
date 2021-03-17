@@ -8,9 +8,11 @@ void bash_loop(char **env)
 {
 	int status;
 	int ret;
+	t_envs **envtable;
 	char *line = malloc(1);
 	t_completecmd *complete;
-	
+	ret = fill_envtable(&envtable, env);// returns Success or memory error or Empty env
+
 	status = 1;
 	while (status)
 	{

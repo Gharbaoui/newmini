@@ -2,9 +2,13 @@
 
 int workon_line(char *line, t_completecmd **complete, int numofcmds, int help)
 {
+	int last, is_str;
 	t_words *commands;
 	t_workingcmds *wcmd;
 
+	help = calcfirst(line, 92, &last, &is_str); /// checking for new line
+	if (help != -2)
+		return PARSERROR;
 	rest(&wcmd, &commands);
 	help = fill_commands(&commands, line);
 	if (check_errors(help, &commands))
