@@ -43,8 +43,9 @@ set shortmess=aoO
 badd +1 workonline.c
 badd +72 minishell.h
 badd +1 minishell.c
-badd +1 random.c
+badd +32 random.c
 badd +1 gather_env.c
+badd +0 filterComplete.c
 argglobal
 silent! argdel *
 $argadd workonline.c
@@ -162,12 +163,14 @@ silent! normal! zE
 30,180fold
 183,242fold
 245,326fold
-let s:l = 330 - ((329 * winheight(0) + 40) / 80)
+30
+normal! zo
+let s:l = 37 - ((36 * winheight(0) + 40) / 80)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-330
-normal! 0
+37
+normal! 017|
 tabedit minishell.c
 set splitbelow splitright
 wincmd _ | wincmd |
@@ -292,7 +295,7 @@ normal! zt
 normal! 0
 wincmd w
 argglobal
-if bufexists('random.c') | buffer random.c | else | edit random.c | endif
+if bufexists('filterComplete.c') | buffer filterComplete.c | else | edit filterComplete.c | endif
 setlocal noautoindent
 setlocal backupcopy=
 setlocal nobinary
@@ -405,6 +408,7 @@ normal! zt
 1
 normal! 0
 wincmd w
+2wincmd w
 exe 'vert 1resize ' . ((&columns * 125 + 126) / 252)
 exe 'vert 2resize ' . ((&columns * 126 + 126) / 252)
 tabedit gather_env.c
@@ -523,12 +527,12 @@ setlocal nowinfixwidth
 setlocal wrap
 setlocal wrapmargin=0
 silent! normal! zE
-let s:l = 1 - ((0 * winheight(0) + 40) / 80)
+let s:l = 80 - ((46 * winheight(0) + 40) / 80)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-1
-normal! 0
+80
+normal! 024|
 wincmd w
 argglobal
 if bufexists('minishell.h') | buffer minishell.h | else | edit minishell.h | endif
@@ -637,12 +641,12 @@ setlocal nowinfixwidth
 setlocal wrap
 setlocal wrapmargin=0
 silent! normal! zE
-let s:l = 72 - ((39 * winheight(0) + 40) / 80)
+let s:l = 80 - ((79 * winheight(0) + 40) / 80)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-72
-normal! 0
+80
+normal! 025|
 wincmd w
 exe 'vert 1resize ' . ((&columns * 125 + 126) / 252)
 exe 'vert 2resize ' . ((&columns * 126 + 126) / 252)
@@ -756,13 +760,13 @@ setlocal nowinfixwidth
 setlocal wrap
 setlocal wrapmargin=0
 silent! normal! zE
-let s:l = 124 - ((39 * winheight(0) + 40) / 80)
+let s:l = 29 - ((28 * winheight(0) + 40) / 80)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-124
-normal! 09|
-tabnext 4
+29
+normal! 023|
+tabnext 2
 set stal=1
 if exists('s:wipebuf')
   silent exe 'bwipe ' . s:wipebuf

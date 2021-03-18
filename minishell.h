@@ -6,6 +6,7 @@
 #define BUFFER_SIZE 15
 #define ENVSIZE 50
 
+#define ENVERROR 4
 #define EMPTYENV 3
 #define SUCCESS 2
 #define PARSERROR -1
@@ -104,6 +105,7 @@ void free_pipcmd(t_pipcmd **pipcmd);
 void free_comp(t_completecmd **cmp);
 // filter complete
 int filter_complete(t_completecmd **completecmd);
+int filter_check_envvar(t_words *txts);
 int filter_pipcmd1(t_pipcmd **pipcmd);
 int filter_cmd(t_cmd **cmd);
 int modify_str(char **str);
@@ -123,6 +125,9 @@ void free_env(t_envs ***envtable);
 void free_one_env(t_envs **oneenv);
 void print_tables(t_envs **table);
 void print_one_oft(t_envs *ln);
+int check_envvar(char *line, int eq_pos);
+int ft_isalpha(char c);
+int ft_isdigit(char c);
 t_envs *make_node_env(int *ern, char *line);
 t_envs *get_env(int *found, int *ern, char *env_name, t_envs **table);
 t_envs *look_inln(int *found, int *ern, char *env_name, t_envs *lnenv);
@@ -135,4 +140,4 @@ void print_cmd(t_cmd *cmd, int level);
 void print_oldwords(t_words *word, int level, char *name);
 void print_pipcmd(t_pipcmd *pipcmd);
 void print_completecmd(t_completecmd *complete);
-// 62 68
+// 62 68  0x0000000100103330
