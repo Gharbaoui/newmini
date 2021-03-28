@@ -6,13 +6,19 @@ int main(int argc, char **argv, char **env)
 
 void bash_loop(char **env)
 {
+	t_fullvar *variables;
 	int status;
 	int ret;
 	t_envs **envtable;
 	char *line = malloc(1);
 	t_completecmd *complete;
-	ret = fill_envtable(&envtable, env);// returns Success or memory error or Empty env
 
+	variables = malloc(sizeof(t_fullvar));
+	variables->exenvs = NULL;
+	variables->emptyvar = NULL;
+
+	ret = fill_envtable(&variables, env);// returns Success or memory error or Empty env
+	
 	status = 1;
 	while (status)
 	{

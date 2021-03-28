@@ -6,6 +6,10 @@
 #define BUFFER_SIZE 15
 #define ENVSIZE 50
 
+#define SINGLEQUOTES 5   /// single quotes
+#define DOUBLEQUOTES 6
+#define NONEQUOTE 7
+
 #define ENVERROR 4
 #define EMPTYENV 3
 #define SUCCESS 2
@@ -23,6 +27,13 @@ typedef struct txts{
 	char *txt;
 	struct txts *next;
 } t_words;
+
+typedef struct full_env_var
+{
+	t_envs **exenvs;
+	t_words *emptyvar;
+	t_words *allkeys;
+}t_fullvar;
 
 typedef struct cmd{
 	char *command;
@@ -115,10 +126,10 @@ int modify_ln(t_words **words);
 char *cleanWord(t_words *words, int size);
 void free_w(t_words **words);
 //// gather_env
-int fill_envtable(t_envs ***envtable, char **env);
+int fill_envtable(t_fullvar **fullvar, char **env);
 int rest_envt(t_envs ***envtable);
 int hash_env_name(char *env_name);
-int add_toenvtable(t_envs ***envtable, char *line);
+int add_toenvtable(t_envs ***envtable, char *line, t_words **allkeyes);
 int add_node_to(t_envs **head, t_envs **current);
 void free_envlist(t_envs **envlist);
 void free_env(t_envs ***envtable);
@@ -128,11 +139,13 @@ void print_one_oft(t_envs *ln);
 int check_envvar(char *line, int eq_pos);
 int ft_isalpha(char c);
 int ft_isdigit(char c);
-t_envs *make_node_env(int *ern, char *line);
-t_envs *get_env(int *found, int *ern, char *env_name, t_envs **table);
-t_envs *look_inln(int *found, int *ern, char *env_name, t_envs *lnenv);
+t_envs *make_node_env(int *ern, char *line, t_words **allkeys);
+t_envs *get_env(int *found, char *env_name, t_envs **table);
+t_envs *look_inln(int *found,  char *env_name, t_envs *lnenv);
 int delete_exactfromln(t_envs **list, char *key, int *found);
 int delete_env(t_envs ***table, char *env_name, int *founded);
+int add_envvar_to_table(t_envs **table, char *line, t_words **free_envvar);
+int add_tofree_envvar(t_words **hid_var, char *line);
 
 
 

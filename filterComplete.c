@@ -66,16 +66,27 @@ int filter_check_envvar(t_words *txts)
 	while (txts)
 	{
 		eq_pos = nlindex(txts->txt, '=');
-		if (eq_pos -= 1){
-			ret = check_envvar(txts->txt, eq_pos);
-			if (ret != SUCCESS)
-				return PARSERROR;
-		}
+		if (eq_pos == -1)
+			eq_pos = ft_strlen(txts->txt);
+		ret = check_envvar(txts->txt, eq_pos);
+		if (ret != SUCCESS)
+			return PARSERROR;
 		txts = txts->next;
 	}
 	return SUCCESS;
 }
 
+int help_in_modstr(char *line, int i)
+{
+	int num;
+
+	if (line[i] == 39)
+		return 0;
+	num = backslash(line, i);
+	if (line[i] == '"' && num % 2 == 0)
+		return 0;
+	return 1;
+}
 
 int modify_str(char **str)
 {
@@ -96,8 +107,13 @@ int modify_str(char **str)
 		if (help[i] == '"' || help[i] == 39){ //  ""''ls''""
 			c = help[i];
 			start = i;
-			while (help[++i] && help[i] != c)
+			while (help[++i] && help_in_modstr(help, i))
 				check = 1;
+			if (i - start > 1)
+			{
+				start--;
+				i++;
+			}
 			size += (i - start);
 			size -= 1;
 		}
@@ -119,6 +135,8 @@ int modify_str(char **str)
 			check = 0;
 			i--;
 		}
+		if (i - start > 1)
+			i--;
 	}
 	free(*str);
 	if (check == 5 || !(*str = cleanWord(words, size))) // maloc error
@@ -131,7 +149,6 @@ int modify_str(char **str)
 		free_w(&words);
 	return SUCCESS; // all good
 }
-
 
 
 int addtowords(t_words **words, char *str, int start, int end){
