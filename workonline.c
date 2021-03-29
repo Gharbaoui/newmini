@@ -6,8 +6,8 @@ int workon_line(char *line, t_completecmd **complete, int numofcmds, int help)
 	t_words *commands;
 	t_workingcmds *wcmd;
 
-	help = calcfirst(line, 92, &last, &is_str); /// checking for new line
-	if (help != -2)
+	help = check_newlines(line);
+	if (help != SUCCESS)
 		return PARSERROR;
 	rest(&wcmd, &commands);
 	help = fill_commands(&commands, line);
@@ -53,6 +53,39 @@ void rest(t_workingcmds **wcmd, t_words **commands)
 	*commands = NULL;
 }
 /// end rest function
+
+int is_empty(char *line)
+{
+	int i;
+
+	i = -1;
+	while (line[++i])
+		if (line[i] != ' ')
+			return 0;
+	return 1;
+}
+
+int check_newlines(char *line)
+{
+	int last;
+	int is_str;
+	int help;
+	int i;
+
+	i = -1;
+	while (line[++i])
+	{
+		help = calcfirst(line, 92, &last, &is_str);
+		if (help != -2)
+		{
+			line += help + 1;
+			i = -1;
+			if (is_empty(line))
+				return PARSERROR;
+		}
+	}
+	return SUCCESS;
+}
 
 
 // fill commands 

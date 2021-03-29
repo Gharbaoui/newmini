@@ -76,6 +76,7 @@ t_envs *make_node_env(int *ern, char *line, t_words **allkeys)
 		}
 		currentEnv->next = NULL;
 	}
+	add_to_words_str(allkeys, currentEnv->env_name);
 	return currentEnv;
 }
 
@@ -129,7 +130,7 @@ t_envs *get_env(int *found, char *env_name, t_envs **table)
 	return current;
 }
 
-int add_envvar_to_table(t_envs **extable, char *line, t_words **free_envvar)
+int add_envvar_to_table(char *line, t_fullvar **variables)
 {
 	int is_plus;
 	int help; // plays also as index of '=' and length of kry variable 
@@ -147,15 +148,16 @@ int add_envvar_to_table(t_envs **extable, char *line, t_words **free_envvar)
 			keyvalue[index - 1] = 0;
 			is_plus = 1;
 		}
-		ptr = get_env(&help, keyvalue, extable);
+		ptr = get_env(&help, keyvalue, (*variables)->exenvs);
 		free(keyvalue);
 	}else{
-		ptr = get_env(&help, line, extable);
+		ptr = get_env(&help, line, (*variables)->exenvs);
 		if (help == 0)
 		{
-			help = add_tofree_envvar(free_envvar, line);
+			help = add_to_words_str(&(*variables)->emptyvar, line);
 			if (help != SUCCESS)
 				return help;
+			help = add_to_words_str(&(*variables)->allkeys, line);
 		}
 		return SUCCESS;
 	}
@@ -170,14 +172,14 @@ int add_envvar_to_table(t_envs **extable, char *line, t_words **free_envvar)
 			ptr->env_value = keyvalue;
 		}
 	}else{
-		//help = add_toenvtable(&extable, line);
+		help = add_toenvtable(&(*variables)->exenvs, line, &(*variables)->allkeys);
 		if (help != SUCCESS)
 			return help;
 	}
 	return SUCCESS;
 }
 
-int add_tofree_envvar(t_words **hidden_var, char *line)
+int add_to_words_str(t_words **hidden_var, char *line)
 {
 	t_words *current;
 

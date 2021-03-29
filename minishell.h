@@ -110,6 +110,8 @@ int opvalid(char *str);
 int ft_cmpstr(char *s1, char *s2);
 int reset_command(t_cmd **command);
 int fill_cmdstruct(t_words *words, t_cmd **command);
+int is_empty(char *line);
+int check_newlines(char *line);
 char *ft_strdup(char *str);
 void free_cmdstr(t_cmd **cmd);
 void free_pipcmd(t_pipcmd **pipcmd);
@@ -144,8 +146,8 @@ t_envs *get_env(int *found, char *env_name, t_envs **table);
 t_envs *look_inln(int *found,  char *env_name, t_envs *lnenv);
 int delete_exactfromln(t_envs **list, char *key, int *found);
 int delete_env(t_envs ***table, char *env_name, int *founded);
-int add_envvar_to_table(t_envs **table, char *line, t_words **free_envvar);
-int add_tofree_envvar(t_words **hid_var, char *line);
+int add_envvar_to_table(char *line, t_fullvar **variables);
+int add_to_words_str(t_words **hid_var, char *line);
 
 
 

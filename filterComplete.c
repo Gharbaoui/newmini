@@ -49,12 +49,6 @@ int filter_cmd(t_cmd **cmd)
 		return MEMERROR; //memory failure
 	if (!(modify_ln(&help->files)))
 		return MEMERROR; // meemory failure
-	if (ft_cmpstr("export", help->command))
-	{
-		ret = filter_check_envvar(help->txts);
-		if (ret != SUCCESS)
-			return PARSERROR;
-	}
 	return SUCCESS;
 }
 
@@ -118,7 +112,7 @@ int modify_str(char **str)
 			size -= 1;
 		}
 		else {
-			start = i - 1;
+			start = i - 1; //// 
 			while (help[++i] && (help[i] != '"' && help[i] != 39))
 				check = 1;
 			size += i - start;
@@ -135,7 +129,7 @@ int modify_str(char **str)
 			check = 0;
 			i--;
 		}
-		if (i - start > 1)
+		else if (i - start > 1)
 			i--;
 	}
 	free(*str);
