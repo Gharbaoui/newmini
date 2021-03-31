@@ -42,7 +42,6 @@ int workon_line(char *line, t_completecmd **complete, int numofcmds, int help)
 		free_comp(complete);
 		return help;
 	}
-	print_completecmd(*complete);
 	return SUCCESS;
 }
 
@@ -81,7 +80,7 @@ int check_newlines(char *line)
 	while (line[++i])
 	{
 		help = calcfirst(line, 92, &last, &is_str);
-		if (help != -2 && (bqnum = backslash(backup, line - backup + help)) % 2 == 0)
+		if (help != -2 && help != -1 && (bqnum = backslash(backup, line - backup + help)) % 2 == 0)
 		{
 			line += help + 1;
 			i = -1;

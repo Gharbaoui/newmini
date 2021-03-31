@@ -36,6 +36,8 @@ void bash_loop(char **env)
 			ret =  workon_line(line, &complete, 0, 0);
 			if (ret == PARSERROR)
 				printf("Parsing Error\n");
+            else
+                expand_current_command(&complete, variables); 
 		}
 
 	}
