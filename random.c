@@ -86,7 +86,7 @@ void print_words(t_words *words, int level, char *name)
 	if (words)
 	{
 		printspaces(level);
-		printf("%s => %s\n", name, words->txt);
+		printf("%s => %s|\n", name, words->txt);
 		print_words(words->next, level + 1, name);
 	}
 }

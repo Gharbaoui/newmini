@@ -57,31 +57,39 @@ void rest(t_workingcmds **wcmd, t_words **commands)
 int is_empty(char *line)
 {
 	int i;
-
-	i = -1;
-	while (line[++i])
-		if (line[i] != ' ')
-			return 0;
+	
+	if (line[0])
+		return 0;
+	//while (line[++i])
+	//	if (line[i] != ' ')
+	//		return 0;
 	return 1;
 }
 
 int check_newlines(char *line)
 {
+	char *backup;
 	int last;
 	int is_str;
 	int help;
 	int i;
+	int bqnum;
 
 	i = -1;
+	is_str = 0;  // not for check used as counter
+	backup = line;
 	while (line[++i])
 	{
 		help = calcfirst(line, 92, &last, &is_str);
-		if (help != -2)
+		if (help != -2 && (bqnum = backslash(backup, line - backup + help)) % 2 == 0)
 		{
 			line += help + 1;
 			i = -1;
 			if (is_empty(line))
 				return PARSERROR;
+		}else{
+			line++;
+			i = -1;
 		}
 	}
 	return SUCCESS;
@@ -413,6 +421,7 @@ int fill_cmd_objs(t_words **txts, char *str)
 int calcfirst(char *line, char c, int *last, int *is_str)
 {
 	int i;
+	int help;
 	int dq;
 	int  sq;
 
@@ -428,7 +437,7 @@ int calcfirst(char *line, char c, int *last, int *is_str)
 		}
 		else if (line[i] == 39 && dq % 2 == 0) // 39 asci for ' single
 			sq++;
-		if (line[i] == c && (dq % 2 == 0 && sq % 2 == 0))
+		if (line[i] == c && (dq % 2 == 0 && sq % 2 == 0) && (help = backslash(line, i)) % 2 == 0)
 			return i;
 		if (line[i] != ' ' && line[i] !=  '|') /// 92 for '\'
 			*is_str = 1;
@@ -459,7 +468,7 @@ int backslash(char *line, int index)
 	int total;
 
 	total = 0;
-	while (--index > 0 && line[index] == 92)
+	while (--index >= 0 && line[index] == 92)
 			total++;
 	return total;
 }
@@ -576,11 +585,11 @@ int  validchracter(char c)
 int splitby(char *str, int *index)
 {
 	int i;
-
+	int help;
 	i = *index;
-	if (str[i] == ' ')
+	if (str[i] == ' ' && (help = backslash(str, i)) % 2 == 0)
 		return 1;
-	if (str[i] == '>' || str[i] == '<')
+	if ((str[i] == '>' || str[i] == '<') && (help = backslash(str, i)) % 2 == 0)
 	{
 		if (i  && validchracter(str[i - 1]))
 			return 1;

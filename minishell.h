@@ -155,4 +155,10 @@ void print_cmd(t_cmd *cmd, int level);
 void print_oldwords(t_words *word, int level, char *name);
 void print_pipcmd(t_pipcmd *pipcmd);
 void print_completecmd(t_completecmd *complete);
+/// configurcmdwithenvvar ////
+int is_special(char *line, int index);
+int expandin_cmdstruct(t_fullvar *fullvar, t_completecmd **complete);
+int ex_in_splcommand(t_pipcmd **splcmd, t_envs **exenv);
+int exin_cmd(t_cmd **cmd, t_envs **exenv);
+
 // 62 68  0x0000000100103330
