@@ -37,12 +37,11 @@ int workon_line(char *line, t_completecmd **complete, int numofcmds, int help)
 	help = filter_complete(complete);
 	if (help != SUCCESS)
 	{
-		free_words(&commands);
-		free_wcmd(&wcmd, numofcmds);
 		free_comp(complete);
 		return help;
 	}
-    print_completecmd(*complete);
+	free_wcmd(&wcmd, numofcmds);
+	free_words(&commands);
 	return SUCCESS;
 }
 

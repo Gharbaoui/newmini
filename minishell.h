@@ -17,6 +17,12 @@
 #define MEMERROR 0
 
 // structres
+
+typedef struct strlen{
+	char *line;
+	int len;
+} t_strlen;
+
 typedef struct envs{
 	char *env_name;
 	char *env_value;
@@ -166,6 +172,6 @@ int work_on_words(t_words **mod_words, t_words *words, t_envs **exenvs);
 int filter_string(t_words **words, char *line, t_envs **exenvs);
 int get_var_name(char *line, char **key);
 int is_special(char c);
-int collect_strs(t_words **words, t_words *keys, char *line, int size);
+int collect_strs(t_words **words, t_words *keys, int size, t_envs **exenvs);
 
 // 62 68  0x0000000100103330

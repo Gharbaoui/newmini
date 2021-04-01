@@ -63,17 +63,19 @@ int backs_filter_str(char **str, t_envs **exenvs)
 int work_on_words(t_words **mod_words, t_words *words, t_envs **exenvs)
 {
     t_words *cuw;
+
+	cuw = NULL;
     int ret;
     if (words)
     {
-        cuw = malloc(sizeof(t_words));
         ret = filter_string(&cuw, words->txt, exenvs);
         add_word_tofront(mod_words, &cuw);
         work_on_words(mod_words, words->next, exenvs);
     }
+	return SUCCESS;
 }
 
-int filter_string(t_words **words, char *line, t_envs **exenvs)
+/* int filter_string(t_words **words, char *line, t_envs **exenvs, t_words *linebackup)
 {
     t_envs *cuenv;
     t_words *keys, *cuword;
@@ -82,12 +84,10 @@ int filter_string(t_words **words, char *line, t_envs **exenvs)
     char *key;
     int total;
     int envsize;
-    char *backup;
     
-    envsize = 0;
+	envsize = 0;
     total = 0;
-    backup = line;
-    if (line[0] != 39)
+	if (line[0] != 39)
     {
         while (*line)
         {
@@ -112,44 +112,61 @@ int filter_string(t_words **words, char *line, t_envs **exenvs)
             }
             line++;
         }
-        collect_strs(words, keys, backup, ft_strlen(backup) - total + envsize);
+		add_word_tofront(&keys, &linebackup);
+        collect_strs(words, keys, ft_strlen(linebackup->txt) - total + envsize, exenvs);
     }
     else{
         (*words)->txt = ft_strdup(line);
     }
     return SUCCESS;
-}
+}*/
 
-int collect_strs(t_words **words, t_words *keys, char *line, int size)
+int collect_strs(t_words **words, t_words *keys, int size, t_envs **exenvs)
 {
     char *tmp;
+	t_words *to_fre;
+	t_words *cuw;
     char *value;
     t_envs *var;
     int help;
     int i;
     int j;
-    int k;
+	int l;
+	char *line;
 
     i = -1;
     j = -1;
+	to_fre = keys;
+	line = to_fre->txt;
+	keys = keys->next;
     tmp = malloc(size + 1);
+	cuw = malloc(sizeof(t_words));
     if (line[0] != 39)
     {
         while (line[++i])
         {
             if (line[i] == 92 && is_special(line[i + 1]))
             {
-                i++;
+                tmp[++j] = line[++i];
             }else if (line[i] == '$')
             {
+				l = -1;
                 i += ft_strlen(keys->txt);
-                var = get_env(&help, keys->txt, ); //// left here need of t_envs exens variable not avialbel for now
+                var = get_env(&help, keys->txt, exenvs); //// left here need of t_envs exens variable not avialbel for now
+				while (var && var->env_value[++l])
+				{
+					tmp[++j] = var->env_value[l];
+				}
                 keys = keys->next;
-            }
-            tmp[++j] = line[i];
+            }else
+            	tmp[++j] = line[i];
         }
-    }
-
+		tmp[++j] = 0;
+		cuw->txt = tmp;
+    }else{
+		cuw->txt = ft_strdup(line);
+	}
+	add_word_tofront(words, &cuw);
     return SUCCESS;
 }
 
@@ -215,6 +232,7 @@ int local_words(t_words **words, char *line)
         } 
         add_word_tofront(words, &word);
     }
+	return SUCCESS;
 }
 
 void add_word_tofront(t_words **words, t_words **cuw)
