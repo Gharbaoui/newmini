@@ -42,12 +42,12 @@ int filter_string(t_words **words, char *line, t_envs **exenv)
 					varsize += ft_strlen(var->env_value);
 				ret = ft_strlen(cuw->txt);
 				backtotal += ret + 1;
-				i += ret - 1;
+				i += ret - 2;
 			}
+			i++;
 		}
 		info_size_line.len = ft_strlen(line) - backtotal + varsize;
 		info_size_line.line = ft_strdup(line);
-        collect_strs(words, keys, exenv, info_size_line);
 	}else{
 		mk_and_add_to_words(words, line);
 	}
@@ -69,18 +69,16 @@ int collect_strs(t_words **words, t_words *keys, t_envs **exenvs, t_strlen info)
 {
 	t_envs *cuvar;
 	int i;
-    char *line;
 	int j;
 	char *tmp;
 
 	tmp = malloc(info.len + 1);
 	i = -1;
 	j = -1;
-    line = info.line;
 	while (line[++i])
 	{	if (line[i] == '$')
 		{
-			i += ft_strlen(keys->txt) - 1;
+			i += ft_strlen(keys->txt);
 			cuvar = get_env(&info.len, keys->txt, exenvs);
 			if (info.len)
 				j = help_fill_tmp(tmp, cuvar->env_value, j);

@@ -121,7 +121,7 @@ int work_on_words(t_words **mod_words, t_words *words, t_envs **exenvs)
     return SUCCESS;
 }*/
 
-int collect_strs(t_words **words, t_words *keys, int size, t_envs **exenvs)
+/*int collect_strs(t_words **words, t_words *keys, int size, t_envs **exenvs)
 {
     char *tmp;
 	t_words *to_fre;
@@ -168,7 +168,7 @@ int collect_strs(t_words **words, t_words *keys, int size, t_envs **exenvs)
 	}
 	add_word_tofront(words, &cuw);
     return SUCCESS;
-}
+}*/
 
 
 
