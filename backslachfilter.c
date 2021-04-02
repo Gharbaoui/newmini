@@ -57,6 +57,8 @@ int backs_filter_str(char **str, t_envs **exenvs)
     mod_words = NULL;
     ret = local_words(&words, line);
     ret = work_on_words(&mod_words, words, exenvs);
+    free(*str);
+    concatenate_words(mod_words, str); 
     return SUCCESS;
 }
 

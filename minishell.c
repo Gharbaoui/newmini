@@ -20,11 +20,6 @@ void bash_loop(char **env)
 	ret = fill_envtable(&variables, env);// returns Success or memory error or Empty env
 	
 
-
-	add_envvar_to_table("mohamed=first", &variables);
-	add_envvar_to_table("mohamed=newdata", &variables);
-	add_envvar_to_table("mohamed", &variables);
-	add_envvar_to_table("uniqe", &variables);
 	status = 1;
 	while (status)
 	{
@@ -37,7 +32,9 @@ void bash_loop(char **env)
 			if (ret == PARSERROR)
 				printf("Parsing Error\n");
             else
-               expand_current_command(&complete, variables); 
+               expand_current_command(&complete, variables);
+            print_completecmd(complete);
+            
 		}
 
 	}

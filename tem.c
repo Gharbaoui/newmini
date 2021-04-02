@@ -68,7 +68,8 @@ int help_fill_tmp(char *tmp, char *value, int start)
 int collect_strs(t_words **words, t_words *keys, t_envs **exenvs, t_strlen info)
 {
 	t_envs *cuvar;
-	int i;
+	t_words *cuw;
+    int i;
     char *line;
 	int j;
 	char *tmp;
@@ -80,7 +81,7 @@ int collect_strs(t_words **words, t_words *keys, t_envs **exenvs, t_strlen info)
 	while (line[++i])
 	{	if (line[i] == '$')
 		{
-			i += ft_strlen(keys->txt) - 1;
+			i += ft_strlen(keys->txt);
 			cuvar = get_env(&info.len, keys->txt, exenvs);
 			if (info.len)
 				j = help_fill_tmp(tmp, cuvar->env_value, j);
@@ -89,14 +90,44 @@ int collect_strs(t_words **words, t_words *keys, t_envs **exenvs, t_strlen info)
 		else if (line[i] == 92 && is_special(line[i + 1]))
 			tmp[++j] = line[++i];
 		else
-			tmp[++j] = line[++i];
+			tmp[++j] = line[i];
 	}
+    tmp[++j] = 0;
+    mk_and_add_to_words(words, tmp);
 	return SUCCESS;
 }
 
+int get_lengthwords(t_words *words)
+{
+    int total;
 
-// "a \\ $varname|"
-//
-//
-//
-//
+    total = 0;
+    while (words){
+        total += ft_strlen(words->txt);
+        words = words->next;
+    }
+    return total;
+}
+
+int concatenate_words(t_words *words, char **line) // i need to chage from "mohamed"opthrt'new' to mohamedopthrtnew remov quotes
+{
+    int len;
+    int i;
+    char *tmp;
+
+    len = get_lengthwords(words) + 1;
+    tmp = malloc(len);
+    i = -1;
+    while (words)
+    {
+        i += help_fill_tmp(tmp, words->txt, i);
+        words = words->next;
+    }
+    *line = tmp;
+    return SUCCESS;
+}
+
+
+
+
+
