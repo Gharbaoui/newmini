@@ -48,6 +48,8 @@ int filter_string(t_words **words, char *line, t_envs **exenv)
 		info_size_line.len = ft_strlen(line) - backtotal + varsize;
 		info_size_line.line = ft_strdup(line);
         collect_strs(words, keys, exenv, info_size_line);
+		free_words(&keys);
+		free(info_size_line.line);
 	}else{
 		mk_and_add_to_words(words, line);
 	}
@@ -57,9 +59,29 @@ int filter_string(t_words **words, char *line, t_envs **exenv)
 int help_fill_tmp(char *tmp, char *value, int start)
 {
 	int i;
+	int lastindex;
+	int len;
 
+	i = 0;
+	lastindex = ft_strlen(value) - 1;
+	len = lastindex;
+	while (value[i] == ' ')
+		i++;
+	while (value[len] == ' ')
+		len--;
+	if (len < lastindex - 1)
+		len++;
+	if (i > 1)
+		i--;
+	else 
+	{
+		i = 0;
+		len++;
+	}
+	len -= i;
+	value += i;
 	i = -1;
-	while (value[++i]){
+	while (value[++i] && i < len + 1){
 		tmp[++start] = value[i];
 	}
 	return start; 
@@ -94,6 +116,7 @@ int collect_strs(t_words **words, t_words *keys, t_envs **exenvs, t_strlen info)
 	}
     tmp[++j] = 0;
     mk_and_add_to_words(words, tmp);
+	free(tmp);
 	return SUCCESS;
 }
 
@@ -126,8 +149,4 @@ int concatenate_words(t_words *words, char **line) // i need to chage from "moha
     *line = tmp;
     return SUCCESS;
 }
-
-
-
-
 

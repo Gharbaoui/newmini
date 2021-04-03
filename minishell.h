@@ -161,7 +161,8 @@ void print_cmd(t_cmd *cmd, int level);
 void print_oldwords(t_words *word, int level, char *name);
 void print_pipcmd(t_pipcmd *pipcmd);
 void print_completecmd(t_completecmd *complete);
-/// configurcmdwithenvvar ////
+/// backslachfilter.c ////
+int split_command(t_cmd **cmd);
 int expand_current_command(t_completecmd **complet, t_fullvar *envs);
 int expand_full_pipcmd(t_pipcmd **pipcmd, t_envs **exenvs);
 int expand_one_cmdstrct(t_cmd **cmd, t_envs **exenvs);

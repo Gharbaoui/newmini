@@ -41,9 +41,29 @@ int expand_one_cmdstrct(t_cmd **cmd, t_envs **exenvs)
     if (help->command)
     {
         ret = backs_filter_str(&help->command, exenvs);
+		split_command(cmd);
     }    
     return SUCCESS;
 }
+
+int split_command(t_cmd **cmd)
+{
+	char *command;
+	char *after;
+	int i = 0;
+	int start;
+	int last;
+
+	command = (*cmd)->command;
+	
+	while (command[i] == ' ')
+		i++;
+	last = i;
+	while (command[last] != ' ')
+		++last;
+	return SUCCESS;
+}
+
 
 int backs_filter_str(char **str, t_envs **exenvs)
 {
@@ -58,7 +78,9 @@ int backs_filter_str(char **str, t_envs **exenvs)
     ret = local_words(&words, line);
     ret = work_on_words(&mod_words, words, exenvs);
     free(*str);
-    concatenate_words(mod_words, str); 
+    concatenate_words(mod_words, str);
+	free_words(&words);
+	free_words(&mod_words);
     return SUCCESS;
 }
 
@@ -77,100 +99,6 @@ int work_on_words(t_words **mod_words, t_words *words, t_envs **exenvs)
 	return SUCCESS;
 }
 
-/* int filter_string(t_words **words, char *line, t_envs **exenvs, t_words *linebackup)
-{
-    t_envs *cuenv;
-    t_words *keys, *cuword;
-    int ret, help;
-    char c;
-    char *key;
-    int total;
-    int envsize;
-    
-	envsize = 0;
-    total = 0;
-	if (line[0] != 39)
-    {
-        while (*line)
-        {
-            c = *line;
-            if (c == 92 && is_special(line[1]))
-            {
-                total++;
-                line++;
-            }else if (c == '$')
-            {
-                line++;
-                ret = get_var_name(line, &key);
-                ret = ft_strlen(key);
-                cuword = malloc(sizeof(t_words));
-                cuword->txt = key;
-                addtmptowords(&keys, &cuword);
-                cuenv = get_env(&help, key, exenvs);
-                total += ret + 1;
-                if (help)  
-                    envsize += ft_strlen(cuenv->env_value);
-                line += ret - 1;
-            }
-            line++;
-        }
-		add_word_tofront(&keys, &linebackup);
-        collect_strs(words, keys, ft_strlen(linebackup->txt) - total + envsize, exenvs);
-    }
-    else{
-        (*words)->txt = ft_strdup(line);
-    }
-    return SUCCESS;
-}*/
-
-/*int collect_strs(t_words **words, t_words *keys, int size, t_envs **exenvs)
-{
-    char *tmp;
-	t_words *to_fre;
-	t_words *cuw;
-    char *value;
-    t_envs *var;
-    int help;
-    int i;
-    int j;
-	int l;
-	char *line;
-
-    i = -1;
-    j = -1;
-	to_fre = keys;
-	line = to_fre->txt;
-	keys = keys->next;
-    tmp = malloc(size + 1);
-	cuw = malloc(sizeof(t_words));
-    if (line[0] != 39)
-    {
-        while (line[++i])
-        {
-            if (line[i] == 92 && is_special(line[i + 1]))
-            {
-                tmp[++j] = line[++i];
-            }else if (line[i] == '$')
-            {
-				l = -1;
-                i += ft_strlen(keys->txt);
-                var = get_env(&help, keys->txt, exenvs); //// left here need of t_envs exens variable not avialbel for now
-				while (var && var->env_value[++l])
-				{
-					tmp[++j] = var->env_value[l];
-				}
-                keys = keys->next;
-            }else
-            	tmp[++j] = line[i];
-        }
-		tmp[++j] = 0;
-		cuw->txt = tmp;
-    }else{
-		cuw->txt = ft_strdup(line);
-	}
-	add_word_tofront(words, &cuw);
-    return SUCCESS;
-}*/
 
 
 
