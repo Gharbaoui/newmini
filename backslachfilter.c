@@ -39,10 +39,21 @@ int expand_one_cmdstrct(t_cmd **cmd, t_envs **exenvs)
 
     help = *cmd;
     if (help->command)
-    {
         ret = backs_filter_str(&help->command, exenvs);
-		split_command(cmd);
-    }    
+    if (help->txts)
+        ret = var_filter_txts(&help->txts, exenvs);
+    return SUCCESS;
+}
+
+int var_filter_txts(t_words **txts, t_envs **exenvs)
+{
+    t_words *help;
+    
+    help = *txts;
+    while (help){
+        backs_filter_str(&help->txt, exenvs);
+        help = help->next;
+    }   
     return SUCCESS;
 }
 
@@ -53,6 +64,7 @@ int split_command(t_cmd **cmd)
     int space;
     char *first;
     
+    words = NULL; 
     help = (*cmd)->command;
     if (help[0] != '"' && help[0] != 39)
     {
@@ -64,8 +76,35 @@ int split_command(t_cmd **cmd)
 
 int con_in_txts(t_cmd **cmd, t_words *words)
 {
-    
+    if (words->next)
+    {
+        if (words->txt[0] != '"' && words->txt[0] != 39)
+        {
+            fill_none_quote(&(*cmd)->txts, words->txt);
+        }
+    }
     return SUCCESS; 
+}
+
+int fill_none_quote(t_words **txts, char *line)
+{
+    int space;
+    int len;
+    char *first;
+    
+    len = ft_strlen(line);
+    if (len)
+    {
+        space = nlindex(line, ' ');
+        if (space == -1)
+            space = len; 
+        first = split(line, 0, space);
+        mk_and_add_to_words(txts, first);
+        while (line[space] == ' ')
+            space++;
+        fill_none_quote(txts, line + space);
+    }
+    return SUCCESS;
 }
 
 int backs_filter_str(char **str, t_envs **exenvs)
@@ -90,12 +129,12 @@ int backs_filter_str(char **str, t_envs **exenvs)
 int work_on_words(t_words **mod_words, t_words *words, t_envs **exenvs)
 {
     t_words *cuw;
-
+    
 	cuw = NULL;
     int ret;
     if (words)
     {
-        ret = filter_string(&cuw, words->txt, exenvs);
+        ret = filter_string(&cuw, words->txt, exenvs, words->head);
         add_word_tofront(mod_words, &cuw);
         work_on_words(mod_words, words->next, exenvs);
     }
@@ -170,8 +209,12 @@ int local_words(t_words **words, char *line)
 
 void add_word_tofront(t_words **words, t_words **cuw)
 {
+    (*cuw)->head = 1;
     if (*words)
+    {
+        (*words)->head = 0;
         (*cuw)->next = *words;
+    }   
     else
         (*cuw)->next = NULL;
     *words = *cuw;

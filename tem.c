@@ -10,7 +10,7 @@ int mk_and_add_to_words(t_words **words, char *line)
 	return SUCCESS;
 }
 
-int filter_string(t_words **words, char *line, t_envs **exenv)
+int filter_string(t_words **words, char *line, t_envs **exenv, int head)
 {
 	t_strlen info_size_line;
 	int i;
@@ -47,6 +47,7 @@ int filter_string(t_words **words, char *line, t_envs **exenv)
 		}
 		info_size_line.len = ft_strlen(line) - backtotal + varsize;
 		info_size_line.line = ft_strdup(line);
+        info_size_line.islast = head;
         collect_strs(words, keys, exenv, info_size_line);
 		free_words(&keys);
 		free(info_size_line.line);
@@ -56,24 +57,32 @@ int filter_string(t_words **words, char *line, t_envs **exenv)
 	return SUCCESS;
 }
 
-int help_fill_tmp(char *tmp, char *value, int start, char c)
+int help_fill_tmp(char *tmp, t_strlen info ,char c)
 {
 	int i;
     int lindex;
+    int sindex;
+    int start;
+    char *value;
     int len;
     
+    value = info.line;
     lindex = ft_strlen(value);
+    start = info.len;
     len = lindex;
     i = -1;
     if (c != '"')
     {
         while (value[i + 1] == ' ')
             i++;
-        while (value[lindex - 1] == ' ')
+        while (value[lindex - 2] == ' ')
+            --lindex;
+        while (info.islast && value[lindex] == ' ')
             --lindex;
     }
+    sindex = i;
     while (value[++i] && i < lindex){
-        tmp[++start] = value[i];
+            tmp[++start] = value[i];
     }
 	return start; 
 }
@@ -81,6 +90,7 @@ int help_fill_tmp(char *tmp, char *value, int start, char c)
 int collect_strs(t_words **words, t_words *keys, t_envs **exenvs, t_strlen info)
 {
 	t_envs *cuvar;
+    t_strlen cuinfo;
 	t_words *cuw;
     int i;
     char *line;
@@ -96,8 +106,12 @@ int collect_strs(t_words **words, t_words *keys, t_envs **exenvs, t_strlen info)
 		{
 			i += ft_strlen(keys->txt);
 			cuvar = get_env(&info.len, keys->txt, exenvs);
-			if (info.len)
-				j = help_fill_tmp(tmp, cuvar->env_value, j, line[0]);
+			if (info.len){
+                cuinfo.len = j;
+                cuinfo.islast = info.islast;
+                cuinfo.line = cuvar->env_value;
+				j = help_fill_tmp(tmp, cuinfo, line[0]);
+            }
             keys = keys->next;
 		}
 		else if (line[i] == 92 && is_special(line[i + 1]))
@@ -125,6 +139,7 @@ int get_lengthwords(t_words *words)
 
 int concatenate_words(t_words *words, char **line) // i need to chage from "mohamed"opthrt'new' to mohamedopthrtnew remov quotes
 {
+    t_strlen info;
     int len;
     int i;
     char *tmp;
@@ -134,7 +149,10 @@ int concatenate_words(t_words *words, char **line) // i need to chage from "moha
     i = -1;
     while (words)
     {
-        i = help_fill_tmp(tmp, words->txt, i, words->txt[0]);
+        info.line = words->txt;
+        info.len = i;
+        info.islast = 0;
+        i = help_fill_tmp(tmp, info, words->txt[0]);
         words = words->next;
     }
     tmp[++i] = 0;

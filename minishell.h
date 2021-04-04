@@ -21,6 +21,7 @@
 typedef struct strlen{
 	char *line;
 	int len;
+    int islast;
 } t_strlen;
 
 typedef struct envs{
@@ -30,6 +31,7 @@ typedef struct envs{
 }t_envs;
 
 typedef struct txts{
+    int head;
 	char *txt;
 	struct txts *next;
 } t_words;
@@ -170,10 +172,15 @@ int backs_filter_str(char **str, t_envs **exenvs);
 int local_words(t_words **words, char *line);
 void  add_word_tofront(t_words **words, t_words **cuw);
 int work_on_words(t_words **mod_words, t_words *words, t_envs **exenvs);
-int filter_string(t_words **words, char *line, t_envs **exenvs);
+int filter_string(t_words **words, char *line, t_envs **exenvs, int head);
 int get_var_name(char *line, char **key);
 int is_special(char c);
 int collect_strs(t_words **words, t_words *keys, t_envs **exenvs, t_strlen info);
 int concatenate_words(t_words *words, char **line);
+int local_words(t_words **words, char *line);
+int con_in_txts(t_cmd **cmd, t_words *words);
+int fill_none_quote(t_words **txts, char *line);
+int mk_and_add_to_words(t_words **words, char *line);
+int var_filter_txts(t_words **txts, t_envs **exenvs);
 
 // 62 68  0x0000000100103330
