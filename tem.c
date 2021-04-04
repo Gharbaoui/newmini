@@ -56,34 +56,25 @@ int filter_string(t_words **words, char *line, t_envs **exenv)
 	return SUCCESS;
 }
 
-int help_fill_tmp(char *tmp, char *value, int start)
+int help_fill_tmp(char *tmp, char *value, int start, char c)
 {
 	int i;
-	int lastindex;
-	int len;
-
-	i = 0;
-	lastindex = ft_strlen(value) - 1;
-	len = lastindex;
-	while (value[i] == ' ')
-		i++;
-	while (value[len] == ' ')
-		len--;
-	if (len < lastindex - 1)
-		len++;
-	if (i > 1)
-		i--;
-	else 
-	{
-		i = 0;
-		len++;
-	}
-	len -= i;
-	value += i;
-	i = -1;
-	while (value[++i] && i < len + 1){
-		tmp[++start] = value[i];
-	}
+    int lindex;
+    int len;
+    
+    lindex = ft_strlen(value);
+    len = lindex;
+    i = -1;
+    if (c != '"')
+    {
+        while (value[i + 1] == ' ')
+            i++;
+        while (value[lindex - 1] == ' ')
+            --lindex;
+    }
+    while (value[++i] && i < lindex){
+        tmp[++start] = value[i];
+    }
 	return start; 
 }
 
@@ -106,7 +97,7 @@ int collect_strs(t_words **words, t_words *keys, t_envs **exenvs, t_strlen info)
 			i += ft_strlen(keys->txt);
 			cuvar = get_env(&info.len, keys->txt, exenvs);
 			if (info.len)
-				j = help_fill_tmp(tmp, cuvar->env_value, j);
+				j = help_fill_tmp(tmp, cuvar->env_value, j, line[0]);
             keys = keys->next;
 		}
 		else if (line[i] == 92 && is_special(line[i + 1]))
@@ -143,9 +134,10 @@ int concatenate_words(t_words *words, char **line) // i need to chage from "moha
     i = -1;
     while (words)
     {
-        i += help_fill_tmp(tmp, words->txt, i);
+        i = help_fill_tmp(tmp, words->txt, i, words->txt[0]);
         words = words->next;
     }
+    tmp[++i] = 0;
     *line = tmp;
     return SUCCESS;
 }

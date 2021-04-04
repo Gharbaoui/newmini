@@ -48,22 +48,25 @@ int expand_one_cmdstrct(t_cmd **cmd, t_envs **exenvs)
 
 int split_command(t_cmd **cmd)
 {
-	char *command;
-	char *after;
-	int i = 0;
-	int start;
-	int last;
-
-	command = (*cmd)->command;
-	
-	while (command[i] == ' ')
-		i++;
-	last = i;
-	while (command[last] != ' ')
-		++last;
+    char *help;
+    t_words *words;
+    int space;
+    char *first;
+    
+    help = (*cmd)->command;
+    if (help[0] != '"' && help[0] != 39)
+    {
+        local_words(&words, help);
+        con_in_txts(cmd, words);
+    }
 	return SUCCESS;
 }
 
+int con_in_txts(t_cmd **cmd, t_words *words)
+{
+    
+    return SUCCESS; 
+}
 
 int backs_filter_str(char **str, t_envs **exenvs)
 {

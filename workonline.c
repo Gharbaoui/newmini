@@ -32,12 +32,14 @@ int workon_line(char *line, t_completecmd **complete, int numofcmds, int help)
 		free_words(&commands);
 		free_wcmd(&wcmd, numofcmds);
 		free_comp(complete);
+        *complete = NULL;
 		return help;
 	}
 	help = filter_complete(complete);
 	if (help != SUCCESS)
 	{
 		free_comp(complete);
+        *complete = NULL;
 		return help;
 	}
 	free_wcmd(&wcmd, numofcmds);
@@ -586,7 +588,7 @@ int splitby(char *str, int *index)
 	int i;
 	int help;
 	i = *index;
-	if (str[i] == ' ' && (help = backslash(str, i)) % 2 == 0)
+	if ((str[i] == ' ' || (str[i] == '$' && i))&& (help = backslash(str, i)) % 2 == 0)
 		return 1;
 	if ((str[i] == '>' || str[i] == '<') && (help = backslash(str, i)) % 2 == 0)
 	{
