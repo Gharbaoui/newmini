@@ -30,6 +30,7 @@ typedef struct envs{
 }t_envs;
 
 typedef struct txts{
+	int head;
 	char *txt;
 	struct txts *next;
 } t_words;
@@ -167,6 +168,7 @@ int expand_current_command(t_completecmd **complet, t_fullvar *envs);
 int expand_full_pipcmd(t_pipcmd **pipcmd, t_envs **exenvs);
 int expand_one_cmdstrct(t_cmd **cmd, t_envs **exenvs);
 int backs_filter_str(char **str, t_envs **exenvs);
+int mk_and_add_to_words(t_words **words, char *line);
 int local_words(t_words **words, char *line);
 void  add_word_tofront(t_words **words, t_words **cuw);
 int work_on_words(t_words **mod_words, t_words *words, t_envs **exenvs);
@@ -175,5 +177,10 @@ int get_var_name(char *line, char **key);
 int is_special(char c);
 int collect_strs(t_words **words, t_words *keys, t_envs **exenvs, t_strlen info);
 int concatenate_words(t_words *words, char **line);
+t_words *split_by_spaces(char *line, int status);
+t_words *first_case(char *line);
+t_words *second_case(char *line);
+t_words  *third_case(char *line);
+char *get_word(char *line, int *next);
 
 // 62 68  0x0000000100103330

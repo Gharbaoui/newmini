@@ -56,42 +56,31 @@ int filter_string(t_words **words, char *line, t_envs **exenv)
 	return SUCCESS;
 }
 
-int help_fill_tmp(char *tmp, char *value, int start)
+int help_fill_tmp(char *tmp, char *value, t_strlen info, int is_first) // if status is one means we deal with spaces 0 do nothing
 {
+	t_words *words;
 	int i;
+	int start;
 	int lastindex;
 	int len;
 
-	i = 0;
-	lastindex = ft_strlen(value) - 1;
-	len = lastindex;
-	while (value[i] == ' ')
-		i++;
-	while (value[len] == ' ')
-		len--;
-	if (len < lastindex - 1)
-		len++;
-	if (i > 1)
-		i--;
-	else 
-	{
-		i = 0;
-		len++;
-	}
-	len -= i;
-	value += i;
 	i = -1;
-	while (value[++i] && i < len + 1){
-		tmp[++start] = value[i];
-	}
+	start = info.len;
+	words = split_by_spaces(value, 2);	
+	//while (value[++i]){
+	//	tmp[++start] = value[i];
+	//}
 	return start; 
 }
 
 int collect_strs(t_words **words, t_words *keys, t_envs **exenvs, t_strlen info)
 {
-	t_envs *cuvar;
+	t_envs *cuvar, *nvar;
 	t_words *cuw;
+	t_strlen nextinfo;
     int i;
+	int is_first;
+	int status;
     char *line;
 	int j;
 	char *tmp;
@@ -99,14 +88,27 @@ int collect_strs(t_words **words, t_words *keys, t_envs **exenvs, t_strlen info)
 	tmp = malloc(info.len + 1);
 	i = -1;
 	j = -1;
+	is_first = 1;
     line = info.line;
 	while (line[++i])
 	{	if (line[i] == '$')
 		{
+			status = 0;
 			i += ft_strlen(keys->txt);
 			cuvar = get_env(&info.len, keys->txt, exenvs);
 			if (info.len)
-				j = help_fill_tmp(tmp, cuvar->env_value, j);
+			{
+				nextinfo.len = j;
+				nextinfo.line = NULL;
+				if (keys->next)
+				{
+					nvar = get_env(&info.len, keys->next->txt, exenvs);
+					if (nvar)
+						nextinfo.line = nvar->env_value;
+				}
+				j = help_fill_tmp(tmp, cuvar->env_value, nextinfo, is_first);
+				is_first = 0;
+			}
             keys = keys->next;
 		}
 		else if (line[i] == 92 && is_special(line[i + 1]))
@@ -135,15 +137,18 @@ int get_lengthwords(t_words *words)
 int concatenate_words(t_words *words, char **line) // i need to chage from "mohamed"opthrt'new' to mohamedopthrtnew remov quotes
 {
     int len;
+	t_strlen info;
     int i;
     char *tmp;
 
     len = get_lengthwords(words) + 1;
     tmp = malloc(len);
     i = -1;
+	info.line = NULL;
     while (words)
     {
-        i += help_fill_tmp(tmp, words->txt, i);
+		info.len = i;
+        i += help_fill_tmp(tmp, words->txt, info, 4); // should do nothing for the number 4
         words = words->next;
     }
     *line = tmp;

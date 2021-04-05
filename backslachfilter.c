@@ -48,19 +48,7 @@ int expand_one_cmdstrct(t_cmd **cmd, t_envs **exenvs)
 
 int split_command(t_cmd **cmd)
 {
-	char *command;
-	char *after;
-	int i = 0;
-	int start;
-	int last;
-
-	command = (*cmd)->command;
 	
-	while (command[i] == ' ')
-		i++;
-	last = i;
-	while (command[last] != ' ')
-		++last;
 	return SUCCESS;
 }
 
@@ -176,5 +164,123 @@ void add_word_tofront(t_words **words, t_words **cuw)
 
 
 
+t_words *split_by_spaces(char *line, int status)
+{
+	// status 0 means first we should not keep space at first word and we should let one at the end
+	// status 1 means let at the first and at the end
+	// status 2 means the last word let space in first and in last
+
+	int i;
+	
+	i = 0;
+	if (status == 0)
+	{
+		return first_case(line); // if space in last let one
+	}else if (status == 1)
+	{
+		return second_case(line);  // let space in start and at the end
+	}else if (status == 2){
+		return third_case(line);
+	}
+	
+	return NULL;
+}
+
+t_words *first_case(char *line)
+{
+	t_words *words;
+	t_words *cuw;
+	char *w;
+	int next;
+
+	words = NULL;
+	while (*line == ' ')
+		line++;
+	while (*line)
+	{
+		w = get_word(line, &next);
+		cuw = malloc(sizeof(t_words));
+		cuw->txt = w;
+		addtmptowords(&words, &cuw);
+		line += next;
+	}
+	return words;
+}
+
+t_words *second_case(char *line)
+{
+	t_words *words;
+	t_words *cuw;
+	char *w;
+	int *next;
+	int space;
+	int i;
+
+	i = -1;
+	
+	words = NULL;
+	while (*(line + 1) == ' ')
+		line++;
+	space = nlindex(line + 1, ' ');
+	if (space == -1)
+		space = ft_strlen(line);
+	w = malloc(space + 2);
+	while (line[++i] && i < space + 1)
+		w[i] = line[i];
+	w[i] = 0;
+	if (!(w[0] == ' ' && w[1] == '\0'))
+	{
+		words = first_case(line + i);
+		mk_and_add_to_words(&words, w);
+	}
+	free(w);
+	return words;
+}
+
+t_words  *third_case(char *line)
+{
+	t_words *words;
+	t_words *head;
+	int lastindex;
 
 
+	words = second_case(line);
+	head = words;
+	while (words && words->next)
+		words = words->next;
+	if (words)
+	{
+		lastindex = ft_strlen(words->txt) - 1;
+		if (words->txt[lastindex] == ' ')
+			words->txt[lastindex] = 0;
+	}
+	return head;
+}
+
+
+char *get_word(char *line, int *next)
+{
+	char *tmp;
+	int space;
+	int j;
+	int i;
+
+	i = -1;
+	j = -1;
+	space = nlindex(line, ' ');
+	if (space == -1)
+		space = ft_strlen(line);
+	tmp = malloc(space + 2); // 1 more maybe i will need to store one more space at the end
+	if (*line == '\0')
+		return NULL;
+	while (line[++i] && i < space)
+		tmp[++j] = line[i];
+
+	while (line[i] && line[i] == ' ')
+		++i;
+	if (line[i - 1] == ' ' && line[i] == 0)
+		tmp[++j] = ' ';
+	tmp[++j] = 0;
+	*next = i;
+	return tmp;
+}
