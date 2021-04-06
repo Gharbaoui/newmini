@@ -6,11 +6,11 @@ int mk_and_add_to_words(t_words **words, char *line)
 
 	cuw = malloc(sizeof(t_words));
 	cuw->txt = ft_strdup(line);
-	add_word_tofront(words, &cuw);
+	addtmptowords(words, &cuw);
 	return SUCCESS;
 }
 
-int filter_string(t_words **words, char *line, t_envs **exenv)
+/*int filter_string(t_words **words, char *line, t_envs **exenv) 
 {
 	t_strlen info_size_line;
 	int i;
@@ -54,7 +54,7 @@ int filter_string(t_words **words, char *line, t_envs **exenv)
 		mk_and_add_to_words(words, line);
 	}
 	return SUCCESS;
-}
+}*/
 
 int help_fill_tmp(char *tmp, char *value, t_strlen info, int is_first) // if status is one means we deal with spaces 0 do nothing
 {
@@ -65,15 +65,16 @@ int help_fill_tmp(char *tmp, char *value, t_strlen info, int is_first) // if sta
 	int len;
 
 	i = -1;
+	i = 0;
 	start = info.len;
-	words = split_by_spaces(value, 2);	
+	words = split_by_spaces(value, i);	
 	//while (value[++i]){
 	//	tmp[++start] = value[i];
 	//}
 	return start; 
 }
 
-int collect_strs(t_words **words, t_words *keys, t_envs **exenvs, t_strlen info)
+/*int collect_strs(t_words **words, t_words *keys, t_envs **exenvs, t_strlen info)
 {
 	t_envs *cuvar, *nvar;
 	t_words *cuw;
@@ -120,7 +121,7 @@ int collect_strs(t_words **words, t_words *keys, t_envs **exenvs, t_strlen info)
     mk_and_add_to_words(words, tmp);
 	free(tmp);
 	return SUCCESS;
-}
+}*/
 
 int get_lengthwords(t_words *words)
 {

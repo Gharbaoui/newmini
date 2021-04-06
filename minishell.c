@@ -32,7 +32,7 @@ void bash_loop(char **env)
 			if (ret == PARSERROR)
 				printf("Parsing Error\n");
             else
-               expand_current_command(&complete, variables);
+              expand_current_command(&complete, variables);
             print_completecmd(complete);
             
 		}

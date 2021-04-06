@@ -80,7 +80,7 @@ int work_on_words(t_words **mod_words, t_words *words, t_envs **exenvs)
     int ret;
     if (words)
     {
-        //ret = filter_string(&cuw, words->txt, exenvs);
+        ret = filter_string(&cuw, words, exenvs);
         addtmptowords(mod_words, &cuw);
         work_on_words(mod_words, words->next, exenvs);
     }
@@ -283,4 +283,148 @@ char *get_word(char *line, int *next)
 	tmp[++j] = 0;
 	*next = i;
 	return tmp;
+}
+
+
+
+int filter_string(t_words **words, t_words *w, t_envs **exenvs)
+{
+	t_words *keys;
+	t_words *finleword;
+	t_strlen info;
+	int i;
+
+	keys = NULL;
+	i = -1;
+	keys = NULL;
+
+	if (w->txt[0] != 39)
+	{
+		info = loop_in_filter_string(w->txt, exenvs, &keys);
+		finleword = collect_strs(keys, exenvs, w->next, info);
+	}else{
+		mk_and_add_to_words(words, w->txt);
+	}
+
+	return SUCCESS;
+}
+
+int fill_all_var(char *tmp, char *value, int index)
+{
+	int i;
+
+	i = -1;
+	while (value[++i])
+		tmp[++index] = value[i];
+	return index;
+}
+
+int check_next(char *value, t_envs **exenv)
+{
+	char *key;
+	int found;
+	int i;
+	t_envs *var;
+
+	i = -1;
+	if (*value == '"' || *value == 39)
+		return 1;
+	else if (value[0] != '$')
+		return 1;
+	get_var_name(value + 1, &key);
+	var = get_env(&found, key, exenv);
+	if (found)
+	{
+		while (var->env_value[i] && var->env_value[i] == ' ')
+			i++;
+		if (var->env_value[i] == '\0')
+			return 0;
+		else
+			return 1;
+	}
+	return 0;
+}
+
+t_words *collect_strs(t_words *keys, t_envs **exenv, t_words *nextword, t_strlen info)
+{
+	t_words *word;
+	t_envs *cvar, *nvar;
+	char *tmp;
+	int status;
+	char *keyvalue;
+	int i;
+	int j;
+
+	i = -1;
+	j = -1;
+	status = check_next(nextword->txt, exenv);
+	tmp = malloc(info.len + 1);
+	while (info.line[++i])
+	{
+		if (info.line[i] == '$')
+		{
+			i += ft_strlen(keys->txt);
+			cvar = get_env(&info.len, keys->txt, exenv);
+			if (info.len)
+			{
+				if (info.line[0] == '"')
+					j = fill_all_var(tmp, cvar->env_value, j);
+				else
+				{
+					if (keys->next){
+						nvar = get_env(&info.len, keys->next->txt, exenv);
+						j = help_fill_unq(tmp, j, cvar->env_value, nvar->env_value);
+					}
+					else{}
+				}
+			}
+		}else if (info.line[i] == 92 && is_special(info.line[i + 1]))
+			tmp[++j] = info.line[++i];
+		else
+			tmp[++j] = info.line[i];
+	}	
+	return word;
+}
+
+
+int help_fill_unq(char *tmp, int i, char *value, char *next)
+{
+	return SUCCESS;
+}
+
+t_strlen loop_in_filter_string(char *line, t_envs **exenv, t_words **keys)
+{
+	int backtotal;
+	int varsize;
+	t_words *cuw;
+	int ret;
+	t_envs *var;
+	int i;
+	t_strlen info;
+
+	i = -1;
+	backtotal = 0;
+	varsize = 0;
+	while (line[++i])
+	{
+		if (line[i] == 92 && is_special(line[i + 1]))
+		{
+			backtotal++;
+			i++;
+		}else if (line[i] == '$'){
+			i++;
+			cuw = malloc(sizeof(t_words));
+			get_var_name(line + i, &cuw->txt);
+			addtmptowords(keys, &cuw);
+			var = get_env(&ret, cuw->txt, exenv);
+			if (ret)
+				varsize += ft_strlen(var->env_value);
+			ret = ft_strlen(cuw->txt);
+			backtotal += ret + 1;
+			i += ret - 1;
+		}
+	}
+	info.len = ft_strlen(line) - backtotal + varsize;
+	info.line = ft_strdup(line);
+	return info;
 }
