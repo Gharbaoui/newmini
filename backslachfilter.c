@@ -80,8 +80,8 @@ int work_on_words(t_words **mod_words, t_words *words, t_envs **exenvs)
     int ret;
     if (words)
     {
-        ret = filter_string(&cuw, words->txt, exenvs);
-        add_word_tofront(mod_words, &cuw);
+        //ret = filter_string(&cuw, words->txt, exenvs);
+        addtmptowords(mod_words, &cuw);
         work_on_words(mod_words, words->next, exenvs);
     }
 	return SUCCESS;
@@ -148,7 +148,7 @@ int local_words(t_words **words, char *line)
             word->txt  = cutstring(line, start, i);
             i--; 
         } 
-        add_word_tofront(words, &word);
+        addtmptowords(words, &word);
     }
 	return SUCCESS;
 }
