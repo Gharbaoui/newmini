@@ -64,7 +64,7 @@ int backs_filter_str(char **str, t_envs **exenvs)
     words = NULL;
     mod_words = NULL;
     ret = local_words(&words, line);
-    ret = work_on_words(&mod_words, words, exenvs);
+    ret = work_on_words(&mod_words, words, exenvs, 0);
     free(*str);
     concatenate_words(mod_words, str);
 	free_words(&words);
@@ -72,7 +72,7 @@ int backs_filter_str(char **str, t_envs **exenvs)
     return SUCCESS;
 }
 
-int work_on_words(t_words **mod_words, t_words *words, t_envs **exenvs)
+int work_on_words(t_words **mod_words, t_words *words, t_envs **exenvs, int order)
 {
     t_words *cuw;
 
@@ -80,9 +80,10 @@ int work_on_words(t_words **mod_words, t_words *words, t_envs **exenvs)
     int ret;
     if (words)
     {
-        ret = filter_string(&cuw, words, exenvs);
+        ret = filter_string(&cuw, words, exenvs, order);
+        // next function will be here to decide if space in last
         addtmptowords(mod_words, &cuw);
-        work_on_words(mod_words, words->next, exenvs);
+        work_on_words(mod_words, words->next, exenvs, order + 1);
     }
 	return SUCCESS;
 }
@@ -210,7 +211,7 @@ t_words *first_case(char *line)
 t_words *second_case(char *line)
 {
 	t_words *words;
-	t_words *cuw;
+	t_words *cuw = NULL;
 	char *w;
 	int *next;
 	int space;
@@ -231,8 +232,9 @@ t_words *second_case(char *line)
 	if (!(w[0] == ' ' && w[1] == '\0'))
 	{
 		words = first_case(line + i);
-		mk_and_add_to_words(&words, w);
 	}
+    mk_and_add_to_words(&cuw, w);
+    add_word_tofront(&words, &cuw);
 	free(w);
 	return words;
 }
@@ -287,7 +289,7 @@ char *get_word(char *line, int *next)
 
 
 
-int filter_string(t_words **words, t_words *w, t_envs **exenvs)
+int filter_string(t_words **words, t_words *w, t_envs **exenvs, int order)
 {
 	t_words *keys;
 	t_words *finleword;
@@ -301,7 +303,8 @@ int filter_string(t_words **words, t_words *w, t_envs **exenvs)
 	if (w->txt[0] != 39)
 	{
 		info = loop_in_filter_string(w->txt, exenvs, &keys);
-		finleword = collect_strs(keys, exenvs, w->next, info);
+		finleword = collect_strs(keys, exenvs, info, order);
+        addtmptowords(words, &finleword);
 	}else{
 		mk_and_add_to_words(words, w->txt);
 	}
@@ -345,19 +348,19 @@ int check_next(char *value, t_envs **exenv)
 	return 0;
 }
 
-t_words *collect_strs(t_words *keys, t_envs **exenv, t_words *nextword, t_strlen info)
+t_words *collect_strs(t_words *keys, t_envs **exenv, t_strlen info, int order)
 {
-	t_words *word;
+	t_words *word = NULL;
 	t_envs *cvar, *nvar;
 	char *tmp;
-	int status;
+    int status;
 	char *keyvalue;
 	int i;
 	int j;
 
 	i = -1;
+    status = 0;
 	j = -1;
-	status = check_next(nextword->txt, exenv);
 	tmp = malloc(info.len + 1);
 	while (info.line[++i])
 	{
@@ -369,28 +372,62 @@ t_words *collect_strs(t_words *keys, t_envs **exenv, t_words *nextword, t_strlen
 			{
 				if (info.line[0] == '"')
 					j = fill_all_var(tmp, cvar->env_value, j);
-				else
-				{
-					if (keys->next){
-						nvar = get_env(&info.len, keys->next->txt, exenv);
-						j = help_fill_unq(tmp, j, cvar->env_value, nvar->env_value);
-					}
-					else{}
-				}
+				else if (order == 0 && status++ == 0)
+                    j = fill_first(tmp, j, cvar->env_value);
+                else
+                    j = fill_normal(tmp, j, cvar->env_value);
 			}
+            keys = keys->next;
 		}else if (info.line[i] == 92 && is_special(info.line[i + 1]))
 			tmp[++j] = info.line[++i];
 		else
 			tmp[++j] = info.line[i];
-	}	
+	}
+    mk_and_add_to_words(&word, tmp);
+    free(tmp);
 	return word;
 }
 
-
-int help_fill_unq(char *tmp, int i, char *value, char *next)
+int fill_normal(char *tmp, int index, char *value)
 {
-	return SUCCESS;
+    t_words *words;
+    int status;
+    
+    status = 1;
+    if(tmp[index] == ' ')
+        status = 0;
+    
+    words = split_by_spaces(value, status);
+    return fill_from_words(tmp, index, words);
 }
+
+
+int fill_first(char *tmp, int index, char *value)
+{
+    t_words *words;
+    int i;
+
+    words = split_by_spaces(value, 0);
+    return fill_from_words(tmp, index, words);
+}
+
+int fill_from_words(char *tmp, int index, t_words *words)
+{
+    int i;
+    
+    i = -1;
+    while (words)
+    {
+        i = -1;
+        while (words->txt[++i])
+            tmp[++index] = words->txt[i];
+        words = words->next;
+        if (words)
+            tmp[++index] = ' ';
+    }
+    return index;
+}
+
 
 t_strlen loop_in_filter_string(char *line, t_envs **exenv, t_words **keys)
 {

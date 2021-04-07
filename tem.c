@@ -10,51 +10,6 @@ int mk_and_add_to_words(t_words **words, char *line)
 	return SUCCESS;
 }
 
-/*int filter_string(t_words **words, char *line, t_envs **exenv) 
-{
-	t_strlen info_size_line;
-	int i;
-	int ret;
-	t_words *keys = NULL;
-	t_words *cuw;
-	t_envs *var;
-	int backtotal;
-	int varsize;
-
-	varsize = 0;
-	backtotal = 0;
-	i = -1;
-	if (line[0] != 39)
-	{
-		while (line[++i])
-		{
-			if (line[i] == 92 && is_special(line[i + 1]))
-			{
-				backtotal++;
-				i++;
-			}else if (line[i] == '$'){
-				i++;
-				cuw = malloc(sizeof(t_words));
-				get_var_name(line + i, &cuw->txt);
-				addtmptowords(&keys, &cuw);
-				var = get_env(&ret, cuw->txt, exenv);
-				if (ret)
-					varsize += ft_strlen(var->env_value);
-				ret = ft_strlen(cuw->txt);
-				backtotal += ret + 1;
-				i += ret - 1;
-			}
-		}
-		info_size_line.len = ft_strlen(line) - backtotal + varsize;
-		info_size_line.line = ft_strdup(line);
-        collect_strs(words, keys, exenv, info_size_line);
-		free_words(&keys);
-		free(info_size_line.line);
-	}else{
-		mk_and_add_to_words(words, line);
-	}
-	return SUCCESS;
-}*/
 
 int help_fill_tmp(char *tmp, char *value, t_strlen info, int is_first) // if status is one means we deal with spaces 0 do nothing
 {

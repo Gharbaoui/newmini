@@ -171,17 +171,20 @@ int backs_filter_str(char **str, t_envs **exenvs);
 int mk_and_add_to_words(t_words **words, char *line);
 int local_words(t_words **words, char *line);
 void  add_word_tofront(t_words **words, t_words **cuw);
-int work_on_words(t_words **mod_words, t_words *words, t_envs **exenvs);
+int work_on_words(t_words **mod_words, t_words *words, t_envs **exenvs, int order);
 t_strlen loop_in_filter_string(char *line, t_envs **exenv, t_words **keys);
-int filter_string(t_words **words, t_words *txt, t_envs **exenvs);
+int filter_string(t_words **words, t_words *txt, t_envs **exenvs, int order);
 int get_var_name(char *line, char **key);
 int is_special(char c);
-t_words *collect_strs(t_words *keys, t_envs **exenv, t_words *nextword, t_strlen info);
+t_words *collect_strs(t_words *keys, t_envs **exenv, t_strlen info, int order);
 int concatenate_words(t_words *words, char **line);
 t_words *split_by_spaces(char *line, int status);
 t_words *first_case(char *line);
 t_words *second_case(char *line);
 t_words  *third_case(char *line);
 char *get_word(char *line, int *next);
+int fill_first(char *tmp, int index, char *value);
+int fill_from_words(char *tmp, int index, t_words *words);
+int fill_normal(char *tmp, int index, char *value);
 
 // 62 68  0x0000000100103330

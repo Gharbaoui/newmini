@@ -180,7 +180,7 @@ void addtmptowords(t_words **words, t_words **word)
 		*words = *word;
 	else{
 		help = *words;
-		while (help->next)
+		while (help && help->next)
 			help = help->next;
 		help->next = *word;
 	}	
