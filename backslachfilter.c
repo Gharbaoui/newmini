@@ -75,13 +75,18 @@ int backs_filter_str(char **str, t_envs **exenvs)
 int work_on_words(t_words **mod_words, t_words *words, t_envs **exenvs, int order)
 {
     t_words *cuw;
-
+    int lastin;
 	cuw = NULL;
     int ret;
     if (words)
     {
         ret = filter_string(&cuw, words, exenvs, order);
-        // next function will be here to decide if space in last
+        if (!words->next && words->txt[0] != '"' && words->txt[0] != 39)
+        {
+            lastin = ft_strlen(cuw->txt) - 1;
+            if (cuw->txt[lastin] == ' ')
+                cuw->txt[lastin] = 0;
+        }
         addtmptowords(mod_words, &cuw);
         work_on_words(mod_words, words->next, exenvs, order + 1);
     }
