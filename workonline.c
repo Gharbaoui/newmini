@@ -16,12 +16,14 @@ int workon_line(char *line, t_completecmd **complete, int numofcmds, int help)
 	numofcmds = countnumberofcmds(commands); // count and it do some checking
 	if (numofcmds <= 0) // parsing error -1 or 0 commands
 	{
+		*complete = NULL;
 		free_words(&commands);
 		return numofcmds;
 	}
 	help = fill_wcmd(&wcmd, commands, numofcmds);
 	if (help != SUCCESS)
 	{
+		*complete = NULL;
 		free_words(&commands);
 		free_wcmd(&wcmd, numofcmds);
 		return help;
@@ -29,6 +31,7 @@ int workon_line(char *line, t_completecmd **complete, int numofcmds, int help)
 	help = fill_completecmd(complete, wcmd->cmds, 0);
 	if (help != SUCCESS)
 	{
+		*complete = NULL;
 		free_words(&commands);
 		free_wcmd(&wcmd, numofcmds);
 		free_comp(complete);
@@ -37,6 +40,7 @@ int workon_line(char *line, t_completecmd **complete, int numofcmds, int help)
 	help = filter_complete(complete);
 	if (help != SUCCESS)
 	{
+		*complete = NULL;
 		free_comp(complete);
 		return help;
 	}

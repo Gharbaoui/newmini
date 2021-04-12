@@ -167,7 +167,7 @@ int split_command(t_cmd **cmd);
 int expand_current_command(t_completecmd **complet, t_fullvar *envs);
 int expand_full_pipcmd(t_pipcmd **pipcmd, t_envs **exenvs);
 int expand_one_cmdstrct(t_cmd **cmd, t_envs **exenvs);
-int backs_filter_str(char **str, t_envs **exenvs);
+int backs_filter_str(char **str, t_envs **exenvs, t_words **newwords);
 int mk_and_add_to_words(t_words **words, char *line);
 int local_words(t_words **words, char *line);
 void  add_word_tofront(t_words **words, t_words **cuw);
@@ -186,5 +186,13 @@ char *get_word(char *line, int *next);
 int fill_first(char *tmp, int index, char *value);
 int fill_from_words(char *tmp, int index, t_words *words);
 int fill_normal(char *tmp, int index, char *value);
+int get_words(char *line, t_words **help);
+int orgniz_mod_words(t_words *words, t_words **nw);
+void add_words(t_words **orgin, t_words **forien);
+int remove_spce_qu(t_words **words);
+int nonequt(char c);
+int expand_txts(t_words **txts, t_envs **exenvs);
+void free_one_word(t_words **word);
+int expand_commandtxt(t_cmd **cmd, t_envs **exenvs);
 
 // 62 68  0x0000000100103330

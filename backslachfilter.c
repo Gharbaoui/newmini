@@ -8,14 +8,17 @@ int expand_current_command(t_completecmd **complet, t_fullvar *envs)
 
     i = -1;
     cucmd = *complet;
-    while (++i < cmdnum)
+    while (cucmd &&  ++i < cmdnum)
     {
         cucmd = cucmd->next;
         if (cucmd->next == NULL)
             cmdnum = 0;
     }
-    expand_full_pipcmd(&cucmd->splcommand, envs->exenvs);
-    cmdnum++;
+	if (cucmd){
+    	expand_full_pipcmd(&cucmd->splcommand, envs->exenvs);
+    	cmdnum++;
+	}else
+		cmdnum = 0;
     return SUCCESS;
 }
 
@@ -36,24 +39,103 @@ int expand_one_cmdstrct(t_cmd **cmd, t_envs **exenvs)
 {   
     int ret;
     t_cmd *help;
+	t_words *neww;
+	t_words *head;
+
 
     help = *cmd;
-    if (help->command)
-    {
-        ret = backs_filter_str(&help->command, exenvs);
-		split_command(cmd);
-    }    
+	if (*cmd)
+	{
+		if ((*cmd)->txts)
+			expand_txts(&(*cmd)->txts, exenvs);
+		if ((*cmd)->command)
+			expand_commandtxt(cmd, exenvs);
+	}
     return SUCCESS;
 }
 
-int split_command(t_cmd **cmd)
+int remove_spce_qu(t_words **words)
 {
+	t_words *help;
+
+
+	help = *words;
+	while (help)
+	{
+		if (!nonequt(help->txt[0]))
+		{
+			help->txt++;
+			help->txt[ft_strlen(help->txt) - 1] = 0;
+		}else if (help->txt[ft_strlen(help->txt) - 1] == ' ')
+			help->txt[ft_strlen(help->txt) - 1] = 0;
+		help = help->next;
+	}
+}
+
+
+int expand_commandtxt(t_cmd **cmd, t_envs **exenvs)
+{
+	t_words *neww;
+	t_words *head;
+	neww = NULL;
+	if ((*cmd)->command)
+	{
+		backs_filter_str(&(*cmd)->command, exenvs, &neww);
+		free((*cmd)->command);
+		(*cmd)->command = neww->txt;
+		head = neww;
+		neww = neww->next;
+		free(head);
+		add_words(&neww, &(*cmd)->txts);
+		(*cmd)->txts = neww;
+	}
+	return SUCCESS;
+}
+
+int expand_txts(t_words **txts, t_envs **exenvs)
+{
+	int len;
+	int i;
+	t_words *help;
+	t_words **all;
+	
+	help = *txts;
+	len = 0;
+	i = -1;
+	while (help)
+	{
+		len++;
+		help = help->next;
+	}
+	help = *txts;
+	all = malloc(sizeof(t_words *) * len);
+	while (help)
+	{
+		backs_filter_str(&(help->txt), exenvs, &all[++i]);
+		help = help->next;
+	}
+	i = -1;
+	free_words(txts);
+	*txts = all[0];
+
+	while (++i < len)
+	{
+		help = all[i];
+		while (help &&  help->next)
+			help = help->next;
+		if (i + 1 < len)
+			help->next = all[i + 1];
+		else{
+			help->next = NULL;
+			break ;
+		}
+	}
 	
 	return SUCCESS;
 }
 
 
-int backs_filter_str(char **str, t_envs **exenvs)
+int backs_filter_str(char **str, t_envs **exenvs, t_words **newwords)
 {
     t_words *words;
     t_words *mod_words;
@@ -65,10 +147,9 @@ int backs_filter_str(char **str, t_envs **exenvs)
     mod_words = NULL;
     ret = local_words(&words, line);
     ret = work_on_words(&mod_words, words, exenvs, 0);
-    free(*str);
-    concatenate_words(mod_words, str);
+	orgniz_mod_words(mod_words, newwords);
+	remove_spce_qu(newwords);
 	free_words(&words);
-	free_words(&mod_words);
     return SUCCESS;
 }
 
@@ -388,6 +469,7 @@ t_words *collect_strs(t_words *keys, t_envs **exenv, t_strlen info, int order)
 		else
 			tmp[++j] = info.line[i];
 	}
+	tmp[++j] = 0;
     mk_and_add_to_words(&word, tmp);
     free(tmp);
 	return word;
