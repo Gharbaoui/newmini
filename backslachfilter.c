@@ -93,7 +93,7 @@ int expand_commandtxt(t_cmd **cmd, t_envs **exenvs)
 	return SUCCESS;
 }
 
-int expand_txts(t_words **txts, t_envs **exenvs)
+/*int expand_txts(t_words **txts, t_envs **exenvs)
 {
 	int len;
 	int i;
@@ -132,8 +132,72 @@ int expand_txts(t_words **txts, t_envs **exenvs)
 	}
 	free(all);
 	return SUCCESS;
+}*/
+
+
+//////
+int expand_txts(t_words **txts, t_envs **exenvs)
+{
+	int i;
+	int len;
+	t_words *help;
+	t_words **all;
+	
+	i = -1;
+	help = *txts;
+	all = expand_txtsh1(help, &len);
+	while (help)
+	{
+		backs_filter_str(&(help->txt), exenvs, &all[++i]);
+		help = help->next;
+	}
+	i = -1;
+	free_words(txts);
+	*txts = all[0];
+	expand_txtsh2(len, all);
+	return SUCCESS;
 }
 
+
+
+t_words **expand_txtsh1(t_words *words, int *l)
+{
+	int len;
+	t_words **all;
+
+	len = 0;
+	while (words)
+	{
+		len++;
+		words = words->next;
+	}
+	*l = len;
+	all = malloc(sizeof(t_words *) * len);
+	return all;
+}
+
+int expand_txtsh2(int len, t_words **all)
+{
+	int i;
+	t_words *help;
+
+	i = -1;
+	while (++i < len)
+	{
+		help = all[i];
+		while (help &&  help->next)
+			help = help->next;
+		if (i + 1 < len)
+			help->next = all[i + 1];
+		else{
+			help->next = NULL;
+			break ;
+		}
+	}
+	free(all);
+	return SUCCESS;
+}
+//////
 
 int backs_filter_str(char **str, t_envs **exenvs, t_words **newwords)
 {
@@ -145,7 +209,7 @@ int backs_filter_str(char **str, t_envs **exenvs, t_words **newwords)
     line = *str;
     words = NULL;
     mod_words = NULL;
-    ret = local_words(&words, line);
+    ret = local_words(&words, line, -1);
     ret = work_on_words(&mod_words, words, exenvs, 0);
 	orgniz_mod_words(mod_words, newwords);
 	//remove_spce_qu(newwords);
@@ -208,7 +272,7 @@ int is_special(char c)
 }
 
 
-int local_words(t_words **words, char *line)
+/*int local_words(t_words **words, char *line)
 {
     int i;
     int index;
@@ -240,6 +304,55 @@ int local_words(t_words **words, char *line)
     }
 	return SUCCESS;
 }
+*/
+
+
+int local_words(t_words **words, char *line, int i)
+{
+	int index;
+	int start;
+	t_words *word;
+	int check;
+
+	while (line[++i])
+	{
+		start = i;
+		word = local_wordsh1(&i, start, line);
+		addtmptowords(words, &word);
+	}
+
+	return SUCCESS;
+}
+
+t_words *local_wordsh1(int *index, int start,char *line)
+{
+	int i;
+	t_words *word;
+
+	i = *index;
+	word = malloc(sizeof(t_words));
+	if (line[i] == '"' || line[i] == 39)
+	{
+		i += valditadsq(line + i);
+		word->txt = cutstring(line, start, i + 1);
+	}else{
+		while (line[++i])
+			if (line[i] == '"' || line[i] == 39)
+				break;
+		word->txt = cutstring(line, start, i);
+		i--;
+	}
+	*index = i;
+	return word;
+}
+
+
+
+
+
+
+
+
 
 void add_word_tofront(t_words **words, t_words **cuw)
 {
@@ -521,7 +634,7 @@ int fill_from_words(char *tmp, int index, t_words *words)
     return index;
 }
 
-
+/*
 t_strlen loop_in_filter_string(char *line, t_envs **exenv, t_words **keys)
 {
 	int backtotal;
@@ -557,4 +670,70 @@ t_strlen loop_in_filter_string(char *line, t_envs **exenv, t_words **keys)
 	info.len = ft_strlen(line) - backtotal + varsize;
 	info.line = ft_strdup(line);
 	return info;
+}*/
+
+
+
+
+int loop_in_filter_stringh1(int *index, char *line, t_words **keys, t_envs **exenvs) /// return variable size
+{
+	t_words *cuw;
+	int i;
+	int varsize;
+	int ret;
+	t_envs *var;
+
+	i = *index;
+	i++;
+	varsize = 0;
+	cuw = malloc(sizeof(t_words));
+	get_var_name(line + i, &cuw->txt);
+	addtmptowords(keys, &cuw);
+	var = get_env(&ret, cuw->txt, exenvs);
+	if (ret)
+		varsize = ft_strlen(var->env_value);
+	*index = i;
+	return varsize;
 }
+
+t_words *get_last_wordstruct(t_words *words)
+{
+	if (words)
+	{
+		while (words && words->next)
+			words = words->next;
+		return words;
+	}
+	return NULL;
+}
+
+
+t_strlen loop_in_filter_string(char *line, t_envs **exenv, t_words **keys)
+{
+	int i;
+	int ret;
+	int varsize;
+	int backtotal;
+	t_strlen info;
+
+	i = -1;
+	varsize = 0;
+	backtotal = 0;
+	while (line[++i])
+	{
+		if (line[i] == 92 && is_special(line[i + 1]) && ++i)
+			backtotal++;
+		else if (line[i] == '$')
+		{
+			varsize = loop_in_filter_stringh1(&i, line, keys, exenv);
+			ret = ft_strlen(get_last_word(*keys)->txt);
+			backtotal += ret + 1;
+			i  += ret - 1;
+		}
+	}
+	info.len = ft_strlen(line) - backtotal + varsize;
+	info.line = ft_strdup(line);
+	return info;
+}
+
+
