@@ -89,8 +89,12 @@ int modify_prev(char *prv, char *cur)
 
 int last_word(t_words **nw, char *line){
 	t_words *help;
+	int index;
+	int moved;
+	char *s1;
 
 	help = *nw;
+	moved = 0;
 	while (help && help->next)
 		help = help->next;
 	if (!nonequt(line[0]))
@@ -98,7 +102,23 @@ int last_word(t_words **nw, char *line){
 		line++;
 		line[ft_strlen(line) - 1] = 0;
 	}
-	help->txt = ft_strjoin(&help->txt, line);
+	if (line[0] == '"' || line[0] == 39)
+	{
+		line++;
+		index = ft_strlen(line) - 1;
+		line[index] = 0;
+	}
+	if (help->txt[0] == '"' || help->txt[0] == 39)
+	{
+		help->txt++;
+		index = ft_strlen(help->txt) - 1;
+		help->txt[index] = 0;
+		moved = 1;
+	}
+	s1 = ft_strdup(help->txt);
+	help->txt -= moved;
+	free(help->txt);
+	help->txt = ft_strjoin(&s1, line); // s1 has been freed inside 
 	return SUCCESS;
 }
 
@@ -119,6 +139,7 @@ void add_words(t_words **orgin, t_words **forien)
 int orgniz_mod_words(t_words *words, t_words **nw)
 {
 	char *tmp;
+	char *back;
 	t_words *head;
 	int len;
 	t_words *help;
@@ -126,6 +147,15 @@ int orgniz_mod_words(t_words *words, t_words **nw)
 	*nw = NULL;
 	first_one(nw, words->txt);
 	words = words->next;
+	tmp = (*nw)->txt;
+	if (words == NULL && (tmp[0] == 39 || tmp[0] == '"'))
+	{
+		tmp++;
+		tmp[ft_strlen(tmp) - 1] = 0;
+		back = ft_strdup(tmp);
+		free((*nw)->txt);
+		(*nw)->txt = back;
+	}
 	while (words)
 	{
 		help = NULL;

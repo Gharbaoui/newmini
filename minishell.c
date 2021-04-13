@@ -4,6 +4,19 @@ int main(int argc, char **argv, char **env)
 	bash_loop(env);
 }
 
+void test_ex(t_completecmd **complete, t_fullvar *variables)
+{
+    int status;
+	do{
+		expand_current_command(complete, variables);
+        print_completecmd(*complete);
+		printf("Enter Number :");
+		scanf("%d", &status);
+	}while (status);
+
+}
+
+
 void bash_loop(char **env)
 {
 	t_fullvar *variables;
@@ -32,10 +45,12 @@ void bash_loop(char **env)
 			if (ret == PARSERROR)
 				printf("Parsing Error\n");
             else
-              expand_current_command(&complete, variables);
-            print_completecmd(complete);
+				expand_current_command(&complete, variables);
+			print_completecmd(complete);
             
 		}
 
 	}
 }
+
+

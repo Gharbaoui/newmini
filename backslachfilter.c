@@ -16,7 +16,8 @@ int expand_current_command(t_completecmd **complet, t_fullvar *envs)
     }
 	if (cucmd){
     	expand_full_pipcmd(&cucmd->splcommand, envs->exenvs);
-    	cmdnum++;
+		if (cucmd->next)
+			cmdnum++;
 	}else
 		cmdnum = 0;
     return SUCCESS;
@@ -117,7 +118,6 @@ int expand_txts(t_words **txts, t_envs **exenvs)
 	i = -1;
 	free_words(txts);
 	*txts = all[0];
-
 	while (++i < len)
 	{
 		help = all[i];
@@ -130,7 +130,7 @@ int expand_txts(t_words **txts, t_envs **exenvs)
 			break ;
 		}
 	}
-	
+	free(all);
 	return SUCCESS;
 }
 
@@ -148,8 +148,9 @@ int backs_filter_str(char **str, t_envs **exenvs, t_words **newwords)
     ret = local_words(&words, line);
     ret = work_on_words(&mod_words, words, exenvs, 0);
 	orgniz_mod_words(mod_words, newwords);
-	remove_spce_qu(newwords);
+	//remove_spce_qu(newwords);
 	free_words(&words);
+	free_words(&mod_words);
     return SUCCESS;
 }
 
@@ -306,8 +307,9 @@ t_words *second_case(char *line)
 	i = -1;
 	
 	words = NULL;
-	while (*(line + 1) == ' ')
-		line++;
+	if (*line == ' ')
+		while (*(line + 1) == ' ')
+			line++;
 	space = nlindex(line + 1, ' ');
 	if (space == -1)
 		space = ft_strlen(line);
@@ -390,6 +392,8 @@ int filter_string(t_words **words, t_words *w, t_envs **exenvs, int order)
 	{
 		info = loop_in_filter_string(w->txt, exenvs, &keys);
 		finleword = collect_strs(keys, exenvs, info, order);
+		free(info.line);
+		free_words(&keys);
         addtmptowords(words, &finleword);
 	}else{
 		mk_and_add_to_words(words, w->txt);
@@ -452,6 +456,8 @@ t_words *collect_strs(t_words *keys, t_envs **exenv, t_strlen info, int order)
 	{
 		if (info.line[i] == '$')
 		{
+			if (i > 0)
+				status = 1;
 			i += ft_strlen(keys->txt);
 			cvar = get_env(&info.len, keys->txt, exenv);
 			if (info.len)

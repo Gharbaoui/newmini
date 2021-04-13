@@ -4,7 +4,7 @@
 void print_cmd(t_cmd *cmd, int level)
 {
 	printspaces(level);
-	printf ("command -> : %s\n", cmd->command);
+	printf ("command -> : %s|\n", cmd->command);
 	printf("================\n");
 	print_oldwords(cmd->txts, level, "txt");
 	printf("================\n");
@@ -19,7 +19,7 @@ void print_oldwords(t_words *word, int level, char *name)
 	if (word)
 	{
 		printspaces(level);
-		printf("%s -> : %s\n", name, word->txt);
+		printf("%s -> : %s|\n", name, word->txt);
 		print_oldwords(word->next, level + 1, name);
 	}
 }
