@@ -70,15 +70,19 @@ int filter_check_envvar(t_words *txts)
 	return SUCCESS;
 }
 
-int help_in_modstr(char *line, int i)
+int help_in_modstr(char *line, int i, char c)
 {
 	int num;
-
-	if (line[i] == 39)
-		return 0;
-	num = backslash(line, i);
-	if (line[i] == '"' && num % 2 == 0)
-		return 0;
+	if (c == 39){
+		if (line[i] == 39)
+			return 0;
+	}
+	else
+	{
+		num = backslash(line, i);
+		if (line[i] == '"' && num % 2 == 0)
+			return 0;
+	}
 	return 1;
 }
 
@@ -101,7 +105,7 @@ int modify_str(char **str)
 		if (help[i] == '"' || help[i] == 39){ //  ""''ls''""
 			c = help[i];
 			start = i;
-			while (help[++i] && help_in_modstr(help, i))
+			while (help[++i] && help_in_modstr(help, i, c))
 				check = 1;
 			if (i - start > 1)
 			{

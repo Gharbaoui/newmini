@@ -550,7 +550,7 @@ int check_next(char *value, t_envs **exenv)
 	}
 	return 0;
 }
-
+/*
 t_words *collect_strs(t_words *keys, t_envs **exenv, t_strlen info, int order)
 {
 	t_words *word = NULL;
@@ -592,7 +592,68 @@ t_words *collect_strs(t_words *keys, t_envs **exenv, t_strlen info, int order)
     mk_and_add_to_words(&word, tmp);
     free(tmp);
 	return word;
+}*/
+
+
+////////
+
+
+void collect_strs_h1(t_collstrs *vars, t_words **keys, t_envs **exenv, int order) //// returns status
+{
+	t_envs *cvar;
+	int found;
+
+	if (vars->line[vars->nums.i] == '$')
+	{
+		if (vars->nums.i > 0)
+			vars->nums.status = 1;
+		vars->nums.i += ft_strlen((*keys)->txt);
+		cvar = get_env(&found, (*keys)->txt, exenv);
+		if (found)
+		{
+			if (vars->line[0] == '"')
+				vars->nums.j = fill_all_var(vars->tmp, cvar->env_value, vars->nums.j);
+			else if (order == 0 && vars->nums.status++ == 0)
+				vars->nums.j = fill_first(vars->tmp, vars->nums.j, cvar->env_value);
+			else
+				vars->nums.j = fill_normal(vars->tmp, vars->nums.j, cvar->env_value);
+		}
+		(*keys) = (*keys)->next;
+	}else if (vars->line[vars->nums.i] == 92 && is_special(vars->line[vars->nums.i + 1]))
+		vars->tmp[++vars->nums.j] = vars->line[++vars->nums.i];
+	else
+		vars->tmp[++vars->nums.j] = vars->line[vars->nums.i];
 }
+
+void  help_fill_collstrs(t_strlen info, t_collstrs *vars)
+{
+	vars->line = info.line;
+	vars->tmp = malloc(info.len + 1);
+	vars->nums.i = -1;
+	vars->nums.j = -1;
+	vars->nums.status = 0;
+}
+
+t_words *collect_strs(t_words *keys, t_envs **exenv, t_strlen info, int order)
+{
+	t_collstrs vars;
+	t_words *word = NULL;
+	t_envs *cvar;
+	
+	help_fill_collstrs(info, &vars);
+	while (info.line[++vars.nums.i])
+	{
+		collect_strs_h1(&vars, &keys, exenv, order);
+	}
+	vars.tmp[++vars.nums.j] = 0;
+    mk_and_add_to_words(&word, vars.tmp);
+    free(vars.tmp);
+	return word;
+}
+
+//////
+
+
 
 int fill_normal(char *tmp, int index, char *value)
 {
@@ -726,7 +787,7 @@ t_strlen loop_in_filter_string(char *line, t_envs **exenv, t_words **keys)
 		else if (line[i] == '$')
 		{
 			varsize = loop_in_filter_stringh1(&i, line, keys, exenv);
-			ret = ft_strlen(get_last_word(*keys)->txt);
+			ret = ft_strlen(get_last_word(*keys));
 			backtotal += ret + 1;
 			i  += ret - 1;
 		}
