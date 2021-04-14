@@ -79,6 +79,26 @@ typedef struct workingcmds
 	struct workingcmds *next;
 }t_workingcmds;
 
+///////
+typedef struct onecmd{
+	char *cmd;
+	char **args;
+	char **files;
+	char **ops;
+} t_onecmd;
+
+typedef struct pipcommand{
+	t_onecmd cmd;
+	struct pipcommand *next;
+} t_pipcommand;
+
+typedef struct multcmd
+{
+	t_pipcommand pipcmd;
+	struct multcmd *next;
+} t_multcmd;
+/////////
+
 /// random.c
 char *cutstring(char *str, int start, int last);
 void print_pipes(t_words **pipes, int numofcmds);
@@ -300,4 +320,9 @@ char *get_last_word(t_words *words);
 char *get_word(char *line, int *next);
 
 
+t_multcmd *get_cmd_struct(t_completecmd *cmpcmd);
+int fill_onepipcmd(t_pipcommand *pipcmd, t_pipcmd *pip);
+int fill_one_cmd(t_onecmd *fcmd, t_cmd *pcmd);
+char **transfrm_ln_arr(t_words *words, char *cmd, int iscmd);
+int how_many_words(t_words *words);
 // 62 68  0x0000000100103330

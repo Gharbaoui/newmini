@@ -34,6 +34,7 @@ void bash_loop(char **env)
 	
 
 	status = 1;
+	t_multcmd *mcmd;
 	while (status)
 	{
 		free(line);
@@ -46,8 +47,8 @@ void bash_loop(char **env)
 				printf("Parsing Error\n");
             else
 				expand_current_command(&complete, variables);
+			mcmd = get_cmd_struct(complete);
 			print_completecmd(complete);
-            
 		}
 
 	}
