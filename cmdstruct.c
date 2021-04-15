@@ -1,28 +1,23 @@
 #include "minishell.h"
 
-t_multcmd *get_cmd_struct(t_completecmd *cmpcmd)
+t_pipcommand *get_cmd_struct(t_completecmd *cmpcmd, t_envs **exenvs)
 {
-	t_multcmd mucmd;
-	t_multcmd *head;
-	
-	head = &mucmd;
-	while (cmpcmd)
-	{
-		fill_onepipcmd(&mucmd.pipcmd, cmpcmd->splcommand);
-		mucmd.next = malloc(sizeof(t_multcmd));
-		mucmd = *mucmd.next;
-		cmpcmd = cmpcmd->next;
-		mucmd.next = NULL;
-	}
-	return head;
+	t_pipcommand *headcmd;
+
+	headcmd = malloc(sizeof(t_pipcommand));
+	fill_onepipcmd(headcmd, cmpcmd->splcommand, exenvs);
+	return headcmd;
 }
 
-int fill_onepipcmd(t_pipcommand *pipcmd, t_pipcmd *pip)
+int fill_onepipcmd(t_pipcommand *pipcmd, t_pipcmd *pip, t_envs **exenvs)
 {
 	while (pip)
 	{
-		fill_one_cmd(&pipcmd->cmd, pip->cmd);
-		pipcmd->next = malloc(sizeof(t_pipcommand));
+		fill_one_cmd(&pipcmd->cmd, pip->cmd, exenvs);
+		if (pip->next)
+			pipcmd->next = malloc(sizeof(t_pipcommand));
+		else
+			pipcmd->next = NULL;
 		pipcmd = pipcmd->next;
 		pip = pip->next;
 	}
@@ -30,11 +25,17 @@ int fill_onepipcmd(t_pipcommand *pipcmd, t_pipcmd *pip)
 }
 
 
-int fill_one_cmd(t_onecmd *fcmd, t_cmd *pcmd)
+int fill_one_cmd(t_onecmd *fcmd, t_cmd *pcmd, t_envs **exenvs)
 {
+	t_envs *pathvar;
+	int found;
 	if (pcmd)
 	{
-		fcmd->cmd = pcmd->command;
+		pathvar = get_env(&found, "PATH", exenvs);
+		if (found)
+			fcmd->cmd = get_command(pcmd->command, pathvar->env_value, &fcmd->prem, NULL);
+		else
+			fcmd->cmd = ft_strdup(pcmd->command);
 		fcmd->args = transfrm_ln_arr(pcmd->txts, pcmd->command, 1);
 		fcmd->files = transfrm_ln_arr(pcmd->files, pcmd->command, 0);
 		fcmd->ops = transfrm_ln_arr(pcmd->ops, pcmd->command, 0);
@@ -50,17 +51,19 @@ char **transfrm_ln_arr(t_words *words, char *cmd, int iscmd)
 	int len;
 	int i;
 	
+	if (words == NULL)
+		return NULL;
 	len = how_many_words(words);
 	allw = malloc(sizeof(char *) * (len + 1 + iscmd));
 	i = -1;
 	if (iscmd)
 		allw[++i] = ft_strdup(cmd);
-	while (++i < len)
+	while (words)
 	{
-		allw[i] = ft_strdup(words->txt);
+		allw[++i] = ft_strdup(words->txt);
 		words = words->next;
 	}
-	allw[i] = NULL;
+	allw[++i] = NULL;
 	return allw;
 }
 
@@ -77,37 +80,48 @@ int how_many_words(t_words *words)
 	return i;
 }
 
-
-void print_cmds(t_multcmd *cmd)
-{
-	while (cmd)
-	{
-		print_p(cmd->pipcmd);
-		cmd = cmd->next;
-	}
-}
-
-void print_p(t_pipcommand pip)
+void print_p(t_pipcommand *pip)
 {
 	while (pip)
 	{
-		print_c(pip.cmd);
-		pip = *pip.next;
+		print_c(&pip->cmd);
+		printf("=============================\n");
+		pip = pip->next;
 	}
 }
 
-void print_c(t_onecmd cmd)
+void print_c(t_onecmd *cmd)
 {
-		
+	printf("%s    pre %d \n", cmd->cmd, cmd->prem);
+	if (cmd->args){
+		printf("args => ");
+		print_arr(cmd->args);
+		printf("-----------------------\n");
+	}
+	if (cmd->files)
+	{
+		printf("files => ");
+		print_arr(cmd->files);
+		printf("-----------------------\n");
+	}
+	if (cmd->ops){
+		printf("ops => ");
+		print_arr(cmd->ops);
+	}
 }
 
 void print_arr(char **str)
 {
 	int i;
 
-	i = -1;
-	while (str[i])
+	i = 0;
+	if (str[1])
 	{
-		printf("%s, ", );
+		printf("[ %s, ", str[i++]);
+		while (str[i] && str[++i])
+			printf("%s, ", str[i - 1]);
+		printf("%s]\n", str[i - 1]);
+	}else{
+		printf("[ %s ]\n", str[0]);
 	}
 }

@@ -2,6 +2,7 @@
 int main(int argc, char **argv, char **env)
 {
 	bash_loop(env);
+	//execve("/bin/ls", argv, env);
 }
 
 void test_ex(t_completecmd **complete, t_fullvar *variables)
@@ -34,7 +35,6 @@ void bash_loop(char **env)
 	
 
 	status = 1;
-	t_multcmd *mcmd;
 	while (status)
 	{
 		free(line);
@@ -46,9 +46,8 @@ void bash_loop(char **env)
 			if (ret == PARSERROR)
 				printf("Parsing Error\n");
             else
-				expand_current_command(&complete, variables);
-			mcmd = get_cmd_struct(complete);
-			print_completecmd(complete);
+				expand_current_command(&complete, variables);;
+			//print_completecmd(complete);
 		}
 
 	}

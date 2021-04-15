@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/uio.h>
+#include <sys/stat.h>
 #include <unistd.h>
 #define BUFFER_SIZE 15
 #define ENVSIZE 50
@@ -9,12 +10,14 @@
 #define SINGLEQUOTES 5   /// single quotes
 #define DOUBLEQUOTES 6
 #define NONEQUOTE 7
-
 #define ENVERROR 4
 #define EMPTYENV 3
 #define SUCCESS 2
 #define PARSERROR -1
 #define MEMERROR 0
+
+#define FOLDER 8
+#define NEX 9 // NOT EXCUTABLE
 
 // structres
 
@@ -81,6 +84,7 @@ typedef struct workingcmds
 
 ///////
 typedef struct onecmd{
+	int prem; /// if 0 excutable other not
 	char *cmd;
 	char **args;
 	char **files;
@@ -196,86 +200,6 @@ void print_cmd(t_cmd *cmd, int level);
 void print_oldwords(t_words *word, int level, char *name);
 void print_pipcmd(t_pipcmd *pipcmd);
 void print_completecmd(t_completecmd *complete);
-/// backslachfilter.c ////
-/*
-int split_command(t_cmd **cmd);
-int expand_current_command(t_completecmd **complet, t_fullvar *envs);
-int expand_full_pipcmd(t_pipcmd **pipcmd, t_envs **exenvs);
-int expand_one_cmdstrct(t_cmd **cmd, t_envs **exenvs);
-int backs_filter_str(char **str, t_envs **exenvs, t_words **newwords);
-int mk_and_add_to_words(t_words **words, char *line);
-int local_words(t_words **words, char *line, int i);
-void  add_word_tofront(t_words **words, t_words **cuw);
-int work_on_words(t_words **mod_words, t_words *words, t_envs **exenvs, int order);
-t_strlen loop_in_filter_string(char *line, t_envs **exenv, t_words **keys);
-int filter_string(t_words **words, t_words *txt, t_envs **exenvs, int order);
-int get_var_name(char *line, char **key);
-int is_special(char c);
-t_words *collect_strs(t_words *keys, t_envs **exenv, t_strlen info, int order);
-int concatenate_words(t_words *words, char **line);
-t_words *split_by_spaces(char *line, int status);
-t_words *first_case(char *line);
-t_words *second_case(char *line);
-t_words  *third_case(char *line);
-char *get_word(char *line, int *next);
-int fill_first(char *tmp, int index, char *value);
-int fill_from_words(char *tmp, int index, t_words *words);
-int fill_normal(char *tmp, int index, char *value);
-int get_words(char *line, t_words **help);
-int orgniz_mod_words(t_words *words, t_words **nw);
-void add_words(t_words **orgin, t_words **forien);
-int remove_spce_qu(t_words **words);
-int nonequt(char c);
-int expand_txts(t_words **txts, t_envs **exenvs);
-void free_one_word(t_words **word);
-int expand_commandtxt(t_cmd **cmd, t_envs **exenvs);
-t_words **expand_txtsh1(t_words *words, int *l);
-int expand_txtsh2(int len, t_words **all);
-t_words *local_wordsh1(int *index, int start,char *line);
-t_words *get_last_wordstruct(t_words *words);
-char *get_last_word(t_words *words);
-int fill_all_var(char *tmp, char *value, int index);
-*/
-///// expand txt
-//int expand_current_command(t_completecmd **complet, t_fullvar *envs);
-//int expand_full_pipcmd(t_pipcmd **pipcmd, t_envs **exenvs);
-//int expand_one_cmdstrct(t_cmd **cmd, t_envs **exenvs);
-//int expand_txts(t_words **txts, t_envs **exenvs);
-//int expand_txtsh2(int len, t_words **all);
-//int backs_filter_str(char **str, t_envs **exenvs, t_words **newwords);
-//int local_words(t_words **words, char *line, int i);
-//int work_on_words(t_words **mod_words, t_words *words, t_envs **exenvs, int order);
-//int filter_string(t_words **words, t_words *w, t_envs **exenvs, int order);
-//int get_var_name(char *line, char **key);
-//int is_special(char c);
-//int loop_in_filter_stringh1(int *index, char *line, t_words **keys, t_envs **exenvs); /// return variable size
-//t_strlen loop_in_filter_string(char *line, t_envs **exenv, t_words **keys);
-//int fill_all_var(char *tmp, char *value, int index);
-//int fill_first(char *tmp, int index, char *value);
-//int mk_and_add_to_words(t_words **words, char *line);
-//int fill_from_words(char *tmp, int index, t_words *words);
-//int fill_normal(char *tmp, int index, char *value);
-//
-//char *get_word(char *line, int *next);
-//t_words **expand_txtsh1(t_words *words, int *l);
-//t_words *local_wordsh1(int *index, int start,char *line);
-//t_words *get_last_wordstruct(t_words *words);
-//char *get_last_word(t_words *words);
-//t_words *collect_strs(t_words *keys, t_envs **exenv, t_strlen info, int order);
-//t_words *split_by_spaces(char *line, int status);
-//t_words *first_case(char *line);
-//t_words *second_case(char *line);
-//t_words  *third_case(char *line);
-//int expand_commandtxt(t_cmd **cmd, t_envs **exenvs);
-//int orgniz_mod_words(t_words *words, t_words **nw);
-//void add_words(t_words **orgin, t_words **forien);
-//void add_word_tofront(t_words **words, t_words **cuw);
-//int first_one(t_words **help, char *line);
-//int get_words(char *line, t_words **help);
-//int modify_prev(char *prv, char *cur);
-//int last_word(t_words **nw, char *line);
-//int nonequt(char c);
-//
 
 t_words **expand_txtsh1(t_words *words, int *l);
 t_words *local_wordsh1(int *index, int start,char *line);
@@ -320,9 +244,22 @@ char *get_last_word(t_words *words);
 char *get_word(char *line, int *next);
 
 
-t_multcmd *get_cmd_struct(t_completecmd *cmpcmd);
-int fill_onepipcmd(t_pipcommand *pipcmd, t_pipcmd *pip);
-int fill_one_cmd(t_onecmd *fcmd, t_cmd *pcmd);
+t_pipcommand *get_cmd_struct(t_completecmd *cmpcmd, t_envs **exenvs);
+int fill_onepipcmd(t_pipcommand *pipcmd, t_pipcmd *pip, t_envs **exenvs);
+int fill_one_cmd(t_onecmd *fcmd, t_cmd *pcmd, t_envs **exenvs);
 char **transfrm_ln_arr(t_words *words, char *cmd, int iscmd);
 int how_many_words(t_words *words);
+
+void print_p(t_pipcommand *pip);
+void print_c(t_onecmd *cmd);
+void print_arr(char **str);
+
+char *get_command(char *cmd, char *PATH, int *prem, char *lcmd);
+int is_comcmd(char *cmd, char *lcmd); // if 1 means not look in PATH 0 look in PATH
+char *get_using_path(char *cmd, char *PATH, struct stat *fst);
+char *get_one_path(char *PATH, int *index);
+int is_excutable(struct stat fst);
+int get_cmd_state(char *cmd);
+char *lower_str(char *str);
+char lower_char(char c);
 // 62 68  0x0000000100103330

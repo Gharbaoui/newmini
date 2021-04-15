@@ -3,6 +3,8 @@
 int expand_current_command(t_completecmd **complet, t_fullvar *envs)
 {
     static int cmdnum;
+	t_pipcommand *pc;
+	
     t_completecmd *cucmd;
     int i;
 
@@ -16,6 +18,8 @@ int expand_current_command(t_completecmd **complet, t_fullvar *envs)
     }
 	if (cucmd){
     	expand_full_pipcmd(&cucmd->splcommand, envs->exenvs);
+		pc = get_cmd_struct(*complet, envs->exenvs);
+		print_p(pc);
 		if (cucmd->next)
 			cmdnum++;
 	}else
