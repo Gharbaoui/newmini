@@ -206,15 +206,29 @@ int modify_ln(t_words **words)
 	return SUCCESS;
 }
 
+int theres_empty(t_words *words)
+{
+    while (words)
+    {   
+        if (words->txt[0] == '\0')
+            return 1;
+        words = words->next;
+    }
+    return 0;
+}
 
 char *cleanWord(t_words *words, int size)
 {
+    t_words *head;
 	char *tmp;
+    char *ptr;
+    char *help;
 	int i;
 	int j;
 
 	i = -1;
-	if (!(tmp = malloc(size + 1)))
+    head = words;
+	if (!(tmp = malloc(size + 1)) || !(help = ft_strdup("''")))
 		return 0;
 	while (words)
 	{
@@ -224,6 +238,12 @@ char *cleanWord(t_words *words, int size)
 		words = words->next;
 	}
 	tmp[++i] = 0;
+    if (tmp[0] != 0 && theres_empty(head))
+    {
+        ptr = tmp;
+        tmp = ft_strjoin(&help, tmp);
+        free(ptr);
+    }
 	return tmp;
 }
 
