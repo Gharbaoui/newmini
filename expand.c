@@ -92,6 +92,11 @@ int expand_txts(t_words **txts, t_envs **exenvs)
 	while (help)
 	{
 		backs_filter_str(&(help->txt), exenvs, &all[++i]);
+        if (all[i] == NULL)
+        {
+            i--;
+            len--;
+        }
 		help = help->next;
 	}
 	i = -1;
@@ -139,6 +144,17 @@ int expand_txtsh2(int len, t_words **all)
 	return SUCCESS;
 }
 
+int empty_var(t_words *words, t_envs **exenv)
+{
+    t_words *help;
+    if (nonequt(words->txt[0])){
+        work_on_words(&help, words, exenv, 0);
+        if (help->txt[0] == 0)
+            return 1;
+    }
+    return 0;
+}
+
 int backs_filter_str(char **str, t_envs **exenvs, t_words **newwords)
 {
     t_words *words;
@@ -151,12 +167,15 @@ int backs_filter_str(char **str, t_envs **exenvs, t_words **newwords)
     mod_words = NULL;
     ret = local_words(&words, line, -1);
 	*newwords = NULL;
+    if (line[0] == '$' && words->next == NULL && empty_var(words, exenvs))
+        return SUCCESS;
 	ret = work_on_words(&mod_words, words, exenvs, 0);
 	orgniz_mod_words(mod_words, newwords);
 	free_words(&words);
 	free_words(&mod_words);
     return SUCCESS;
 }
+
 
 int local_words(t_words **words, char *line, int i)
 {
