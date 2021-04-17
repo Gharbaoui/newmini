@@ -1,11 +1,11 @@
 #include "minishell.h"
 
-t_pipcommand *get_cmd_struct(t_completecmd *cmpcmd, t_envs **exenvs)
+t_pipcommand *get_cmd_struct(t_pipcmd *cmd, t_envs **exenvs)
 {
 	t_pipcommand *headcmd;
 
 	headcmd = malloc(sizeof(t_pipcommand));
-	fill_onepipcmd(headcmd, cmpcmd->splcommand, exenvs);
+	fill_onepipcmd(headcmd, cmd, exenvs);
 	return headcmd;
 }
 

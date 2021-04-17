@@ -1,30 +1,14 @@
 #include "minishell.h"
 
-int expand_current_command(t_completecmd **complet, t_fullvar *envs)
+t_pipcommand *expand_current_command(t_completecmd *cucmd, t_fullvar *envs)
 {
-    static int cmdnum;
 	t_pipcommand *pc;
-	
-    t_completecmd *cucmd;
-    int i;
 
-    i = -1;
-    cucmd = *complet;
-    while (cucmd &&  ++i < cmdnum)
-    {
-        cucmd = cucmd->next;
-        if (cucmd->next == NULL)
-            cmdnum = 0;
-    }
 	if (cucmd){
     	expand_full_pipcmd(&cucmd->splcommand, envs->exenvs);
-		pc = get_cmd_struct(*complet, envs->exenvs);
-		print_p(pc);
-		if (cucmd->next)
-			cmdnum++;
-	}else
-		cmdnum = 0;
-    return SUCCESS;	
+        return get_cmd_struct(cucmd->splcommand, envs->exenvs);
+	}
+    return NULL;
 }
 
 

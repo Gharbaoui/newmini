@@ -103,6 +103,11 @@ typedef struct multcmd
 } t_multcmd;
 /////////
 
+typedef struct prstatus
+{
+    int exitecode;
+}t_prstatus;
+
 /// random.c
 char *cutstring(char *str, int start, int last);
 void print_pipes(t_words **pipes, int numofcmds);
@@ -210,7 +215,7 @@ t_words *first_case(char *line);
 t_words *second_case(char *line);
 t_words  *third_case(char *line);
 
-int expand_current_command(t_completecmd **complet, t_fullvar *envs);
+t_pipcommand *expand_current_command(t_completecmd *complet, t_fullvar *envs);
 int expand_full_pipcmd(t_pipcmd **pipcmd, t_envs **exenvs);
 int expand_one_cmdstrct(t_cmd **cmd, t_envs **exenvs);
 int expand_commandtxt(t_cmd **cmd, t_envs **exenvs);
@@ -244,7 +249,7 @@ char *get_last_word(t_words *words);
 char *get_word(char *line, int *next);
 
 
-t_pipcommand *get_cmd_struct(t_completecmd *cmpcmd, t_envs **exenvs);
+t_pipcommand *get_cmd_struct(t_pipcmd *cmd, t_envs **exenvs);
 int fill_onepipcmd(t_pipcommand *pipcmd, t_pipcmd *pip, t_envs **exenvs);
 int fill_one_cmd(t_onecmd *fcmd, t_cmd *pcmd, t_envs **exenvs);
 char **transfrm_ln_arr(t_words *words, char *cmd, int iscmd);
@@ -262,4 +267,11 @@ int is_excutable(struct stat fst);
 int get_cmd_state(char *cmd);
 char *lower_str(char *str);
 char lower_char(char c);
+/// EXCUTION ///
+int fullexcute(t_completecmd **complete, t_fullvar **variables, t_prstatus *prstatus);
+int excute_one_cmd(t_pipcommand *pcmd, t_fullvar **variables);
+int get_num_subcmds(t_pipcommand *pcmd);
+void alloc_pipes(int ***pipes, int count);
+
+
 // 62 68  0x0000000100103330

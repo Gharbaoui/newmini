@@ -2,25 +2,12 @@
 int main(int argc, char **argv, char **env)
 {
 	bash_loop(env);
-	//execve("/bin/ls", argv, env);
 }
-
-void test_ex(t_completecmd **complete, t_fullvar *variables)
-{
-    int status;
-	do{
-		expand_current_command(complete, variables);
-        print_completecmd(*complete);
-		printf("Enter Number :");
-		scanf("%d", &status);
-	}while (status);
-
-}
-
 
 void bash_loop(char **env)
 {
 	t_fullvar *variables;
+    t_prstatus prstatus;
 	int status;
 	int ret;
 	t_envs **envtable;
@@ -44,10 +31,12 @@ void bash_loop(char **env)
 		{
 			ret =  workon_line(line, &complete, 0, 0);
 			if (ret == PARSERROR)
+            {
 				printf("Parsing Error\n");
-            else
-				expand_current_command(&complete, variables);;
-			//print_completecmd(complete);
+                free_comp(&complete);
+            }else{
+                fullexcute(&complete, &variables, &prstatus);
+            }
 		}
 
 	}
