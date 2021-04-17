@@ -4,6 +4,7 @@
 #include <sys/uio.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <fcntl.h>
 #define BUFFER_SIZE 15
 #define ENVSIZE 50
 
@@ -15,6 +16,9 @@
 #define SUCCESS 2
 #define PARSERROR -1
 #define MEMERROR 0
+
+#define APPEND 1 // append to the file
+#define OVERWRITE 0  // overwrite in file
 
 #define FOLDER 8
 #define NEX 9 // NOT EXCUTABLE
@@ -272,6 +276,8 @@ int fullexcute(t_completecmd **complete, t_fullvar **variables, t_prstatus *prst
 int excute_one_cmd(t_pipcommand *pcmd, t_fullvar **variables);
 int get_num_subcmds(t_pipcommand *pcmd);
 void alloc_pipes(int ***pipes, int count);
+int exec_multi_pipe(t_pipcommand *pcmd, int **pipe, t_fullvar **variables, int index);
+char  **creat_w_files(char **files, char **ops, int *error); // returns last file
 
 
 // 62 68  0x0000000100103330
