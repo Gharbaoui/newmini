@@ -31,12 +31,22 @@ int fill_one_cmd(t_onecmd *fcmd, t_cmd *pcmd, t_envs **exenvs)
 	int found;
 	if (pcmd)
 	{
-		pathvar = get_env(&found, "PATH", exenvs);
-		if (found)
-			fcmd->cmd = get_command(pcmd->command, pathvar->env_value, &fcmd->prem, NULL);
-		else
-			fcmd->cmd = ft_strdup(pcmd->command);
+		if (pcmd->command)
+		{
+			pathvar = get_env(&found, "PATH", exenvs);
+			if (found)
+				fcmd->cmd = get_command(pcmd->command, pathvar->env_value, &fcmd->prem, NULL);
+			else
+				fcmd->cmd = ft_strdup(pcmd->command);
+		}else
+			fcmd->cmd = NULL;
 		fcmd->args = transfrm_ln_arr(pcmd->txts, pcmd->command, 1);
+		if (fcmd->args == NULL)
+		{
+			fcmd->args = malloc(sizeof(char *) * 2);
+			fcmd->args[0] = ft_strdup("");
+			fcmd->args[1] = NULL;
+		}
 		fcmd->files = transfrm_ln_arr(pcmd->files, pcmd->command, 0);
 		fcmd->ops = transfrm_ln_arr(pcmd->ops, pcmd->command, 0);
 	}else

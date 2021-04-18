@@ -5,6 +5,10 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <sys/wait.h>
+#define READ_END 0
+#define WRITE_END 1
+
 #define BUFFER_SIZE 15
 #define ENVSIZE 50
 
@@ -70,7 +74,10 @@ typedef struct iter{
 	int i;
 	int j;
 	int help;
-	int status;;
+	int count;
+	int error;
+	int status;
+	int index;
 } t_iter;
 
 typedef struct collstrs{
@@ -241,6 +248,7 @@ int fill_normal(char *tmp, int index, char *value);
 int orgniz_mod_words(t_words *words, t_words **nw);
 int first_one(t_words **help, char *line);
 int get_words(char *line, t_words **help);
+int is_built_in(char *lcmd);
 int last_word(t_words **nw, char *line);
 int modify_prev(char *prv, char *cur);
 int nonequt(char c);
@@ -276,8 +284,14 @@ int fullexcute(t_completecmd **complete, t_fullvar **variables, t_prstatus *prst
 int excute_one_cmd(t_pipcommand *pcmd, t_fullvar **variables);
 int get_num_subcmds(t_pipcommand *pcmd);
 void alloc_pipes(int ***pipes, int count);
-int exec_multi_pipe(t_pipcommand *pcmd, int **pipe, t_fullvar **variables, int index);
+int exec_multi_pipe(t_pipcommand *pcmd, int **pipe, t_fullvar **variables, t_iter nums);
 char  **creat_w_files(char **files, char **ops, int *error); // returns last file
+void close_pipes(int **pipes, int inex, int pipsize);
+void close_write_rest(int **pipes, int index, int pipsize);
+void close_read_rest(int **pipes, int index, int pipsize);
+int decide_in_out(int **pipes, char **files, char **ops, t_iter nums);
+int builtin(char *cmd);
+int run_command(t_onecmd cmd);
 
 
 // 62 68  0x0000000100103330
