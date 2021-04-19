@@ -6,30 +6,33 @@
 
 int main(int argc, char **argv, char **env)
 {
-	int pid;
-	int fd[2];
+    int fd[2];
+    pipe(fd);
+    char *cat[] = {"cat", NULL};
+    char *ls[] = {"ls",  NULL};
+    int pid;
 
-	pipe(fd);
-	pid = fork();
-	if (pid == 0)
-	{
-		close(fd[0]);
-		dup2(fd[1], 1);
-		close(fd[1]);
-		char *ar[] = {"cat", "file", NULL};
-		execve("/bin/cat", ar, NULL);
-	}
-	
-	pid = fork();
-	if (pid == 0)
-	{
-		char *g[] = {"cat", "-e", NULL};
-		close(fd[1]);
-		dup2(fd[0], 0);
-		close(fd[0]);
-		execve("/bin/cat", g, NULL);
-	}
+    pid = fork();
+    if (pid == 0)
+    {
+        dup2(fd[1], 1);
+        close(fd[1]);
+        close(fd[0]);
+        execve("/usr/bin/cat", cat, NULL);
+    }
 
-	wait(NULL);
-	wait(NULL);
+    pid = fork();
+    if (pid == 0)
+    {
+        dup2(fd[0], 0);
+        close(fd[0]);
+        close(fd[1]);
+        execve("/usr/bin/ls", ls, NULL);
+    }
+
+    close(fd[0]);
+    //close(fd[1]);
+    wait(NULL);
+    wait(NULL);
+    
 }

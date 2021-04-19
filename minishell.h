@@ -292,6 +292,7 @@ void close_read_rest(int **pipes, int index, int pipsize);
 int decide_in_out(int **pipes, char **files, char **ops, t_iter nums);
 int builtin(char *cmd);
 int run_command(t_onecmd cmd);
+int close_in_parent(int **pipe, int pindex);
 
 
 // 62 68  0x0000000100103330

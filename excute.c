@@ -24,6 +24,7 @@ int excute_one_cmd(t_pipcommand *pcmd, t_fullvar **variables)
         alloc_pipes(&pipes, nums.count);
 		nums.index = 0;
         exec_multi_pipe(pcmd, pipes, variables, nums);
+        printf("PASSED\n");
     }
     
     
@@ -31,37 +32,32 @@ int excute_one_cmd(t_pipcommand *pcmd, t_fullvar **variables)
 
 int exec_multi_pipe(t_pipcommand *pcmd, int **pipe, t_fullvar **variables, t_iter nums)
 {
-  	int pid;
-	int ret;
-	t_onecmd cmd;
-
-	if (pcmd)
-	{
-		pid = fork();
-		cmd = pcmd->cmd;
-		if (pid == 0)
-		{
-			if (!(decide_in_out(pipe, cmd.files, cmd.ops, nums)))
-				ret = run_command(cmd);
-			else{
-				// here error accured no such file or dir
-			}
-			return 10;
-		}
-		nums.index++;
-		exec_multi_pipe(pcmd->next, pipe, variables, nums);
-		wait(NULL);
-	}
+    t_onecmd cmd;
+    int pid;
+    
+    if (pcmd)
+    {
+        cmd = pcmd->cmd;
+        close_in_parent(pipe, nums.index);
+        pid = fork();
+        if (pid == 0)
+        {
+            dup2(pipe[0][WRITE_END], 1);
+            run_command(cmd);
+        }
+        nums.index++;
+        exec_multi_pipe(pcmd->next, pipe, variables, nums);
+        if (pcmd->next == NULL)
+            close(pipe[0][READ_END]);
+        wait(NULL);
+    }
 }
 
 int run_command(t_onecmd cmd)
 {
 	if (cmd.cmd)
 	{
-	//if (!builtin(cmd.cmd))
-	//{
-			execve(cmd.cmd, cmd.args, NULL);
-//	}
+        execve(cmd.cmd, cmd.args, NULL);
 	}
 	
 }
@@ -77,13 +73,27 @@ int run_command(t_onecmd cmd)
 	return 0;
 }*/
 
+int close_in_parent(int **pipe, int pindex)
+{
+    if (pindex > 0)
+    {
+        if (pindex > 1)
+        {
+            close(pipe[pindex - 2][READ_END]);
+            close(pipe[pindex - 1][WRITE_END]);
+        }else
+            close(pipe[pindex - 1][WRITE_END]);
+    }
+    return 0;
+}
+
 int decide_in_out(int **pipe, char **files, char **ops, t_iter nums)
 {
 	char **fs;
 	int error;
 	int fd[2];
 
-	close_pipes(pipe, nums.index,  nums.count);
+	//close_pipes(pipe, nums.index,  nums.count);
 	if (files)
 	{
 		fs = creat_w_files(files, ops, &error);
@@ -130,8 +140,8 @@ int decide_in_out(int **pipe, char **files, char **ops, t_iter nums)
 		if (nums.index > 0)
 		{
 			dup2(pipe[nums.index - 1][READ_END], 0);
-			close(pipe[nums.index - 1][READ_END]);
-		}
+            close(pipe[nums.index - 1][READ_END]);
+        }
 	}
 	return 0;
 }
