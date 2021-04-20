@@ -18,13 +18,14 @@ int excute_one_cmd(t_pipcommand *pcmd, t_fullvar **variables)
 {
     int **pipes;
 	t_iter nums;
+    int ret;
 
     nums.count = get_num_subcmds(pcmd) - 1;
     if (nums.count > 0){
         alloc_pipes(&pipes, nums.count);
 		nums.index = 0;
-        exec_multi_pipe(pcmd, pipes, variables, nums);
-        printf("PASSED\n");
+        ret = exec_multi_pipe(pcmd, pipes, variables, nums);
+        printf("%d\n",WEXITSTATUS(ret));
     }
     
     
@@ -34,7 +35,7 @@ int exec_multi_pipe(t_pipcommand *pcmd, int **pipe, t_fullvar **variables, t_ite
 {
     t_onecmd cmd;
     int pid;
-    
+    int status;
     if (pcmd)
     {
         cmd = pcmd->cmd;
@@ -42,14 +43,20 @@ int exec_multi_pipe(t_pipcommand *pcmd, int **pipe, t_fullvar **variables, t_ite
         pid = fork();
         if (pid == 0)
         {
-            dup2(pipe[0][WRITE_END], 1);
-            run_command(cmd);
+            if (!decide_in_out(pipe, cmd.files, cmd.ops, nums))
+                run_command(cmd);
+            //exit(20);  //// testing
         }
+        if (pcmd->next == NULL)
+            close(pipe[nums.index - 1][READ_END]);
         nums.index++;
         exec_multi_pipe(pcmd->next, pipe, variables, nums);
         if (pcmd->next == NULL)
-            close(pipe[0][READ_END]);
-        wait(NULL);
+        {
+            waitpid(pid, &status, 0);
+            return status;
+        }else
+            wait(NULL);
     }
 }
 
@@ -62,16 +69,6 @@ int run_command(t_onecmd cmd)
 	
 }
 
-/*int builtin(char *cmd)
-{
-	char *lcmd;
-	lcmd = lower_str(cmd);
-	if (is_built_in(lcmd)){
-		free(lcmd);
-		return 1;
-	}
-	return 0;
-}*/
 
 int close_in_parent(int **pipe, int pindex)
 {
@@ -90,26 +87,27 @@ int close_in_parent(int **pipe, int pindex)
 int decide_in_out(int **pipe, char **files, char **ops, t_iter nums)
 {
 	char **fs;
+    int append;
 	int error;
 	int fd[2];
 
-	//close_pipes(pipe, nums.index,  nums.count);
 	if (files)
 	{
-		fs = creat_w_files(files, ops, &error);
+		fs = creat_w_files(files, ops, &error, &append);
 		if (error == 0)
 		{
 			if (fs[1]){
-				fd[1] = open (fs[1], O_WRONLY);
+                if (append == 0)
+				    fd[1] = open (fs[1], O_WRONLY);
+                else
+                    fd[1] = open(fs[1], O_WRONLY | O_TRUNC);
 				dup2(fd[1], 1);
 				close(fd[1]);
-				close_write_rest(pipe, nums.index, nums.count);
 			}else
 			{
 				if (nums.index < nums.count)
 				{
 					dup2(pipe[nums.index][WRITE_END], 1);
-					close(pipe[nums.index][WRITE_END]);
 				}
 			}
 			if (fs[0])
@@ -117,7 +115,6 @@ int decide_in_out(int **pipe, char **files, char **ops, t_iter nums)
 				fd[0] = open (fs[0], O_RDONLY);
 				dup2(fd[0], 0);
 				close(fd[0]);
-				close_read_rest(pipe, nums.index, nums.count);
 			}else{
 				if (nums.index > 0)
 				{
@@ -125,9 +122,8 @@ int decide_in_out(int **pipe, char **files, char **ops, t_iter nums)
 					close(pipe[nums.index - 1][READ_END]);
 				}
 			}
-		}else{
-			close_write_rest(pipe, nums.index, nums.count);
-			close_read_rest(pipe, nums.index, nums.count);
+		}else{ /// here error happend
+            printf("bash: %s: No such file or directory\n", fs[0]);
 			return 1;
 		}
 	}else
@@ -135,7 +131,6 @@ int decide_in_out(int **pipe, char **files, char **ops, t_iter nums)
 		if (nums.index < nums.count)
 		{
 			dup2(pipe[nums.index][WRITE_END], 1);
-			close(pipe[nums.index][WRITE_END]);
 		}
 		if (nums.index > 0)
 		{
@@ -143,6 +138,11 @@ int decide_in_out(int **pipe, char **files, char **ops, t_iter nums)
             close(pipe[nums.index - 1][READ_END]);
         }
 	}
+    if (nums.index < nums.count)
+    {
+        close(pipe[nums.index][WRITE_END]);
+        close(pipe[nums.index][READ_END]);
+    }
 	return 0;
 }
 
@@ -202,7 +202,7 @@ void close_pipes(int **pipes, int index, int pipslen)
 	}
 }
 
-char  **creat_w_files(char **files, char **ops, int *error) // returns last file
+char  **creat_w_files(char **files, char **ops, int *error, int *append) // returns last file
 {
 	int i;
 	int fd;
@@ -213,6 +213,7 @@ char  **creat_w_files(char **files, char **ops, int *error) // returns last file
 	*error = 0;
 	fs[0] = NULL;
 	fs[1] = NULL;
+    *append = 0;
 	while (files[++i])
 	{
 		if (ft_cmpstr(ops[i], ">")){
@@ -223,6 +224,7 @@ char  **creat_w_files(char **files, char **ops, int *error) // returns last file
 		{
 			fd = open (files[i], O_WRONLY | O_TRUNC | O_CREAT, 0644);
 			fs[1] = files[i];
+            *append = 1;
 			close(fd);
 		}
 		else

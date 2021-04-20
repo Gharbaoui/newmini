@@ -285,7 +285,7 @@ int excute_one_cmd(t_pipcommand *pcmd, t_fullvar **variables);
 int get_num_subcmds(t_pipcommand *pcmd);
 void alloc_pipes(int ***pipes, int count);
 int exec_multi_pipe(t_pipcommand *pcmd, int **pipe, t_fullvar **variables, t_iter nums);
-char  **creat_w_files(char **files, char **ops, int *error); // returns last file
+char  **creat_w_files(char **files, char **ops, int *error, int *append); // returns last file
 void close_pipes(int **pipes, int inex, int pipsize);
 void close_write_rest(int **pipes, int index, int pipsize);
 void close_read_rest(int **pipes, int index, int pipsize);
