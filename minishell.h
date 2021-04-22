@@ -293,6 +293,11 @@ int decide_in_out(int **pipes, char **files, char **ops, t_iter nums);
 int builtin(char *cmd);
 int run_command(t_onecmd cmd);
 int close_in_parent(int **pipe, int pindex);
+int ex_mu_p_cmd(t_pipcommand *pcmd, int **pipe, t_fullvar **env_var, t_iter nums);
+
+int exc_one_cmd(t_onecmd cmd, int **pipe, t_iter nums, t_fullvar **env_var);
+int run_exact_cmd(t_onecmd cmd, t_fullvar **env_var);
+int run_cmd(t_onecmd cmd, t_fullvar **env_var);
 
 
 // 62 68  0x0000000100103330

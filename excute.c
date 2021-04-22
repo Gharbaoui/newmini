@@ -24,49 +24,14 @@ int excute_one_cmd(t_pipcommand *pcmd, t_fullvar **variables)
     if (nums.count > 0){
         alloc_pipes(&pipes, nums.count);
 		nums.index = 0;
-        ret = exec_multi_pipe(pcmd, pipes, variables, nums);
-        printf("%d\n",WEXITSTATUS(ret));
+        ret = ex_mu_p_cmd(pcmd, pipes, variables, nums);
     }
-    
-    
-}
-
-int exec_multi_pipe(t_pipcommand *pcmd, int **pipe, t_fullvar **variables, t_iter nums)
-{
-    t_onecmd cmd;
-    int pid;
-    int status;
-    if (pcmd)
+    else
     {
-        cmd = pcmd->cmd;
-        close_in_parent(pipe, nums.index);
-        pid = fork();
-        if (pid == 0)
-        {
-            if (!decide_in_out(pipe, cmd.files, cmd.ops, nums))
-                run_command(cmd);
-            //exit(20);  //// testing
-        }
-        if (pcmd->next == NULL)
-            close(pipe[nums.index - 1][READ_END]);
-        nums.index++;
-        exec_multi_pipe(pcmd->next, pipe, variables, nums);
-        if (pcmd->next == NULL)
-        {
-            waitpid(pid, &status, 0);
-            return status;
-        }else
-            wait(NULL);
+        ret = excute_one_command(pcmd->cmd, variables);
     }
-}
-
-int run_command(t_onecmd cmd)
-{
-	if (cmd.cmd)
-	{
-        execve(cmd.cmd, cmd.args, NULL);
-	}
-	
+    printf("%d\n",WEXITSTATUS(ret));
+    
 }
 
 
@@ -100,7 +65,7 @@ int decide_in_out(int **pipe, char **files, char **ops, t_iter nums)
                 if (append == 0)
 				    fd[1] = open (fs[1], O_WRONLY);
                 else
-                    fd[1] = open(fs[1], O_WRONLY | O_TRUNC);
+                    fd[1] = open(fs[1], O_WRONLY | O_APPEND);
 				dup2(fd[1], 1);
 				close(fd[1]);
 			}else
@@ -214,15 +179,15 @@ char  **creat_w_files(char **files, char **ops, int *error, int *append) // retu
 	fs[0] = NULL;
 	fs[1] = NULL;
     *append = 0;
-	while (files[++i])
+	while (files && files[++i])
 	{
 		if (ft_cmpstr(ops[i], ">")){
-			fd = open (files[i], O_WRONLY | O_APPEND | O_CREAT, 0644);
+			fd = open (files[i], O_WRONLY | O_TRUNC | O_CREAT, 0644);
 			fs[1] = files[i];
 			close(fd);
 		}else if (ft_cmpstr(ops[i], ">>"))
 		{
-			fd = open (files[i], O_WRONLY | O_TRUNC | O_CREAT, 0644);
+			fd = open (files[i], O_WRONLY | O_APPEND | O_CREAT, 0644);
 			fs[1] = files[i];
             *append = 1;
 			close(fd);
