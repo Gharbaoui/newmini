@@ -3,18 +3,21 @@
 int fullexcute(t_completecmd **complete, t_fullvar **variables, t_prstatus *prstatus)
 {
     t_pipcommand *pcmd;
+    char **new_env;
     t_completecmd *cmpt;
 
     cmpt = *complete;
    	while (cmpt)
    	{
+        new_env = update_env_var((*variables)->exenvs);
         pcmd = expand_current_command(cmpt, *variables);
-        excute_one_cmd(pcmd, variables);
+        excute_one_cmd(pcmd, variables, new_env);
+        //free_double_str(new_env);
         cmpt = cmpt->next;
     }
 }
 
-int excute_one_cmd(t_pipcommand *pcmd, t_fullvar **variables)
+int excute_one_cmd(t_pipcommand *pcmd, t_fullvar **variables, char **envp)
 {
     int **pipes;
 	t_iter nums;
@@ -27,9 +30,7 @@ int excute_one_cmd(t_pipcommand *pcmd, t_fullvar **variables)
         ret = ex_mu_p_cmd(pcmd, pipes, variables, nums);
     }
     else
-    {
-        ret = excute_one_command(pcmd->cmd, variables);
-    }
+        ret = run_sim_cmd(pcmd->cmd, variables, envp);
     printf("%d\n",WEXITSTATUS(ret));
     
 }

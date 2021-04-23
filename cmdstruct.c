@@ -41,7 +41,7 @@ int fill_one_cmd(t_onecmd *fcmd, t_cmd *pcmd, t_envs **exenvs)
 		}else
 			fcmd->cmd = NULL;
 		fcmd->args = transfrm_ln_arr(pcmd->txts, pcmd->command, 1);
-		if (fcmd->args == NULL)
+		if (fcmd->args[1] == NULL)
 		{
 			fcmd->args = malloc(sizeof(char *) * 2);
 			fcmd->args[0] = ft_strdup("");
@@ -61,7 +61,7 @@ char **transfrm_ln_arr(t_words *words, char *cmd, int iscmd)
 	int len;
 	int i;
 	
-	if (words == NULL)
+	if (words == NULL && iscmd == 0)
 		return NULL;
 	len = how_many_words(words);
 	allw = malloc(sizeof(char *) * (len + 1 + iscmd));

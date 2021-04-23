@@ -20,7 +20,6 @@ void bash_loop(char **env)
 	variables->allkeys = NULL;
 	ret = fill_envtable(&variables, env);// returns Success or memory error or Empty env
 	
-
 	status = 1;
 	while (status)
 	{
