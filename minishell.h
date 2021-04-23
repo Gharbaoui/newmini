@@ -113,11 +113,17 @@ typedef struct multcmd
 	struct multcmd *next;
 } t_multcmd;
 /////////
-
+typedef struct {
+	char **envp;
+	int exitstatus;
+	int lastpid;
+} g_vars;
 typedef struct prstatus
 {
     int exitecode;
 }t_prstatus;
+
+g_vars glob_vars;
 
 /// random.c
 char *cutstring(char *str, int start, int last);
@@ -280,8 +286,8 @@ int get_cmd_state(char *cmd);
 char *lower_str(char *str);
 char lower_char(char c);
 /// EXCUTION ///
-int fullexcute(t_completecmd **complete, t_fullvar **variables, t_prstatus *prstatus);
-int excute_one_cmd(t_pipcommand *pcmd, t_fullvar **variables, char **new_env);
+int fullexcute(t_completecmd **complete, t_fullvar **variables);
+int excute_one_cmd(t_pipcommand *pcmd, t_fullvar **variables);
 int get_num_subcmds(t_pipcommand *pcmd);
 void alloc_pipes(int ***pipes, int count);
 int exec_multi_pipe(t_pipcommand *pcmd, int **pipe, t_fullvar **variables, t_iter nums);
@@ -296,12 +302,12 @@ int close_in_parent(int **pipe, int pindex);
 int ex_mu_p_cmd(t_pipcommand *pcmd, int **pipe, t_fullvar **env_var, t_iter nums);
 
 int exc_one_cmd(t_onecmd cmd, int **pipe, t_iter nums, t_fullvar **env_var);
-int run_exact_cmd(t_onecmd cmd, t_fullvar **env_var, char **envp);
+int run_exact_cmd(t_onecmd cmd, t_fullvar **env_var);
 int run_cmd(t_onecmd cmd, t_fullvar **env_var);
 
-int run_sim_cmd(t_onecmd cmd, t_fullvar **env_var, char **envp);
+int run_sim_cmd(t_onecmd cmd, t_fullvar **env_var);
 int handl_red(t_onecmd cmd);
-int actual_exec_one(t_onecmd cmd, t_fullvar **env_var, char **envp);
+int actual_exec_one(t_onecmd cmd, t_fullvar **env_var);
 int builtin(char *cmd);
 char **update_env_var(t_envs **exenvs);
 int get_hasht_size(t_envs **exenvs);

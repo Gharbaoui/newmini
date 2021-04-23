@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-int run_sim_cmd(t_onecmd cmd, t_fullvar **env_var, char **envp)
+int run_sim_cmd(t_onecmd cmd, t_fullvar **env_var)
 {
     int pid;
     int status;
@@ -10,7 +10,7 @@ int run_sim_cmd(t_onecmd cmd, t_fullvar **env_var, char **envp)
         pid = fork();
         if (pid == 0)
         {
-            status = actual_exec_one(cmd, env_var, envp);
+            status = actual_exec_one(cmd, env_var);
             exit(status);
         }
         waitpid(pid, &status, 0);
@@ -55,7 +55,7 @@ int handl_red(t_onecmd cmd)
     return 0;   
 }
 
-int actual_exec_one(t_onecmd cmd, t_fullvar **env_var, char **envp)
+int actual_exec_one(t_onecmd cmd, t_fullvar **env_var)
 {
     int origin[2];
 
@@ -65,7 +65,7 @@ int actual_exec_one(t_onecmd cmd, t_fullvar **env_var, char **envp)
         return 1;
     if (cmd.cmd)
     {
-        run_exact_cmd(cmd, env_var, envp);
+        run_exact_cmd(cmd, env_var);
         dup2(origin[1], 1);
         dup2(origin[0], 0);
         if (cmd.cmd[0] == '/' || cmd.cmd[0] == '~' || cmd.cmd[0] == '.')

@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-int fullexcute(t_completecmd **complete, t_fullvar **variables, t_prstatus *prstatus)
+/*int fullexcute(t_completecmd **complete, t_fullvar **variables, t_prstatus *prstatus)
 {
     t_pipcommand *pcmd;
     char **new_env;
@@ -15,9 +15,9 @@ int fullexcute(t_completecmd **complete, t_fullvar **variables, t_prstatus *prst
         //free_double_str(new_env);
         cmpt = cmpt->next;
     }
-}
+}*/
 
-int excute_one_cmd(t_pipcommand *pcmd, t_fullvar **variables, char **envp)
+/*int excute_one_cmd(t_pipcommand *pcmd, t_fullvar **variables, char **envp)
 {
     int **pipes;
 	t_iter nums;
@@ -33,7 +33,7 @@ int excute_one_cmd(t_pipcommand *pcmd, t_fullvar **variables, char **envp)
         ret = run_sim_cmd(pcmd->cmd, variables, envp);
     printf("%d\n",WEXITSTATUS(ret));
     
-}
+}*/
 
 
 int close_in_parent(int **pipe, int pindex)

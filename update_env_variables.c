@@ -25,7 +25,7 @@ char **update_env_var(t_envs **exenvs)
     full = malloc(sizeof(char *) * (size + 1));
     i = -1;
     j = -1;
-    while (exenvs[++i])
+    while (++i < ENVSIZE)
     {
         help = exenvs[i];
         while (help)

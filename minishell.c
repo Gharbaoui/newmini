@@ -26,6 +26,7 @@ void bash_loop(char **env)
 		free(line);
 		write(1, "minishell=>", 11);
 		ret = get_next_line(&line);
+		// here i need to handel inputs to my bash
 		if (ret > 0)
 		{
 			ret =  workon_line(line, &complete, 0, 0);
@@ -34,7 +35,7 @@ void bash_loop(char **env)
 				printf("Parsing Error\n");
                 free_comp(&complete);
             }else{
-                fullexcute(&complete, &variables, &prstatus);
+                fullexcute(&complete, &variables);
             }
 		}
 
