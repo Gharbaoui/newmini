@@ -1,7 +1,6 @@
 #include "minishell.h"
 int main(int argc, char **argv, char **env)
 {
-	printf("%s\n", ft_itoa(0));
 	bash_loop(env);
 }
 
@@ -23,7 +22,8 @@ void bash_loop(char **env)
 	
 	status = 1;
 	add_toenvtable(&variables->exenvs, "?=0", &variables->allkeys);
-	
+	ft_export(&variables, "hello+=gharbaoui");
+	get_env(&status, "hello", variables->exenvs);
 	while (status)
 	{
 		free(line);

@@ -314,6 +314,9 @@ int actual_exec_one(t_onecmd cmd, t_fullvar **env_var);
 int builtin(char *cmd);
 char **update_env_var(t_envs **exenvs);
 int get_hasht_size(t_envs **exenvs);
-
+///// export 
+char *get_key(char *line);
+int ft_export(t_fullvar **vars, char *line);
+int check_exvar(char *line);
 
 // 62 68  0x0000000100103330
