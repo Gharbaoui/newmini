@@ -24,6 +24,49 @@ int istxt(char c)
 	return 0;
 }
 
+char* ft_itoa(int value)
+{
+    char *buffer;
+	char *tmp;
+
+	buffer = malloc(sizeof(char) * 4);
+    int i = 0;
+    while (value)
+    {
+        int r = value % 10;
+ 
+        if (r >= 10) {
+            buffer[i++] = 65 + (r - 10);
+        }
+        else {
+            buffer[i++] = 48 + r;
+        }
+        value /= 10;
+    }
+    if (i == 0) {
+        buffer[i++] = '0';
+    }
+    buffer[i] = '\0';
+    tmp = ft_reverse(buffer);
+	free(buffer);
+	return tmp;
+}
+
+char *ft_reverse(char *line)
+{
+	int i;
+	int j;
+	char *tmp;
+
+	j = ft_strlen(line);
+	tmp = malloc(j + 1);
+	i = -1;
+	while (line[++i])
+		tmp[i] = line[--j];
+	return tmp;
+}
+
+
 
 int opvalid(char *str)
 {

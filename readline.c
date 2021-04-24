@@ -8,6 +8,8 @@ int get_next_line(char **line)
 	if (error(line, &rest, &current))
 		return -1;
 	help = validate(line, &rest, &current);
+	if (help == 1)
+		return help;
 	while ((help = read(0, current, BUFFER_SIZE)) > 0)
 	{
 		current[help] = 0;

@@ -114,6 +114,7 @@ typedef struct multcmd
 } t_multcmd;
 /////////
 typedef struct {
+	int envchanged;
 	char **envp;
 	int exitstatus;
 	int lastpid;
@@ -127,6 +128,8 @@ g_vars glob_vars;
 
 /// random.c
 char *cutstring(char *str, int start, int last);
+char *ft_reverse(char *line);
+char* ft_itoa(int value);
 void print_pipes(t_words **pipes, int numofcmds);
 void print_words(t_words *words, int level, char *name);
 void printspaces(int n);

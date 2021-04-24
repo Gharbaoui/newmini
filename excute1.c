@@ -31,7 +31,7 @@ int excute_one_cmd (t_pipcommand *pcmd, t_fullvar **variables)
 		glob_vars.exitstatus = run_sim_cmd(pcmd->cmd, variables);
 	}
 	glob_vars.exitstatus = WEXITSTATUS(glob_vars.exitstatus);
-	printf("%d\n", glob_vars.exitstatus);
+	printf("%d\n", 	glob_vars.exitstatus);
 }
 
 
@@ -39,15 +39,6 @@ int excute_one_cmd (t_pipcommand *pcmd, t_fullvar **variables)
 
 int run_exact_cmd(t_onecmd cmd, t_fullvar **env_var)
 {
-    // i need to check is built in
-	/*int i;
-
-	i = -1;
-	while (glob_vars.envp[++i])
-	{
-		printf("%s\n", glob_vars.envp[i]);
-		fflush(stdout);
-	}*/
     execve(cmd.cmd, cmd.args, glob_vars.envp);
     return -1;
 }

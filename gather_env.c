@@ -76,7 +76,8 @@ t_envs *make_node_env(int *ern, char *line, t_words **allkeys)
 		}
 		currentEnv->next = NULL;
 	}
-	add_to_words_str(allkeys, currentEnv->env_name);
+	if (currentEnv->env_name[0] != '?')
+		add_to_words_str(allkeys, currentEnv->env_name);
 	return currentEnv;
 }
 

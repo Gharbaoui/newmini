@@ -56,8 +56,8 @@ int ex_mu_p_cmd(t_pipcommand *pcmd, int **pipe, t_fullvar **env_var, t_iter nums
 			run_child(cmd, pipe, nums, env_var);
         if (pcmd->next == NULL)
         {
-            waitpid(pid, &status, 0);
             close(pipe[nums.index - 1][READ_END]);
+            waitpid(pid, &status, 0);
             return status;
         }else{
             nums.index++;

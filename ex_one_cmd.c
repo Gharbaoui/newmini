@@ -65,6 +65,10 @@ int actual_exec_one(t_onecmd cmd, t_fullvar **env_var)
         return 1;
     if (cmd.cmd)
     {
+		if (cmd.prem != 0){
+			printf("bash: %s: Permission denied\n", cmd.cmd);
+			return 126;
+		}
         run_exact_cmd(cmd, env_var);
         dup2(origin[1], 1);
         dup2(origin[0], 0);

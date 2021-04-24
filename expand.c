@@ -131,6 +131,8 @@ int expand_txtsh2(int len, t_words **all)
 int empty_var(t_words *words, t_envs **exenv)
 {
     t_words *help;
+
+	help = NULL;
     if (nonequt(words->txt[0])){
         work_on_words(&help, words, exenv, 0);
         if (help->txt[0] == 0)
@@ -260,6 +262,10 @@ int get_var_name(char *line, char **key)
     int i;
     
     i = -1;
+	if (line[0] == '?'){
+		*key = ft_strdup("?");
+		return SUCCESS;
+	}
     while (line[++i])
         if (is_special(line[i]) || line[i] == ' ')
             break ;
@@ -339,7 +345,7 @@ t_strlen loop_in_filter_string(char *line, t_envs **exenv, t_words **keys)
 	{
 		if (line[i] == 92 && is_special(line[i + 1]) && ++i)
 			backtotal++;
-		else if (line[i] == '$')
+		else if (line[i] == '$' && line[i + 1] && line[i + 1] != ' ')
 		{
 			varsize = loop_in_filter_stringh1(&i, line, keys, exenv);
 			ret = ft_strlen(get_last_word(*keys));
@@ -357,7 +363,7 @@ void collect_strs_h1(t_collstrs *vars, t_words **keys, t_envs **exenv, int order
 	t_envs *cvar;
 	int found;
 
-	if (vars->line[vars->nums.i] == '$')
+	if (vars->line[vars->nums.i] == '$' && vars->line[vars->nums.i + 1] && vars->line[vars->nums.i + 1] != ' ')
 	{
 		if (vars->nums.i > 0)
 			vars->nums.status = 1;
