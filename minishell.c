@@ -16,14 +16,16 @@ void bash_loop(char **env)
 
 	variables = malloc(sizeof(t_fullvar));
 	variables->exenvs = NULL;
-	variables->emptyvar = NULL;
+	variables->filledvar = NULL;
 	variables->allkeys = NULL;
 	ret = fill_envtable(&variables, env);// returns Success or memory error or Empty env
 	
 	status = 1;
-	add_toenvtable(&variables->exenvs, "?=0", &variables->allkeys);
-	ft_export(&variables, "hello+=gharbaoui");
-	get_env(&status, "hello", variables->exenvs);
+	add_toenvtable(&variables, "?=0");
+	/*ft_export(&variables, "new=");
+	print_words(variables->allkeys, 0, "");
+	print_words(variables->filledvar, 0, "");*/
+
 	while (status)
 	{
 		free(line);

@@ -49,7 +49,7 @@ typedef struct txts{
 typedef struct full_env_var
 {
 	t_envs **exenvs;
-	t_words *emptyvar;
+	t_words *filledvar;
 	t_words *allkeys;
 }t_fullvar;
 
@@ -201,7 +201,7 @@ void free_w(t_words **words);
 int fill_envtable(t_fullvar **fullvar, char **env);
 int rest_envt(t_envs ***envtable);
 int hash_env_name(char *env_name);
-int add_toenvtable(t_envs ***envtable, char *line, t_words **allkeyes);
+int add_toenvtable(t_fullvar **vars, char *line);
 int add_node_to(t_envs **head, t_envs **current);
 void free_envlist(t_envs **envlist);
 void free_env(t_envs ***envtable);
@@ -211,7 +211,7 @@ void print_one_oft(t_envs *ln);
 int check_envvar(char *line, int eq_pos);
 int ft_isalpha(char c);
 int ft_isdigit(char c);
-t_envs *make_node_env(int *ern, char *line, t_words **allkeys);
+t_envs *make_node_env(int *ern, char *line, t_fullvar **vars);
 t_envs *get_env(int *found, char *env_name, t_envs **table);
 t_envs *look_inln(int *found,  char *env_name, t_envs *lnenv);
 int delete_exactfromln(t_envs **list, char *key, int *found);

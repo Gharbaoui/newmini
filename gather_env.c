@@ -11,7 +11,7 @@ int fill_envtable(t_fullvar **fullvar, char **env)
 	help = -1;
 	while (env[++help])
 	{
-		ret = add_toenvtable(&(*fullvar)->exenvs, env[help], &(*fullvar)->allkeys);
+		ret = add_toenvtable(fullvar, env[help]);
 		if (ret != SUCCESS)
 		{
 			free_env(&(*fullvar)->exenvs);
@@ -29,22 +29,22 @@ int fill_envtable(t_fullvar **fullvar, char **env)
 }
 
 
-int add_toenvtable(t_envs ***envtable, char *line, t_words **allkeys)
+int add_toenvtable(t_fullvar **vars, char *line)
 {
 	int found;
 	t_envs *currentEnv;
 	int index;
 	int ern;
-	
-	currentEnv = make_node_env(&ern, line, allkeys); // MEMERROR or 
+
+	currentEnv = make_node_env(&ern, line, vars); // MEMERROR or 
 	if (ern != SUCCESS)
 		return ern;
 	index = hash_env_name(currentEnv->env_name);
-	add_node_to(&(*envtable)[index], &currentEnv);
+	add_node_to(&(*vars)->exenvs[index], &currentEnv);
 	return SUCCESS;
 }
 
-t_envs *make_node_env(int *ern, char *line, t_words **allkeys)
+t_envs *make_node_env(int *ern, char *line, t_fullvar **vars)
 {
 	t_envs *currentEnv;
 	int eq_pos;
@@ -60,6 +60,8 @@ t_envs *make_node_env(int *ern, char *line, t_words **allkeys)
 	if (eq_pos != -1)
 	{
 		currentEnv->env_name = split(line, 0, eq_pos);
+		if 	(currentEnv->env_name[eq_pos - 1] == '+')
+			currentEnv->env_name[eq_pos - 1] = '\0';
 		if (!currentEnv->env_name)
 		{
 			*ern = MEMERROR;
@@ -76,8 +78,11 @@ t_envs *make_node_env(int *ern, char *line, t_words **allkeys)
 		}
 		currentEnv->next = NULL;
 	}
-	if (currentEnv->env_name[0] != '?')
-		add_to_words_str(allkeys, currentEnv->env_name);
+	if (currentEnv->env_name[0] != '?'){
+		add_to_words_str(&(*vars)->allkeys, currentEnv->env_name);
+		if (currentEnv->env_value[0] != '\0')
+			add_to_words_str(&(*vars)->filledvar, currentEnv->env_name);
+	}
 	return currentEnv;
 }
 
@@ -130,7 +135,7 @@ t_envs *get_env(int *found, char *env_name, t_envs **table)
 	}
 	return current;
 }
-
+/*
 int add_envvar_to_table(char *line, t_fullvar **variables)
 {
 	int is_plus;
@@ -179,7 +184,7 @@ int add_envvar_to_table(char *line, t_fullvar **variables)
 	}
 	return SUCCESS;
 }
-
+*/
 int add_to_words_str(t_words **hidden_var, char *line)
 {
 	t_words *current;
