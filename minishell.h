@@ -178,6 +178,7 @@ int fill_cmd_objs(t_words **txts, char *str);
 int istxt(char c);
 int opvalid(char *str);
 int ft_cmpstr(char *s1, char *s2);
+int ft_strcmp(char *s1, char *s2);
 int reset_command(t_cmd **command);
 int fill_cmdstruct(t_words *words, t_cmd **command);
 int is_empty(char *line);
