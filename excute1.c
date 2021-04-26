@@ -27,10 +27,10 @@ int excute_one_cmd (t_pipcommand *pcmd, t_fullvar **variables)
         alloc_pipes(&pipes, nums.count);
 		nums.index = 0;
         glob_vars.exitstatus = ex_mu_p_cmd(pcmd, pipes, variables, nums);
+		glob_vars.exitstatus = WEXITSTATUS(glob_vars.exitstatus);
     }else{
-		glob_vars.exitstatus = run_sim_cmd(pcmd->cmd, variables);
+		run_sim_cmd(pcmd->cmd, variables);
 	}
-	glob_vars.exitstatus = WEXITSTATUS(glob_vars.exitstatus);
 	printf("%d\n", 	glob_vars.exitstatus);
 }
 

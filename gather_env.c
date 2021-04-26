@@ -37,6 +37,8 @@ int add_toenvtable(t_fullvar **vars, char *line)
 	int ern;
 
 	currentEnv = make_node_env(&ern, line, vars); // MEMERROR or 
+	if (currentEnv == NULL)
+		return SUCCESS;
 	if (ern != SUCCESS)
 		return ern;
 	index = hash_env_name(currentEnv->env_name);
@@ -77,13 +79,29 @@ t_envs *make_node_env(int *ern, char *line, t_fullvar **vars)
 			return NULL;
 		}
 		currentEnv->next = NULL;
-	}
-	if (currentEnv->env_name[0] != '?'){
-		add_to_words_str(&(*vars)->allkeys, currentEnv->env_name);
-		if (currentEnv->env_value[0] != '\0')
+		if (currentEnv->env_name[0] != '?'){
+			if (ft_exist((*vars)->allkeys, currentEnv->env_name) == 0)
+				add_to_words_str(&(*vars)->allkeys, currentEnv->env_name);
 			add_to_words_str(&(*vars)->filledvar, currentEnv->env_name);
+		}
+	}else
+	{	if (ft_exist((*vars)->allkeys, line) == 0)
+			add_to_words_str(&(*vars)->allkeys, line);
+		free(currentEnv);
+		currentEnv = NULL;
 	}
 	return currentEnv;
+}
+
+int ft_exist(t_words *words, char *str)
+{
+	while (words)
+	{
+		if (!ft_strcmp(words->txt, str))
+			return 1;
+		words = words->next;
+	}
+	return 0;
 }
 
 int check_envvar(char *line, int eq_pos)

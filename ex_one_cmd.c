@@ -14,10 +14,23 @@ int run_sim_cmd(t_onecmd cmd, t_fullvar **env_var)
             exit(status);
         }
         waitpid(pid, &status, 0);
+		glob_vars.exitstatus = WEXITSTATUS(status);
         return status;
-    }
+    }else
+		run_built_in(cmd, env_var);
     return 0;
 }
+
+int run_built_in(t_onecmd cmd, t_fullvar **vars)
+{
+	char *lcmd;
+
+	lcmd = lower_str(cmd.cmd);
+	if (ft_strcmp(lcmd, "export") == 0)
+		return ft_export(cmd.args, vars);
+}
+
+
 
 int handl_red(t_onecmd cmd)
 {
@@ -83,7 +96,17 @@ int actual_exec_one(t_onecmd cmd, t_fullvar **env_var)
 
 int builtin(char *cmd)
 {
-    return 0;
+	char *lcmd;
+	int ret;
+	
+	ret = 0;
+	lcmd = lower_str(cmd);
+	if (ft_cmpstr(lcmd, "echo") || ft_cmpstr(lcmd, "export") || ft_cmpstr(lcmd, "cd"))
+    	ret = 2;
+	else if (ft_cmpstr(lcmd, "exit") || ft_cmpstr(lcmd, "unset") || ft_cmpstr(lcmd, "env") || ft_cmpstr(lcmd, "pwd"))
+		ret = 2;
+	free(lcmd);
+    return ret;
 }
 
 

@@ -1,16 +1,17 @@
 #include "minishell.h"
 
-int ft_export(t_fullvar **vars, char *line)
+int sub_export(t_fullvar **vars, char *line)
 {
 	char *key, *tmp;
 	t_envs *cuvar;
 	int help;
 	int ret;
 	
-/*	if (line == NULL){
-		export_print((*vars)->exenvs);
+	glob_vars.exitstatus = 0;	
+	if (line == NULL){
+		export_print(*vars);
 		return SUCCESS;
-	}*/
+	}
 	if (check_exvar(line) != SUCCESS)
 		return ENVERROR;
 	key = get_key(line);
@@ -22,7 +23,7 @@ int ft_export(t_fullvar **vars, char *line)
 		cuvar = get_env(&help, tmp, (*vars)->exenvs);
 	}else
 		cuvar = get_env(&help, key, (*vars)->exenvs);
-	if (help)
+	if (help && nlindex(line, '=') != -1)
 	{
 		if (tmp)
 			free(tmp);
@@ -32,11 +33,8 @@ int ft_export(t_fullvar **vars, char *line)
 			cuvar->env_value = ft_strjoin(&cuvar->env_value, tmp);
 		}else
 		{
-			if (tmp[0] != '\0')
-			{
-				free(cuvar->env_value);
-				cuvar->env_value = ft_strdup(tmp); //// stops here
-			}
+			free(cuvar->env_value);
+			cuvar->env_value = ft_strdup(tmp); //// stops here
 		}
 	}else{
 		add_toenvtable(vars, line);
@@ -46,11 +44,35 @@ int ft_export(t_fullvar **vars, char *line)
 	free(key);
 }
 
+void export_print(t_fullvar *vars)
+{
+	t_envs *cur;
+	t_words *keys;
+	int found;
+
+	keys = vars->allkeys;
+	sort_words(&keys);
+	while (keys)
+	{
+		cur = get_env(&found, keys->txt, vars->exenvs);
+		if (!(keys->txt[0] == '_' && !keys->txt[1])){
+			if (found)
+				printf("declare -x %s=\"%s\"\n", keys->txt, cur->env_value);
+			else
+				printf("declare -x %s\n", keys->txt);
+		}
+		keys = keys->next;
+	}	
+}
+
 int check_exvar(char *line)
 {
 	int help;
 
-	help = check_envvar(line, nlindex(line, '='));
+	help = nlindex(line, '=');
+	if (help == -1)
+		help = ft_strlen(line);
+	help = check_envvar(line, help);
 	if (help != SUCCESS)
 	{
 		printf("bash: export: `%s': not a valid identifier\n", line);

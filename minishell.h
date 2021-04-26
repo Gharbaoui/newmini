@@ -201,6 +201,7 @@ void free_w(t_words **words);
 //// gather_env
 int fill_envtable(t_fullvar **fullvar, char **env);
 int rest_envt(t_envs ***envtable);
+int ft_exist(t_words *words, char *str);
 int hash_env_name(char *env_name);
 int add_toenvtable(t_fullvar **vars, char *line);
 int add_node_to(t_envs **head, t_envs **current);
@@ -258,7 +259,6 @@ int fill_normal(char *tmp, int index, char *value);
 int orgniz_mod_words(t_words *words, t_words **nw);
 int first_one(t_words **help, char *line);
 int get_words(char *line, t_words **help);
-int is_built_in(char *lcmd);
 int last_word(t_words **nw, char *line);
 int modify_prev(char *prv, char *cur);
 int nonequt(char c);
@@ -317,7 +317,16 @@ char **update_env_var(t_envs **exenvs);
 int get_hasht_size(t_envs **exenvs);
 ///// export 
 char *get_key(char *line);
-int ft_export(t_fullvar **vars, char *line);
+void export_print(t_fullvar *vars);
+int ft_export(char **args, t_fullvar **vars);
+int sub_export(t_fullvar **vars, char *line);
 int check_exvar(char *line);
-
+//// print_export 
+t_words *sortd_merg(t_words *w1, t_words *w2);
+int sort_words(t_words **words);
+void real_work_sort(t_words **words);
+int run_built_in(t_onecmd cmd, t_fullvar **vars);
+void fill_rest(t_words **fin, t_words *w);
+int run_built_in(t_onecmd cmd, t_fullvar **vars);
+void split_words(t_words *words, t_words **a, t_words **b);
 // 62 68  0x0000000100103330

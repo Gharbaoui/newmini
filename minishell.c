@@ -1,7 +1,6 @@
 #include "minishell.h"
 int main(int argc, char **argv, char **env)
 {
- 
 	bash_loop(env);
 }
 
@@ -21,12 +20,8 @@ void bash_loop(char **env)
 	variables->allkeys = NULL;
 	ret = fill_envtable(&variables, env);// returns Success or memory error or Empty env
 	
-	status = 1;
 	add_toenvtable(&variables, "?=0");
-	/*ft_export(&variables, "new=");
-	print_words(variables->allkeys, 0, "");
-	print_words(variables->filledvar, 0, "");*/
-
+	status = 1;
 	while (status)
 	{
 		free(line);

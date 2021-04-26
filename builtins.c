@@ -68,23 +68,3 @@ int		pwd()
 	}
 	return (0);
 }
-//-------------------------------------------------------
-
-int main()
-{
-    char *args[2];
-	args[0] = "echo";
-	args[1] = NULL;
-	// args[2] = "psps";
-	// args[3] = "brps";
-	// args[4] = NULL;
-
-    // _echo(args);
-	pwd();
-	cd("gsrgs");
-	pwd();
-	// cd("/Users");
-	// pwd();
-
-    return (0);
-}
