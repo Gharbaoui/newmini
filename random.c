@@ -24,6 +24,15 @@ int istxt(char c)
 	return 0;
 }
 
+void free_dstr(char **str)
+{
+	int i;
+
+	i = -1;
+	while (str[++i])
+		free(str[i]);
+}
+
 int ft_strcmp(char *s1, char *s2)
 {
 	int i;
@@ -74,6 +83,7 @@ char *ft_reverse(char *line)
 	i = -1;
 	while (line[++i])
 		tmp[i] = line[--j];
+	tmp[i] = 0;
 	return tmp;
 }
 

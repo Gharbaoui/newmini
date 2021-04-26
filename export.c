@@ -10,13 +10,14 @@ int sub_export(t_fullvar **vars, char *line)
 	glob_vars.exitstatus = 0;	
 	if (line == NULL){
 		export_print(*vars);
-		return SUCCESS;
+		return 0;
 	}
 	if (check_exvar(line) != SUCCESS)
-		return ENVERROR;
+		return glob_vars.exitstatus;
 	key = get_key(line);
 	ret = ft_strlen(key) - 1;
 	tmp = NULL;
+	glob_vars.envchanged = 1;
 	if (key[ret] == '+'){
 		tmp = ft_strdup(key);
 		tmp[ret] = 0;
@@ -42,6 +43,7 @@ int sub_export(t_fullvar **vars, char *line)
 	if (tmp)
 		free(tmp);
 	free(key);
+	return 0;
 }
 
 void export_print(t_fullvar *vars)

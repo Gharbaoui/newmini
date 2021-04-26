@@ -3,17 +3,25 @@
 int fullexcute(t_completecmd **complete, t_fullvar **variables)
 {
 	t_pipcommand *pcmd;
+	int check;
 	t_completecmd *comp;
 
 	comp = *complete;
+	check = 0;
 	while (comp)
 	{
-		glob_vars.envp  = update_env_var((*variables)->exenvs);
+		if (glob_vars.envchanged || check == 0){
+			glob_vars.envp  = update_env_var((*variables)->exenvs);
+			glob_vars.envchanged = 0;
+			check = 1;
+		}
 		pcmd = expand_current_command(comp, *variables);
 		excute_one_cmd(pcmd, variables);
-		// free envp variable here
+		if (glob_vars.envchanged)
+			free_dstr(glob_vars.envp);
 		comp = comp->next;
-	}	
+	}
+	return SUCCESS;
 }
 
 int excute_one_cmd (t_pipcommand *pcmd, t_fullvar **variables)
@@ -26,19 +34,31 @@ int excute_one_cmd (t_pipcommand *pcmd, t_fullvar **variables)
 	{
         alloc_pipes(&pipes, nums.count);
 		nums.index = 0;
-        glob_vars.exitstatus = ex_mu_p_cmd(pcmd, pipes, variables, nums);
-		glob_vars.exitstatus = WEXITSTATUS(glob_vars.exitstatus);
+        ex_mu_p_cmd(pcmd, pipes, variables, nums);
     }else{
 		run_sim_cmd(pcmd->cmd, variables);
 	}
-	printf("%d\n", 	glob_vars.exitstatus);
+	update_exit_status((*variables)->exenvs);
+	return SUCCESS;
 }
 
+void update_exit_status(t_envs **exenvs)
+{
+	t_envs *cvar;
+	int found;
+	
+	cvar = get_env(&found, "?", exenvs);
+	free(cvar->env_value);
+	cvar->env_value = ft_itoa(glob_vars.exitstatus);
+}
 
 
 
 int run_exact_cmd(t_onecmd cmd, t_fullvar **env_var)
 {
-    execve(cmd.cmd, cmd.args, glob_vars.envp);
-    return -1;
+	if (!builtin(cmd.cmd)){
+    	execve(cmd.cmd, cmd.args, glob_vars.envp);
+    	return -1;
+	}
+	return run_built_in(cmd, env_var);
 }

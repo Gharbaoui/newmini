@@ -30,8 +30,7 @@ char **update_env_var(t_envs **exenvs)
         help = exenvs[i];
         while (help)
         {
-			if (help->env_value[0] != '\0')
-            	full[++j] = get_fullstr(help);
+            full[++j] = get_fullstr(help);
             help = help->next;
         }
     }

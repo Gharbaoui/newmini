@@ -128,6 +128,7 @@ g_vars glob_vars;
 
 /// random.c
 char *cutstring(char *str, int start, int last);
+void free_dstr(char **str);
 char *ft_reverse(char *line);
 char* ft_itoa(int value);
 void print_pipes(t_words **pipes, int numofcmds);
@@ -319,6 +320,7 @@ int get_hasht_size(t_envs **exenvs);
 char *get_key(char *line);
 void export_print(t_fullvar *vars);
 int ft_export(char **args, t_fullvar **vars);
+void update_exit_status(t_envs **exenvs);
 int sub_export(t_fullvar **vars, char *line);
 int check_exvar(char *line);
 //// print_export 

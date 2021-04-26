@@ -3,14 +3,16 @@
 int ft_export(char **args, t_fullvar **vars)
 {
 	int i;
+	int ret;
 
 	i = 0;
+	ret = 0;
 	while (args[++i])
 	{
-		sub_export(vars, args[i]);
+		ret = sub_export(vars, args[i]);
 	}
 	if (i == 1)
-		sub_export(vars, NULL);
+		ret = sub_export(vars, NULL);
 		
-	return 0;
+	return ret;
 }

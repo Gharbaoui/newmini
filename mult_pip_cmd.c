@@ -28,7 +28,9 @@ int exc_one_cmd(t_onecmd cmd, int **pipe, t_iter nums, t_fullvar **env_var)
         return 1;
     if (cmd.cmd)
     {
-        run_exact_cmd(cmd, env_var);
+        ret = run_exact_cmd(cmd, env_var);
+		if (ret != -1)
+			return ret;
         dup2(orgin[1], 1);
         dup2(orgin[0], 0);
         if (cmd.cmd[0] == '/' || cmd.cmd[0] == '~' || cmd.cmd[0] == '.')
@@ -40,6 +42,13 @@ int exc_one_cmd(t_onecmd cmd, int **pipe, t_iter nums, t_fullvar **env_var)
     return 0;
 }
 
+int help_ex_mu(int pid, int **pipe, int numindex)
+{
+	int status;
+	close(pipe[numindex - 1][READ_END]);
+	waitpid(pid, &status, 0);
+	return status;
+}
 
 int ex_mu_p_cmd(t_pipcommand *pcmd, int **pipe, t_fullvar **env_var, t_iter nums)
 {
@@ -55,11 +64,9 @@ int ex_mu_p_cmd(t_pipcommand *pcmd, int **pipe, t_fullvar **env_var, t_iter nums
 		if (pid == 0)
 			run_child(cmd, pipe, nums, env_var);
         if (pcmd->next == NULL)
-        {
-            close(pipe[nums.index - 1][READ_END]);
-            waitpid(pid, &status, 0);
-            return status;
-        }else{
+			return help_ex_mu(pid, pipe, nums.index);
+		else
+		{
             nums.index++;
             status = ex_mu_p_cmd(pcmd->next, pipe, env_var, nums);
             wait(NULL);
@@ -70,3 +77,5 @@ int ex_mu_p_cmd(t_pipcommand *pcmd, int **pipe, t_fullvar **env_var, t_iter nums
 	}
 	return -1999;
 }
+
+

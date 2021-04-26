@@ -82,7 +82,7 @@ int actual_exec_one(t_onecmd cmd, t_fullvar **env_var)
 			printf("bash: %s: Permission denied\n", cmd.cmd);
 			return 126;
 		}
-        run_exact_cmd(cmd, env_var);
+        execve(cmd.cmd, cmd.args, glob_vars.envp);
         dup2(origin[1], 1);
         dup2(origin[0], 0);
         if (cmd.cmd[0] == '/' || cmd.cmd[0] == '~' || cmd.cmd[0] == '.')
