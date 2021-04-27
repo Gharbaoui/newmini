@@ -190,18 +190,22 @@ int local_words(t_words **words, char *line, int i)
 t_words *local_wordsh1(int *index, int start,char *line)
 {
 	int i;
+	int num;
 	t_words *word;
 
 	i = *index;
 	word = malloc(sizeof(t_words));
-	if (line[i] == '"' || line[i] == 39)
+	num = backslash(line, i);
+	if ((line[i] == '"' && num % 2 == 0) || line[i] == 39)
 	{
 		i += valditadsq(line + i);
 		word->txt = cutstring(line, start, i + 1);
 	}else{
-		while (line[++i])
-			if (line[i] == '"' || line[i] == 39)
+		while (line[++i]){
+			num = backslash(line, i);
+			if ((line[i] == '"' && num % 2 == 0) || line[i] == 39)
 				break;
+		}
 		word->txt = cutstring(line, start, i);
 		i--;
 	}

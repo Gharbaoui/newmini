@@ -91,6 +91,7 @@ int modify_str(char **str)
 	t_words *words = NULL; // just store words in str splited by " or  '
 	int size;
 	char *help;
+	int num;
 	int i;
 	char c;
 	int check, start;
@@ -102,7 +103,8 @@ int modify_str(char **str)
 	size = 0;
 	while (help[++i])
 	{
-		if (help[i] == '"' || help[i] == 39){ //  ""''ls''""
+		num = backslash(help, i);
+		if ((help[i] == '"' && num % 2 == 0) || help[i] == 39){ //  ""''ls''""
 			c = help[i];
 			start = i;
 			while (help[++i] && help_in_modstr(help, i, c))
@@ -117,7 +119,7 @@ int modify_str(char **str)
 		}
 		else {
 			start = i - 1; //// 
-			while (help[++i] && (help[i] != '"' && help[i] != 39))
+			while (help[++i] && (help[i] != '"' && help[i] != 39)) /// run hello \"
 				check = 1;
 			size += i - start;
 			size -= 1;
@@ -147,7 +149,6 @@ int modify_str(char **str)
 		free_w(&words);
 	return SUCCESS; // all good
 }
-
 
 int addtowords(t_words **words, char *str, int start, int end){
 	

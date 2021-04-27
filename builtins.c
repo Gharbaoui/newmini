@@ -36,6 +36,7 @@ int     _echo(char **args)
     int new_line;
 	int i;
 
+	glob_vars.exitstatus = 0;
     new_line = 0;
 	i = 1;
     while (args[i] && ft_strcmp(args[i], "-n") == 0)
@@ -50,6 +51,7 @@ int     _echo(char **args)
 	}
     if (new_line == 1 || !(args[1]))
         printf("\n");
+	fflush(stdout);
     return (0);
 }
 //-------------------------------------------------------

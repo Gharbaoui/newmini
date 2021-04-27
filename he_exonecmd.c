@@ -18,7 +18,10 @@ int run_sim_ifcmd(t_onecmd cmd, t_fullvar **env_var)
        	return status;
     }
 	else
+	{
+		/// here i need to make files >l 
 		run_built_in(cmd, env_var);
+	}
 	return -1999;
 }
 

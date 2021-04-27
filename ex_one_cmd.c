@@ -28,10 +28,18 @@ int run_sim_cmd(t_onecmd cmd, t_fullvar **env_var)
 int run_built_in(t_onecmd cmd, t_fullvar **vars)
 {
 	char *lcmd;
-
+	
 	lcmd = lower_str(cmd.cmd);
 	if (ft_strcmp(lcmd, "export") == 0)
+	{
+		free(lcmd);
 		return ft_export(cmd.args, vars);
+	}
+	if (ft_strcmp(lcmd, "echo") == 0)
+	{
+		free(lcmd);
+		return _echo(cmd.args);
+	}
 }
 
 

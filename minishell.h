@@ -328,6 +328,8 @@ int ft_export(char **args, t_fullvar **vars);
 void update_exit_status(t_envs **exenvs);
 int sub_export(t_fullvar **vars, char *line);
 int check_exvar(char *line);
+//// echo
+int     _echo(char **args);
 //// print_export 
 t_words *sortd_merg(t_words *w1, t_words *w2);
 int sort_words(t_words **words);
