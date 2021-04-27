@@ -310,8 +310,12 @@ int exc_one_cmd(t_onecmd cmd, int **pipe, t_iter nums, t_fullvar **env_var);
 int run_exact_cmd(t_onecmd cmd, t_fullvar **env_var);
 int run_cmd(t_onecmd cmd, t_fullvar **env_var);
 
+int cre_write_files(char ***fs, char *file, char *op, int *append);
+void init_in_creat_wf(char ***fs, int *i, int *error);
 int run_sim_cmd(t_onecmd cmd, t_fullvar **env_var);
+int run_sim_ifcmd(t_onecmd cmd, t_fullvar **env_var);
 int handl_red(t_onecmd cmd);
+void help_handl_red(char **fs, int append);
 int actual_exec_one(t_onecmd cmd, t_fullvar **env_var);
 int builtin(char *cmd);
 char **update_env_var(t_envs **exenvs);
@@ -326,6 +330,8 @@ int check_exvar(char *line);
 //// print_export 
 t_words *sortd_merg(t_words *w1, t_words *w2);
 int sort_words(t_words **words);
+void red_in_decide_files(char **fs, int **pipe, int append, t_iter nums);
+void red_in_decide_no_files(int **pipe, t_iter nums);
 void real_work_sort(t_words **words);
 int run_built_in(t_onecmd cmd, t_fullvar **vars);
 void fill_rest(t_words **fin, t_words *w);

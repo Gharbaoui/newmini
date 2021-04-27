@@ -2,22 +2,26 @@
 
 int run_sim_cmd(t_onecmd cmd, t_fullvar **env_var)
 {
-    int pid;
+	char **fs;
     int status;
-
-    if (!builtin(cmd.cmd))
-    {
-        pid = fork();
-        if (pid == 0)
-        {
-            status = actual_exec_one(cmd, env_var);
-            exit(status);
-        }
-        waitpid(pid, &status, 0);
-		glob_vars.exitstatus = WEXITSTATUS(status);
-        return status;
-    }else
-		run_built_in(cmd, env_var);
+	int error;
+	
+	if (cmd.cmd)
+	{
+		status = run_sim_ifcmd(cmd, env_var);
+		if (status != -1999)
+			return status;
+	}
+	else
+	{
+		fs = creat_w_files(cmd.files, cmd.ops, &error, &status);
+		if (error)
+		{
+        	printf("bash: %s: No such file or directory\n", fs[0]);
+			glob_vars.exitstatus = 1;
+        	return 1; // error happend
+		}
+	}
     return 0;
 }
 
@@ -35,7 +39,6 @@ int run_built_in(t_onecmd cmd, t_fullvar **vars)
 int handl_red(t_onecmd cmd)
 {
     char **fs;
-    int fd[2];
     int error;
     int append;
     
@@ -43,24 +46,9 @@ int handl_red(t_onecmd cmd)
     {
         fs = creat_w_files(cmd.files, cmd.ops, &error, &append);
         if (error == 0)
-        {
-            if (fs[1])
-            {
-                if (append == 0)
-				    fd[1] = open (fs[1], O_WRONLY);
-                else
-                    fd[1] = open(fs[1], O_WRONLY | O_APPEND);
-				dup2(fd[1], 1);
-				close(fd[1]);
-            }
-            if (fs[0])
-            {
-				fd[0] = open (fs[0], O_RDONLY);
-				dup2(fd[0], 0);
-				close(fd[0]);
-            }
-        }
-        else{
+			help_handl_red(fs, append);
+        else
+		{
             printf("bash: %s: No such file or directory\n", fs[0]);
             return 1; // error happend
         }
