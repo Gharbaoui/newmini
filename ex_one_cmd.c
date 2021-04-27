@@ -59,17 +59,16 @@ int handl_red(t_onecmd cmd)
 int actual_exec_one(t_onecmd cmd, t_fullvar **env_var)
 {
     int origin[2];
-
+	
+	origin[0] = prm_check(cmd);
+	if (origin[0] != 0)
+		return origin[0];
     origin[1] = dup(1);
     origin[0] = dup(0);
     if (handl_red(cmd))
         return 1;
     if (cmd.cmd)
     {
-		if (cmd.prem != 0){
-			printf("bash: %s: Permission denied\n", cmd.cmd);
-			return 126;
-		}
         execve(cmd.cmd, cmd.args, glob_vars.envp);
         dup2(origin[1], 1);
         dup2(origin[0], 0);

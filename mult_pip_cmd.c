@@ -23,6 +23,9 @@ int exc_one_cmd(t_onecmd cmd, int **pipe, t_iter nums, t_fullvar **env_var)
     int orgin[2];
 
     default_fds(&orgin[1], &orgin[0]);
+	ret = prm_check(cmd);
+	if (ret != 0)
+		return ret;
     ret = decide_in_out(pipe, cmd.files, cmd.ops, nums);
     if (ret != 0) // means that file is mising
         return 1;
@@ -47,6 +50,7 @@ int help_ex_mu(int pid, int **pipe, int numindex)
 	int status;
 	close(pipe[numindex - 1][READ_END]);
 	waitpid(pid, &status, 0);
+	glob_vars.exitstatus = WEXITSTATUS(status);
 	return status;
 }
 

@@ -307,6 +307,7 @@ int close_in_parent(int **pipe, int pindex);
 int ex_mu_p_cmd(t_pipcommand *pcmd, int **pipe, t_fullvar **env_var, t_iter nums);
 
 int exc_one_cmd(t_onecmd cmd, int **pipe, t_iter nums, t_fullvar **env_var);
+int prm_check(t_onecmd cmd);
 int run_exact_cmd(t_onecmd cmd, t_fullvar **env_var);
 int run_cmd(t_onecmd cmd, t_fullvar **env_var);
 

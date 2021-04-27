@@ -85,7 +85,11 @@ t_envs *make_node_env(int *ern, char *line, t_fullvar **vars)
 			add_to_words_str(&(*vars)->filledvar, currentEnv->env_name);
 		}
 	}else
-	{	if (ft_exist((*vars)->allkeys, line) == 0)
+	{	
+		eq_pos = ft_strlen(line) - 1;
+		if (line[eq_pos] == '+')
+			line[eq_pos] = 0;
+		if (ft_exist((*vars)->allkeys, line) == 0)
 			add_to_words_str(&(*vars)->allkeys, line);
 		free(currentEnv);
 		currentEnv = NULL;

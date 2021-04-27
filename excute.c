@@ -15,6 +15,26 @@ int close_in_parent(int **pipe, int pindex)
     return 0;
 }
 
+int prm_check(t_onecmd cmd)
+{
+	int error;
+	int append;
+	char **fs;
+
+	fs = creat_w_files(cmd.files, cmd.ops, &error, &append);	
+	if (error)
+	{
+        printf("bash: %s: No such file or directory\n", fs[0]);
+		return 1;
+	}
+	if (cmd.cmd && cmd.prem)
+	{
+		printf("bash: %s: Permission denied\n", cmd.cmd);
+		return 126;
+	}
+	return 0;	
+}
+
 int decide_in_out(int **pipe, char **files, char **ops, t_iter nums)
 {
 	char **fs;
