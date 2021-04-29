@@ -145,36 +145,47 @@ int backs_filter_str(char **str, t_envs **exenvs, t_words **newwords)
 {
     t_words *words;
     t_words *mod_words;
+	t_dollar *strdol;
     int ret;
     char *line;
 
     line = *str;
     words = NULL;
+	strdol = NULL;
     mod_words = NULL;
-    ret = local_words(&words, line, -1);
+    ret = local_words(&words, line, -1, &strdol);  // need to be given to orgnize words strdol to decide if you will split words or not depending if it was dolar split if not keep the orgin string
 	*newwords = NULL;
     if (line[0] == '$' && words->next == NULL && empty_var(words, exenvs))
         return SUCCESS;
 	ret = work_on_words(&mod_words, words, exenvs, 0);
-	orgniz_mod_words(mod_words, newwords);
+	ch_was_var(&mod_words);
+	orgniz_mod_words(mod_words, newwords, strdol);
 	free_words(&words);
 	free_words(&mod_words);
     return SUCCESS;
 }
 
 
-int local_words(t_words **words, char *line, int i)
+int local_words(t_words **words, char *line, int i, t_dollar **strdol)
 {
 	int index;
 	int start;
+	t_dollar *cdoll;
 	t_words *word;
 	int check;
+	
 	if (*line)
 	{	
 		while (line[++i])
 		{
+			cdoll = malloc(sizeof(t_dollar));
+			cdoll->isd = 0;
+			cdoll->next = NULL;
 			start = i;
 			word = local_wordsh1(&i, start, line);
+			if (word->txt[0] == '$')
+				cdoll->isd = 1;
+			addstr_ints(strdol, &cdoll);
 			addtmptowords(words, &word);
 		}
 	}else{
@@ -186,6 +197,9 @@ int local_words(t_words **words, char *line, int i)
 
 	return SUCCESS;
 }
+
+
+
 
 t_words *local_wordsh1(int *index, int start,char *line)
 {
@@ -213,6 +227,24 @@ t_words *local_wordsh1(int *index, int start,char *line)
 	return word;
 }
 
+int valid_space(char *line)
+{
+	int len;
+
+	len = ft_strlen(line);
+	while (--len >=0 && line[len])
+		if (line[len] == 92)
+			break ;
+	if (line[len] == 92)
+	{
+		len++;
+		len = backslash(line, len);
+		if (len % 2 == 0)
+			return 1;
+		return 0;
+	}
+	return 1;
+}
 
 int work_on_words(t_words **mod_words, t_words *words, t_envs **exenvs, int order)
 {
@@ -227,7 +259,7 @@ int work_on_words(t_words **mod_words, t_words *words, t_envs **exenvs, int orde
         if (!words->next && words->txt[0] != '"' && words->txt[0] != 39)
         {
             lastin = ft_strlen(cuw->txt) - 1;
-            if (cuw->txt[lastin] == ' ')
+            if (cuw->txt[lastin] == ' ' && valid_space(words->txt))
                 cuw->txt[lastin] = 0;
         }
         addtmptowords(mod_words, &cuw);
@@ -235,6 +267,7 @@ int work_on_words(t_words **mod_words, t_words *words, t_envs **exenvs, int orde
     }
 	return SUCCESS;
 }
+
 
 
 int filter_string(t_words **words, t_words *w, t_envs **exenvs, int order)
@@ -279,7 +312,7 @@ int get_var_name(char *line, char **key)
 
 int is_special(char c)
 {
-    if (c == 92 || c == '>' || c == '<')
+    if (c == 92 || c == '>' || c == '<' || c == ' ')
         return 1;
     if (c == '$' || c == '"' || c == '&')
         return 1;
@@ -349,7 +382,7 @@ t_strlen loop_in_filter_string(char *line, t_envs **exenv, t_words **keys)
 	{
 		if (line[i] == 92 && is_special(line[i + 1]) && ++i)
 			backtotal++;
-		else if (line[i] == '$' && line[i + 1] && line[i + 1] != ' ')
+		else if (line[i] == '$' && line[i + 1] && line[i + 1] != '/' && line[i + 1] != ' ')
 		{
 			varsize = loop_in_filter_stringh1(&i, line, keys, exenv);
 			ret = ft_strlen(get_last_word(*keys));
@@ -367,7 +400,7 @@ void collect_strs_h1(t_collstrs *vars, t_words **keys, t_envs **exenv, int order
 	t_envs *cvar;
 	int found;
 
-	if (vars->line[vars->nums.i] == '$' && vars->line[vars->nums.i + 1] && vars->line[vars->nums.i + 1] != ' ')
+	if (vars->line[vars->nums.i] == '$' && vars->line[vars->nums.i + 1] &&  vars->line[vars->nums.i + 1]  != '/' && vars->line[vars->nums.i + 1] != ' ')
 	{
 		if (vars->nums.i > 0)
 			vars->nums.status = 1;
@@ -612,7 +645,7 @@ int fill_normal(char *tmp, int index, char *value)
 }
 
 
-int orgniz_mod_words(t_words *words, t_words **nw)
+int orgniz_mod_words(t_words *words, t_words **nw, t_dollar *strdol)
 {
 	char *tmp;
 	char *back;
@@ -621,9 +654,12 @@ int orgniz_mod_words(t_words *words, t_words **nw)
 	t_words *help;
 	
 	*nw = NULL;
-	first_one(nw, words->txt);
-	words = words->next;
-	tmp = (*nw)->txt;
+	if (strdol->isd){
+		first_one(nw, words->txt);
+		words = words->next;
+		tmp = (*nw)->txt;
+		strdol = strdol->next;
+	}
 	if (words == NULL && (tmp[0] == 39 || tmp[0] == '"'))
 	{
 		tmp++;
@@ -635,20 +671,34 @@ int orgniz_mod_words(t_words *words, t_words **nw)
 	while (words)
 	{
 		help = NULL;
-		first_one(&help, words->txt);
-		tmp = get_last_word(*nw);
-		if (modify_prev(tmp, help->txt))
+		if (strdol->isd)
 		{
-			last_word(nw, help->txt);
-			head = help;
-			help = help->next;
-			free (head->txt);
-			free(head);
+			first_one(&help, words->txt);
+			tmp = get_last_word(*nw);
+			if (modify_prev(tmp, help->txt))
+			{
+				last_word(nw, help->txt);
+				head = help;
+				help = help->next;
+				free (head->txt);
+				free(head);
+			}
+		}else
+		{
+			fill_unchaged(&help, words->txt);	
 		}
+		strdol = strdol->next;
 		add_words(nw, &help);
 		words = words->next;
 	}
 	return SUCCESS;
+}
+
+void fill_unchaged(t_words **word, char *line)
+{
+	*word = malloc(sizeof(word));
+	(*word)->txt = ft_strdup(line);
+	(*word)->next = NULL;
 }
 
 void add_words(t_words **orgin, t_words **forien)

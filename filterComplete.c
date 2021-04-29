@@ -192,6 +192,19 @@ void addtmptowords(t_words **words, t_words **word)
 }
 
 
+void addstr_ints(t_dollar **head, t_dollar **new)
+{
+	t_dollar *help;
+	(*new)->next = NULL;
+	if (*head == NULL)
+		*head = *new;
+	else{
+		help = *head;
+		while (help && help->next)
+			help = help->next;
+		help->next = *new;
+	}	
+}
 
 int modify_ln(t_words **words)
 {

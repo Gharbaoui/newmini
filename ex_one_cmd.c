@@ -40,6 +40,11 @@ int run_built_in(t_onecmd cmd, t_fullvar **vars)
 		free(lcmd);
 		return _echo(cmd.args);
 	}
+	if (ft_strcmp(lcmd, "cd") == 0)
+	{
+		free(lcmd);
+		return cd(cmd.args, vars);
+	}
 }
 
 
@@ -58,6 +63,8 @@ int handl_red(t_onecmd cmd)
         else
 		{
             printf("bash: %s: No such file or directory\n", fs[0]);
+			glob_vars.exitstatus = 1;
+			fflush(stdout); //// need to be remved
             return 1; // error happend
         }
     }
@@ -88,6 +95,18 @@ int actual_exec_one(t_onecmd cmd, t_fullvar **env_var)
     }
     return 0;
 }
+
+
+int exc_one_built(t_onecmd cmd, t_fullvar **env_var)
+{
+	
+    if (handl_red(cmd))
+        return 1;
+    if (cmd.cmd)
+		return run_built_in(cmd, env_var);
+    return 0;
+}
+
 
 int builtin(char *cmd)
 {

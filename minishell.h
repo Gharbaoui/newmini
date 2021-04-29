@@ -28,7 +28,7 @@
 #define NEX 9 // NOT EXCUTABLE
 
 // structres
-
+///// look for fflush and remove it
 typedef struct strlen{
 	char *line;
 	int len;
@@ -69,6 +69,12 @@ typedef struct completecmd{
 	t_pipcmd *splcommand;
 	struct completecmd *next;
 } t_completecmd;
+
+typedef struct s_isdollar
+{
+	int isd; // if comes from dollar will have value of 1 otherwise 0
+	struct s_isdollar *next;
+}t_dollar;
 
 typedef struct iter{
 	int i;
@@ -155,6 +161,7 @@ int fill_commands(t_words **commands, char *line);
 void rest_txt_next(char **str, t_words **next);
 int calcfirst(char *line, char c, int *last, int *is_str);
 int backslash(char *line, int index);
+void addstr_ints(t_dollar **head, t_dollar **newint);
 int help_short_calcfirst(int *i, int *dq, int *sq, int is_first);
 int countnumberofcmds(t_words *commands);
 int simplecheck(char *line);
@@ -245,7 +252,7 @@ int expand_commandtxt(t_cmd **cmd, t_envs **exenvs);
 int expand_txts(t_words **txts, t_envs **exenvs);
 int expand_txtsh2(int len, t_words **all);
 int backs_filter_str(char **str, t_envs **exenvs, t_words **newwords);
-int local_words(t_words **words, char *line, int i);
+int local_words(t_words **words, char *line, int i, t_dollar **strdol);
 int work_on_words(t_words **mod_words, t_words *words, t_envs **exenvs, int order);
 int filter_string(t_words **words, t_words *w, t_envs **exenvs, int order);
 int get_var_name(char *line, char **key);
@@ -257,7 +264,7 @@ int fill_first(char *tmp, int index, char *value);
 int mk_and_add_to_words(t_words **words, char *line);
 int fill_from_words(char *tmp, int index, t_words *words);
 int fill_normal(char *tmp, int index, char *value);
-int orgniz_mod_words(t_words *words, t_words **nw);
+int orgniz_mod_words(t_words *words, t_words **nw, t_dollar *strdol);
 int first_one(t_words **help, char *line);
 int get_words(char *line, t_words **help);
 int last_word(t_words **nw, char *line);
@@ -294,6 +301,7 @@ char lower_char(char c);
 int fullexcute(t_completecmd **complete, t_fullvar **variables);
 int excute_one_cmd(t_pipcommand *pcmd, t_fullvar **variables);
 int get_num_subcmds(t_pipcommand *pcmd);
+void default_fds(int *stdo, int *stdi);
 void alloc_pipes(int ***pipes, int count);
 int exec_multi_pipe(t_pipcommand *pcmd, int **pipe, t_fullvar **variables, t_iter nums);
 char  **creat_w_files(char **files, char **ops, int *error, int *append); // returns last file
@@ -323,6 +331,7 @@ char **update_env_var(t_envs **exenvs);
 int get_hasht_size(t_envs **exenvs);
 ///// export 
 char *get_key(char *line);
+ int exc_one_built(t_onecmd cmd, t_fullvar **env_var);
 void export_print(t_fullvar *vars);
 int ft_export(char **args, t_fullvar **vars);
 void update_exit_status(t_envs **exenvs);
@@ -330,6 +339,8 @@ int sub_export(t_fullvar **vars, char *line);
 int check_exvar(char *line);
 //// echo
 int     _echo(char **args);
+int cd(char **paths, t_fullvar **vars);
+void set_pwd(t_fullvar **vars);
 //// print_export 
 t_words *sortd_merg(t_words *w1, t_words *w2);
 int sort_words(t_words **words);
@@ -340,4 +351,8 @@ int run_built_in(t_onecmd cmd, t_fullvar **vars);
 void fill_rest(t_words **fin, t_words *w);
 int run_built_in(t_onecmd cmd, t_fullvar **vars);
 void split_words(t_words *words, t_words **a, t_words **b);
+void fill_unchaged(t_words **word, char *line);
+int var_founded(t_words **words, int kl, int counter);
+int var_exist(char *line, int *len);
+int ch_was_var(t_words **words);
 // 62 68  0x0000000100103330

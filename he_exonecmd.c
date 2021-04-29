@@ -4,7 +4,9 @@ int run_sim_ifcmd(t_onecmd cmd, t_fullvar **env_var)
 {
 	int status;
 	int pid;
-	
+	int def[2];
+
+	default_fds(&def[1], &def[0]);
     if (!builtin(cmd.cmd))
    	{
         pid = fork();
@@ -18,9 +20,10 @@ int run_sim_ifcmd(t_onecmd cmd, t_fullvar **env_var)
        	return status;
     }
 	else
-	{
-		/// here i need to make files >l 
-		run_built_in(cmd, env_var);
+	{ 
+		exc_one_built(cmd, env_var);
+        dup2(def[1], 1);
+        dup2(def[0], 0);
 	}
 	return -1999;
 }
