@@ -38,13 +38,9 @@ int cd(char **paths, t_fullvar **vars)
 	i = chdir(home);
 	if (i)
 	{
-		printf("%d\n", i);
 		glob_vars.exitstatus = 1;
 		perror("minishell: cd");
 	}
-		// printf("minishell: cd: %s: No such file or directory\n", path);
-
-	// TODO: set env variables PWD and OLDPWD
 	set_pwd(vars);
 	return (i);
 }
@@ -79,10 +75,34 @@ void set_pwd(t_fullvar **vars)
 	var = get_env(&found, "PWD", (*vars)->exenvs);
 	if (found)
 		change_pwd_old_pwd(vars, var->env_value);
-	//else
+	else
+	{
 	 	// remove oldpwd and run export(OLDPWD)
+		unset_one_var("OLDPWD", vars);
+		sub_export(vars, "OLDPWD");	
+	}
 }
 //-------------------------------------------------------
+
+
+/////   env
+int ft_env (t_fullvar *vars)
+{
+	t_envs *var;
+	t_words *help;
+	int found;
+
+	help = vars->filledvar;
+	glob_vars.exitstatus = 0;
+	while (help)
+	{
+		var = get_env(&found, help->txt, vars->exenvs);
+		printf("%s=%s\n", var->env_name, var->env_value);
+		help = help->next;
+	}
+	return 0;
+}
+//////
 
 
 //////////////////////////// echo ////////////////////////////
@@ -115,7 +135,7 @@ int     _echo(char **args)
 int		pwd()
 {
 	char cwd[128];
-
+	glob_vars.exitstatus = 0;
 	if (getcwd(cwd, sizeof(cwd)))
 		printf("%s\n", cwd);
 	else

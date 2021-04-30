@@ -45,6 +45,21 @@ int run_built_in(t_onecmd cmd, t_fullvar **vars)
 		free(lcmd);
 		return cd(cmd.args, vars);
 	}
+	if (ft_strcmp(lcmd, "unset") == 0)
+	{
+		free(lcmd);
+		return ft_unset(cmd.args, vars);
+	}
+	if (ft_strcmp(lcmd, "env") == 0)
+	{
+		free(lcmd);
+		return ft_env(*vars);
+	}
+	if (ft_strcmp(lcmd, "pwd") == 0)
+	{
+		free(lcmd);
+		return  pwd();
+	}
 }
 
 

@@ -355,4 +355,15 @@ void fill_unchaged(t_words **word, char *line);
 int var_founded(t_words **words, int kl, int counter);
 int var_exist(char *line, int *len);
 int ch_was_var(t_words **words);
+/////// unset
+int ft_unset(char **args, t_fullvar **vars);
+int check_unsetvar(char *line);
+int unset_one_var(char *key, t_fullvar **vars);
+void delete_exact_word(t_words **words, char *word);
+
+// ENV
+int ft_env (t_fullvar *vars);
+int		pwd();
+
+
 // 62 68  0x0000000100103330
