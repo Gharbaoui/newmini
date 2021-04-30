@@ -52,8 +52,10 @@ int expand_commandtxt(t_cmd **cmd, t_envs **exenvs)
 	neww = NULL;
 	if ((*cmd)->command)
 	{
+
 		backs_filter_str(&(*cmd)->command, exenvs, &neww);
-		(*cmd)->command = neww->txt;
+		free ((*cmd)->command);
+		(*cmd)->command = neww->txt;  /// i will need strdup here
 		head = neww;
 		neww = neww->next;
 		free(head);
@@ -153,7 +155,7 @@ int backs_filter_str(char **str, t_envs **exenvs, t_words **newwords)
     words = NULL;
 	strdol = NULL;
     mod_words = NULL;
-    ret = local_words(&words, line, -1, &strdol);  // need to be given to orgnize words strdol to decide if you will split words or not depending if it was dolar split if not keep the orgin string
+    ret = local_words(&words, line, -1, &strdol);
 	*newwords = NULL;
     if (line[0] == '$' && words->next == NULL && empty_var(words, exenvs))
         return SUCCESS;
@@ -162,9 +164,22 @@ int backs_filter_str(char **str, t_envs **exenvs, t_words **newwords)
 	orgniz_mod_words(mod_words, newwords, strdol);
 	free_words(&words);
 	free_words(&mod_words);
+	free_ints(strdol);
     return SUCCESS;
 }
 
+void free_ints(t_dollar *d)
+{
+	t_dollar *next;
+
+	if (d)
+		next = d->next;
+	while (d)
+	{	
+		free(d);
+		d = next;
+	}
+}
 
 int local_words(t_words **words, char *line, int i, t_dollar **strdol)
 {
@@ -696,7 +711,7 @@ int orgniz_mod_words(t_words *words, t_words **nw, t_dollar *strdol)
 
 void fill_unchaged(t_words **word, char *line)
 {
-	*word = malloc(sizeof(word));
+	*word = malloc(sizeof(t_words));
 	(*word)->txt = ft_strdup(line);
 	(*word)->next = NULL;
 }

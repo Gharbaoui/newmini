@@ -21,16 +21,21 @@ int prm_check(t_onecmd cmd)
 	int append;
 	char **fs;
 
-	fs = creat_w_files(cmd.files, cmd.ops, &error, &append);	
-	if (error)
-	{
-        printf("bash: %s: No such file or directory\n", fs[0]);
-		return 1;
-	}
-	if (cmd.cmd && cmd.prem)
-	{
-		printf("bash: %s: Permission denied\n", cmd.cmd);
-		return 126;
+	if (cmd.files)
+	{	
+			fs = creat_w_files(cmd.files, cmd.ops, &error, &append);	
+			if (error)
+			{
+				printf("bash: %s: No such file or directory\n", fs[0]);
+				free(fs);
+				return 1;
+			}
+			if (cmd.cmd && cmd.prem)
+			{
+				printf("bash: %s: Permission denied\n", cmd.cmd);
+				free(fs);
+				return 126;
+			}
 	}
 	return 0;	
 }

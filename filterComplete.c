@@ -257,7 +257,8 @@ char *cleanWord(t_words *words, int size)
         ptr = tmp;
         tmp = ft_strjoin(&help, tmp);
         free(ptr);
-    }
+    }else
+		free(help);
 	return tmp;
 }
 

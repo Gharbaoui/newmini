@@ -301,7 +301,9 @@ int fill_pipcmd(t_pipcmd **pipcmd, t_words *pip)
 			return ret;
 		}
 		(*pipcmd)->next = NULL;
-		fill_pipcmd(&(*pipcmd)->next, pip->next);
+		ret = fill_pipcmd(&(*pipcmd)->next, pip->next);
+		if (ret != SUCCESS)
+			return ret;
 	}
 	return SUCCESS;
 }

@@ -17,6 +17,7 @@ int run_sim_cmd(t_onecmd cmd, t_fullvar **env_var)
 		fs = creat_w_files(cmd.files, cmd.ops, &error, &status);
 		if (error)
 		{
+			free(fs);
         	printf("bash: %s: No such file or directory\n", fs[0]);
 			glob_vars.exitstatus = 1;
         	return 1; // error happend
@@ -77,6 +78,7 @@ int handl_red(t_onecmd cmd)
 			help_handl_red(fs, append);
         else
 		{
+			free(fs);
             printf("bash: %s: No such file or directory\n", fs[0]);
 			glob_vars.exitstatus = 1;
 			fflush(stdout); //// need to be remved

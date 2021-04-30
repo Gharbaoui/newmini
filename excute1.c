@@ -1,5 +1,5 @@
 #include "minishell.h"
-
+// ls ; cat -e >g; cat < g > l; ls | cat -e; ls > k
 int fullexcute(t_completecmd **complete, t_fullvar **variables)
 {
 	t_pipcommand *pcmd;
@@ -15,7 +15,7 @@ int fullexcute(t_completecmd **complete, t_fullvar **variables)
 			glob_vars.envchanged = 0;
 			check = 1;
 		}
-		pcmd = expand_current_command(comp, *variables);
+		pcmd = expand_current_command(comp, *variables);   ///// free here
 		excute_one_cmd(pcmd, variables);
 		if (glob_vars.envchanged)
 			free_dstr(glob_vars.envp);

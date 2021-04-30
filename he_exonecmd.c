@@ -46,5 +46,6 @@ void help_handl_red(char **fs, int append)
 		fd[0] = open (fs[0], O_RDONLY);
 		dup2(fd[0], 0);
 		close(fd[0]);
-	}	
+	}
+	free(fs);
 }

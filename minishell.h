@@ -167,6 +167,7 @@ int countnumberofcmds(t_words *commands);
 int simplecheck(char *line);
 int check_errors(int ern, t_words **words);
 void free_words(t_words **words);
+void free_ints(t_dollar *d);
 void free_wcmd(t_workingcmds **wcmd, int numofcmds);
 void help_short_count(char *help, int *i);
 int fill_string_cmdtxt(t_words **commands, int len, char *line);
