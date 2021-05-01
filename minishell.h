@@ -168,6 +168,7 @@ int simplecheck(char *line);
 int check_errors(int ern, t_words **words);
 void free_words(t_words **words);
 void free_ints(t_dollar *d);
+void free_pipes(int **pipes, int count);
 void free_wcmd(t_workingcmds **wcmd, int numofcmds);
 void help_short_count(char *help, int *i);
 int fill_string_cmdtxt(t_words **commands, int len, char *line);
@@ -207,6 +208,8 @@ void addtmptowords(t_words **words, t_words **word);
 int modify_ln(t_words **words);
 char *cleanWord(t_words *words, int size);
 void free_w(t_words **words);
+void free_onecmd(t_onecmd *cmd);
+void free_laststr(t_pipcommand **pcmd);
 //// gather_env
 int fill_envtable(t_fullvar **fullvar, char **env);
 int rest_envt(t_envs ***envtable);

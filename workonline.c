@@ -668,6 +668,7 @@ void free_pipcmd(t_pipcmd **pipcmd)
 	while (*pipcmd)
 	{
 		free_cmdstr(&(*pipcmd)->cmd);
+		free(*pipcmd);
 		*pipcmd = next;
 		if (*pipcmd)
 			next = (*pipcmd)->next;
@@ -679,10 +680,11 @@ void free_comp(t_completecmd **cmp)
 	t_completecmd *next;
 	
 	if (*cmp)
-		next = *cmp;
+		next = (*cmp)->next;
 	while (*cmp)
 	{
 		free_pipcmd(&(*cmp)->splcommand);
+		free(*cmp);
 		*cmp = next;
 		if (*cmp)
 			next = (*cmp)->next;

@@ -20,24 +20,25 @@ int prm_check(t_onecmd cmd)
 	int error;
 	int append;
 	char **fs;
+	int ret;
 
+	ret = 0;
 	if (cmd.files)
 	{	
 			fs = creat_w_files(cmd.files, cmd.ops, &error, &append);	
 			if (error)
 			{
 				printf("bash: %s: No such file or directory\n", fs[0]);
-				free(fs);
-				return 1;
+				ret = 1;
 			}
-			if (cmd.cmd && cmd.prem)
+			else if (cmd.cmd && cmd.prem)
 			{
 				printf("bash: %s: Permission denied\n", cmd.cmd);
-				free(fs);
-				return 126;
+				ret = 126;
 			}
+			free(fs);
 	}
-	return 0;	
+	return ret;	
 }
 
 int decide_in_out(int **pipe, char **files, char **ops, t_iter nums)
@@ -53,6 +54,7 @@ int decide_in_out(int **pipe, char **files, char **ops, t_iter nums)
 			red_in_decide_files(fs, pipe, append, nums);
 		else
 		{
+			free(fs);
             printf("bash: %s: No such file or directory\n", fs[0]);
 			return 1;
 		}

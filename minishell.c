@@ -13,7 +13,7 @@ void bash_loop(char **env)
 	t_envs **envtable;
 	char *line = malloc(1);
 	t_completecmd *complete;
-
+	glob_vars.envchanged = 1;
 	variables = malloc(sizeof(t_fullvar));
 	variables->exenvs = NULL;
 	variables->filledvar = NULL;

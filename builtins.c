@@ -34,7 +34,6 @@ int cd(char **paths, t_fullvar **vars)
 		home = paths[1];
 	else if (home[0] == '\0')
 		home = ".";
-	//printf("mine %s\n", home);
 	i = chdir(home);
 	if (i)
 	{
@@ -57,14 +56,16 @@ void change_pwd_old_pwd(t_fullvar **vars, char *opwd)
 	oldpwd_newpwd = malloc(sizeof(char *) * 4);
 	help = ft_strdup("OLDPWD=");
 	oldpwd_newpwd[1] = ft_strjoin(&help, opwd);
-	
-	path = malloc(sizeof(1000));
+	path = malloc(1000);
 	help = ft_strdup("PWD=");
 	getcwd(path, 1000);
 	oldpwd_newpwd[2] = ft_strjoin(&help, path);
 	free(path);
 	oldpwd_newpwd[3] = NULL;
 	ft_export(oldpwd_newpwd, vars);
+	free(oldpwd_newpwd[1]);
+	free(oldpwd_newpwd[2]);
+	free(oldpwd_newpwd);
 }
 
 void set_pwd(t_fullvar **vars)

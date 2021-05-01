@@ -144,6 +144,53 @@ char *ft_strdup(char *str)
 	return tmp;
 }
 
+
+void free_laststr(t_pipcommand **pcmd)
+{
+	t_pipcommand *help;
+
+	help = *pcmd;
+	while (help)
+	{
+		free_onecmd(&help->cmd);
+		help = help->next;
+	}
+	*pcmd = NULL;
+}
+
+void free_pipes(int **pipes, int count)
+{
+	int i;
+
+	i = -1;
+	while (++i < count)
+		free(pipes[i]);
+	free(pipes);
+}
+
+void free_onecmd(t_onecmd *cmd)
+{
+	if (cmd)
+	{
+		if ((cmd)->cmd)
+			free((cmd)->cmd);
+		if ((cmd)->args)
+		{
+			free_dstr((cmd)->args);
+			free(cmd->args);
+		}
+		if ((cmd)->files)
+		{
+			free_dstr((cmd)->files);
+			free_dstr((cmd)->ops);
+			free(cmd->files);
+			free(cmd->ops);
+		}
+		free(cmd);
+		cmd = NULL;
+	}
+}
+
 ///  printing
 void print_words(t_words *words, int level, char *name)
 {

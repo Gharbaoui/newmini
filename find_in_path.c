@@ -24,6 +24,7 @@ char *get_command(char *cmd, char *PATH, int *prem, char *lcmd)
 			*prem = get_cmd_state(command);
 		}else
 			command = ft_strdup(lcmd);
+		free(b);
 	}
 	else{
 		bcmd = ft_strjoin(&b, lcmd); 

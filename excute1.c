@@ -1,26 +1,30 @@
 #include "minishell.h"
 // ls ; cat -e >g; cat < g > l; ls | cat -e; ls > k
+//
+//  ls | cat | cat -e| export a=hello
 int fullexcute(t_completecmd **complete, t_fullvar **variables)
 {
 	t_pipcommand *pcmd;
-	int check;
 	t_completecmd *comp;
 
 	comp = *complete;
-	check = 0;
 	while (comp)
 	{
-		if (glob_vars.envchanged || check == 0){
+		if (glob_vars.envchanged){
 			glob_vars.envp  = update_env_var((*variables)->exenvs);
 			glob_vars.envchanged = 0;
-			check = 1;
 		}
 		pcmd = expand_current_command(comp, *variables);   ///// free here
 		excute_one_cmd(pcmd, variables);
 		if (glob_vars.envchanged)
+		{
 			free_dstr(glob_vars.envp);
+			free(glob_vars.envp);
+		}
+		free_laststr(&pcmd);
 		comp = comp->next;
 	}
+	free_comp(complete);
 	return SUCCESS;
 }
 
@@ -35,6 +39,7 @@ int excute_one_cmd (t_pipcommand *pcmd, t_fullvar **variables)
         alloc_pipes(&pipes, nums.count);
 		nums.index = 0;
         ex_mu_p_cmd(pcmd, pipes, variables, nums);
+		free_pipes(pipes, nums.count);
     }else{
 		run_sim_cmd(pcmd->cmd, variables);
 	}
@@ -100,6 +105,7 @@ void red_in_decide_files(char **fs, int **pipe, int append, t_iter nums)
 		dup2(pipe[nums.index - 1][READ_END], 0);
 		close(pipe[nums.index - 1][READ_END]);
 	}
+	free(fs);
 }
 
 
