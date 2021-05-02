@@ -120,10 +120,12 @@ typedef struct multcmd
 } t_multcmd;
 /////////
 typedef struct {
+	char *line;
 	int envchanged;
 	char **envp;
 	int exitstatus;
 	int lastpid;
+	int childruning;
 } g_vars;
 typedef struct prstatus
 {
@@ -234,6 +236,7 @@ int add_envvar_to_table(char *line, t_fullvar **variables);
 int add_to_words_str(t_words **hid_var, char *line);
 
 
+int get_status(int st);
 
 void print_cmd(t_cmd *cmd, int level);
 void print_oldwords(t_words *word, int level, char *name);
@@ -369,5 +372,8 @@ void delete_exact_word(t_words **words, char *word);
 int ft_env (t_fullvar *vars);
 int		pwd();
 
-
+///////////////////////////////////////////////////////////////////////////////////// TESTS NEED TO REMOVE
+void handl_sig(int signum);
+int get_status(int st);
+/////////////////////////////////////////////////////////////////////////////////////
 // 62 68  0x0000000100103330

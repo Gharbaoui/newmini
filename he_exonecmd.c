@@ -1,5 +1,6 @@
 #include "minishell.h"
 
+
 int run_sim_ifcmd(t_onecmd cmd, t_fullvar **env_var)
 {
 	int status;
@@ -9,14 +10,18 @@ int run_sim_ifcmd(t_onecmd cmd, t_fullvar **env_var)
 	default_fds(&def[1], &def[0]);
     if (!builtin(cmd.cmd))
    	{
+		glob_vars.childruning = 1;
         pid = fork();
        	if (pid == 0)
        	{
+			signal(SIGINT, SIG_DFL);
+			signal(SIGQUIT, SIG_DFL);
            	status = actual_exec_one(cmd, env_var);
          	exit(status);
         }
        	waitpid(pid, &status, 0);
-		glob_vars.exitstatus = WEXITSTATUS(status);
+		glob_vars.childruning = 0;
+		glob_vars.exitstatus = get_status(status);
        	return status;
     }
 	else

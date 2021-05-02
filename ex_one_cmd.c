@@ -5,7 +5,7 @@ int run_sim_cmd(t_onecmd cmd, t_fullvar **env_var)
 	char **fs;
     int status;
 	int error;
-	
+		
 	if (cmd.cmd)
 	{
 		status = run_sim_ifcmd(cmd, env_var);
