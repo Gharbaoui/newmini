@@ -54,13 +54,15 @@ int expand_commandtxt(t_cmd **cmd, t_envs **exenvs)
 	{
 
 		backs_filter_str(&(*cmd)->command, exenvs, &neww);
-		free ((*cmd)->command);
-		(*cmd)->command = neww->txt;  /// i will need strdup here
-		head = neww;
-		neww = neww->next;
-		free(head);
-		add_words(&neww, &(*cmd)->txts);
-		(*cmd)->txts = neww;
+		if (neww){
+			free ((*cmd)->command);
+			(*cmd)->command = neww->txt;  /// i will need strdup here
+			head = neww;
+			neww = neww->next;
+			free(head);
+			add_words(&neww, &(*cmd)->txts);
+			(*cmd)->txts = neww;
+		}
 	}
 	return SUCCESS;
 }

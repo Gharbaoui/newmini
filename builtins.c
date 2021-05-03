@@ -109,6 +109,13 @@ int ft_env (t_fullvar *vars)
 int ft_exit(char **args)
 {
 	glob_vars.exit = 1;
+	if (args[2] && args[3])
+	{
+		printf("bash: exit: too many arguments\n");
+	}else if (args[2])
+	{
+		// here i need to call atoi on args[2] and store it in glob_vars.exitstatus
+	}
 	return 0;
 }
 ///////
