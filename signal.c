@@ -24,12 +24,17 @@ void handl_sig(int signum)
 			{
 				free(glob_vars.line);
 			}
-			write(1, "\nminishell=>", 12);
+			write(1, "\nminishell=>", 13);
 		}
 		else{
 			write(1, "\n", 1);	
 		}
 	}
 	if (signum == SIGQUIT)
-		printf("Cntrol + back\n");
+	{
+		if (glob_vars.childruning)
+		{
+			write(1, "QUIT 3\n", 7);
+		}
+	}
 }

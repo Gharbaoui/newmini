@@ -39,7 +39,10 @@ char *from_words_to_line(t_words *words)
 		while (words->txt[++j])
 			tmp[++i] = words->txt[j];
 		if (c == '"' || c == 39)
+		{
 			words->txt--;
+			words->txt[ft_strlen(words->txt)] = c;
+		}
 		words = words->next;
 	}
 	tmp[++i] = 0;

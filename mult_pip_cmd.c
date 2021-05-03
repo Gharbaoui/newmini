@@ -64,6 +64,7 @@ int ex_mu_p_cmd(t_pipcommand *pcmd, int **pipe, t_fullvar **env_var, t_iter nums
 	{
 		cmd = pcmd->cmd;
 		close_in_parent(pipe, nums.index);
+		glob_vars.childruning = 1;
 		pid = fork();
 		if (pid == 0)
 			run_child(cmd, pipe, nums, env_var);
@@ -79,6 +80,7 @@ int ex_mu_p_cmd(t_pipcommand *pcmd, int **pipe, t_fullvar **env_var, t_iter nums
             return -1999;
         }
 	}
+	glob_vars.childruning = 0;
 	return -1999;
 }
 

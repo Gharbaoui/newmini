@@ -73,7 +73,7 @@ int expand_txts(t_words **txts, t_envs **exenvs)
 	t_words **all;
 	
 	i = -1;
-	help = *txts;
+	help = *txts; //// look here
 	all = expand_txtsh1(help, &len);
 	while (help)
 	{
@@ -204,9 +204,13 @@ int local_words(t_words **words, char *line, int i, t_dollar **strdol)
 			addtmptowords(words, &word);
 		}
 	}else{
+		cdoll = malloc(sizeof(t_dollar));
+		cdoll->isd = 0;
+		cdoll->next = NULL;
 		word = malloc(sizeof(t_words));
 		word->txt = malloc(1);
 		word->txt[0] = 0;
+		addstr_ints(strdol, &cdoll);
 		addtmptowords(words, &word);
 	}
 
@@ -712,6 +716,11 @@ int orgniz_mod_words(t_words *words, t_words **nw, t_dollar *strdol)
 void fill_unchaged(t_words **word, char *line)
 {
 	*word = malloc(sizeof(t_words));
+	if (line[0] == '"' || line[0] == 39)
+	{
+		line++;
+		line[ft_strlen(line) - 1] = 0;
+	}
 	(*word)->txt = ft_strdup(line);
 	(*word)->next = NULL;
 }
