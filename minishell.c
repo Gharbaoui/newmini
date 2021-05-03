@@ -25,6 +25,7 @@ void bash_loop(char **env)
 	status = 1;
 	glob_vars.line = malloc(1);
 	glob_vars.childruning = 0;
+	glob_vars.exenvs = &variables->exenvs;
 	while (status)
 	{
 		free(glob_vars.line);
@@ -41,13 +42,17 @@ void bash_loop(char **env)
                 free_comp(&complete);
             }else{
                 fullexcute(&complete, &variables);
+				if (glob_vars.exit)
+				{
+					free(glob_vars.line);
+					exit(glob_vars.exitstatus);
+				}
             }
 		}else if (ret == 0)
 		{
 			printf("exited\n");
 			status = 0;
 		}
-
 	}
 }
 

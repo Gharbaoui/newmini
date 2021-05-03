@@ -138,7 +138,15 @@ int empty_var(t_words *words, t_envs **exenv)
     if (nonequt(words->txt[0])){
         work_on_words(&help, words, exenv, 0);
         if (help->txt[0] == 0)
+		{
+			free(help->txt);
+			free(help);
             return 1;
+		}else
+		{
+			free(help->txt);
+			free(help);
+		}
     }
     return 0;
 }
@@ -158,7 +166,10 @@ int backs_filter_str(char **str, t_envs **exenvs, t_words **newwords)
     ret = local_words(&words, line, -1, &strdol);
 	*newwords = NULL;
     if (line[0] == '$' && words->next == NULL && empty_var(words, exenvs))
+	{
+		free_words(&words);
         return SUCCESS;
+	}
 	ret = work_on_words(&mod_words, words, exenvs, 0);
 	ch_was_var(&mod_words);
 	orgniz_mod_words(mod_words, newwords, strdol);
@@ -178,6 +189,8 @@ void free_ints(t_dollar *d)
 	{	
 		free(d);
 		d = next;
+		if (d)
+			next = d->next;
 	}
 }
 
@@ -386,6 +399,13 @@ char *get_last_word(t_words *words)
 	return words->txt;
 }
 
+int space_check_dq(char *line, int index)
+{
+	if (line[0] == '"' && line[index + 1] == ' ')
+		return 0;
+	return 1;
+}
+
 t_strlen loop_in_filter_string(char *line, t_envs **exenv, t_words **keys)
 {
 	int i;
@@ -399,7 +419,7 @@ t_strlen loop_in_filter_string(char *line, t_envs **exenv, t_words **keys)
 	backtotal = 0;
 	while (line[++i])
 	{
-		if (line[i] == 92 && is_special(line[i + 1]) && ++i)
+		if (line[i] == 92 && is_special(line[i + 1]) && space_check_dq(line, i) && ++i)
 			backtotal++;
 		else if (line[i] == '$' && line[i + 1] && line[i + 1] != '/' && line[i + 1] != ' ')
 		{
@@ -435,7 +455,7 @@ void collect_strs_h1(t_collstrs *vars, t_words **keys, t_envs **exenv, int order
 				vars->nums.j = fill_normal(vars->tmp, vars->nums.j, cvar->env_value);
 		}
 		(*keys) = (*keys)->next;
-	}else if (vars->line[vars->nums.i] == 92 && is_special(vars->line[vars->nums.i + 1]))
+	}else if (vars->line[vars->nums.i] == 92 && is_special(vars->line[vars->nums.i + 1]) && space_check_dq(vars->line, vars->nums.i))
 		vars->tmp[++vars->nums.j] = vars->line[++vars->nums.i];
 	else
 		vars->tmp[++vars->nums.j] = vars->line[vars->nums.i];
@@ -707,7 +727,10 @@ int orgniz_mod_words(t_words *words, t_words **nw, t_dollar *strdol)
 			fill_unchaged(&help, words->txt);	
 		}
 		strdol = strdol->next;
-		add_words(nw, &help);
+		if (help->txt[0])
+			add_words(nw, &help);
+		else
+			free(help);
 		words = words->next;
 	}
 	return SUCCESS;

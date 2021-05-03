@@ -20,6 +20,8 @@ void handl_sig(int signum)
 	{
 		if (glob_vars.childruning == 0)
 		{
+			glob_vars.exitstatus = 1;
+			update_exit_status(*glob_vars.exenvs);
 			if (glob_vars.line)
 			{
 				free(glob_vars.line);

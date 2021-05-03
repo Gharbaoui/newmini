@@ -8,7 +8,7 @@ int run_sim_ifcmd(t_onecmd cmd, t_fullvar **env_var)
 	int def[2];
 
 	default_fds(&def[1], &def[0]);
-    if (!builtin(cmd.cmd))
+    if (!builtin(cmd.cmd, cmd.args[0]))
    	{
 		glob_vars.childruning = 1;
         pid = fork();

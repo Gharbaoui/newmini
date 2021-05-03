@@ -120,11 +120,13 @@ typedef struct multcmd
 } t_multcmd;
 /////////
 typedef struct {
+	t_envs ***exenvs;
 	char *line;
 	int envchanged;
 	char **envp;
 	int exitstatus;
 	int lastpid;
+	int exit;
 	int childruning;
 } g_vars;
 typedef struct prstatus
@@ -316,7 +318,6 @@ void close_pipes(int **pipes, int inex, int pipsize);
 void close_write_rest(int **pipes, int index, int pipsize);
 void close_read_rest(int **pipes, int index, int pipsize);
 int decide_in_out(int **pipes, char **files, char **ops, t_iter nums);
-int builtin(char *cmd);
 int run_command(t_onecmd cmd);
 int close_in_parent(int **pipe, int pindex);
 int ex_mu_p_cmd(t_pipcommand *pcmd, int **pipe, t_fullvar **env_var, t_iter nums);
@@ -333,7 +334,7 @@ int run_sim_ifcmd(t_onecmd cmd, t_fullvar **env_var);
 int handl_red(t_onecmd cmd);
 void help_handl_red(char **fs, int append);
 int actual_exec_one(t_onecmd cmd, t_fullvar **env_var);
-int builtin(char *cmd);
+int builtin(char *cmd, char *origin);
 char **update_env_var(t_envs **exenvs);
 int get_hasht_size(t_envs **exenvs);
 ///// export 
@@ -367,7 +368,8 @@ int ft_unset(char **args, t_fullvar **vars);
 int check_unsetvar(char *line);
 int unset_one_var(char *key, t_fullvar **vars);
 void delete_exact_word(t_words **words, char *word);
-
+/// exit
+int ft_exit(char **args);
 // ENV
 int ft_env (t_fullvar *vars);
 int		pwd();

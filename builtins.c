@@ -105,7 +105,13 @@ int ft_env (t_fullvar *vars)
 }
 //////
 
-
+////// exit
+int ft_exit(char **args)
+{
+	glob_vars.exit = 1;
+	return 0;
+}
+///////
 //////////////////////////// echo ////////////////////////////
 int     _echo(char **args)
 {

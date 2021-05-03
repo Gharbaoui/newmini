@@ -39,7 +39,7 @@ int exc_one_cmd(t_onecmd cmd, int **pipe, t_iter nums, t_fullvar **env_var)
         if (cmd.cmd[0] == '/' || cmd.cmd[0] == '~' || cmd.cmd[0] == '.')
             printf("bash: %s: No such file or directory\n", cmd.cmd);
         else
-            printf("%s: command not found\n", cmd.cmd);
+            printf("%s: command not found\n", cmd.args[0]);
         return 127; // for command not found
     }
     return 0;

@@ -22,6 +22,8 @@ int fullexcute(t_completecmd **complete, t_fullvar **variables)
 			free(glob_vars.envp);
 		}
 		free_laststr(&pcmd);
+		if (glob_vars.exit)
+			break ;
 		comp = comp->next;
 	}
 	free_comp(complete);
@@ -32,7 +34,8 @@ int excute_one_cmd (t_pipcommand *pcmd, t_fullvar **variables)
 {
 	int **pipes;
 	t_iter nums;
-	
+
+	glob_vars.exit = 0;
     nums.count = get_num_subcmds(pcmd) - 1;
     if (nums.count > 0)
 	{
@@ -60,7 +63,7 @@ void update_exit_status(t_envs **exenvs)
 
 int run_exact_cmd(t_onecmd cmd, t_fullvar **env_var)
 {
-	if (!builtin(cmd.cmd)){
+	if (!builtin(cmd.cmd, cmd.args[0])){
     	execve(cmd.cmd, cmd.args, glob_vars.envp);
     	return -1;
 	}

@@ -44,7 +44,9 @@ int run_built_in(t_onecmd cmd, t_fullvar **vars)
 	if (ft_strcmp(lcmd, "cd") == 0)
 	{
 		free(lcmd);
-		return cd(cmd.args, vars);
+		if (ft_strcmp(cmd.args[0], "cd") == 0)
+			return cd(cmd.args, vars);
+		return 0;
 	}
 	if (ft_strcmp(lcmd, "unset") == 0)
 	{
@@ -60,6 +62,11 @@ int run_built_in(t_onecmd cmd, t_fullvar **vars)
 	{
 		free(lcmd);
 		return  pwd();
+	}
+	if (ft_strcmp(lcmd, "exit") == 0)
+	{
+		free(lcmd);
+		return ft_exit(cmd.args);
 	}
 }
 
@@ -107,7 +114,7 @@ int actual_exec_one(t_onecmd cmd, t_fullvar **env_var)
         if (cmd.cmd[0] == '/' || cmd.cmd[0] == '~' || cmd.cmd[0] == '.')
             printf("bash: %s: No such file or directory\n", cmd.cmd);
         else
-            printf("%s: command not found\n", cmd.cmd);
+            printf("%s: command not found\n", cmd.args[0]);
         return 127; // for command not found
     }
     return 0;
@@ -125,7 +132,7 @@ int exc_one_built(t_onecmd cmd, t_fullvar **env_var)
 }
 
 
-int builtin(char *cmd)
+int builtin(char *cmd, char *origin)
 {
 	char *lcmd;
 	int ret;
@@ -134,7 +141,7 @@ int builtin(char *cmd)
 	lcmd = lower_str(cmd);
 	if (ft_cmpstr(lcmd, "echo") || ft_cmpstr(lcmd, "export") || ft_cmpstr(lcmd, "cd"))
     	ret = 2;
-	else if (ft_cmpstr(lcmd, "exit") || ft_cmpstr(lcmd, "unset") || ft_cmpstr(lcmd, "env") || ft_cmpstr(lcmd, "pwd"))
+	else if (ft_cmpstr(origin, "exit") || ft_cmpstr(lcmd, "unset") || ft_cmpstr(lcmd, "env") || ft_cmpstr(lcmd, "pwd"))
 		ret = 2;
 	free(lcmd);
     return ret;
