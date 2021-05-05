@@ -104,7 +104,7 @@ int modify_str(char **str)
 	while (help[++i])
 	{
 		num = backslash(help, i);
-		if ((help[i] == '"' && num % 2 == 0) || help[i] == 39){ //  ""''ls''""
+		if (num % 2 == 0 && (help[i] == '"' || help[i] == 39)){ //  ""''ls''""
 			c = help[i];
 			start = i;
 			while (help[++i] && help_in_modstr(help, i, c))
@@ -236,13 +236,13 @@ char *cleanWord(t_words *words, int size)
     t_words *head;
 	char *tmp;
     char *ptr;
-    char *help;
+    //char *help;
 	int i;
 	int j;
 
 	i = -1;
     head = words;
-	if (!(tmp = malloc(size + 1)) || !(help = ft_strdup("''")))
+	if (!(tmp = malloc(size + 1)) /*|| !(help = ft_strdup("''"))*/)
 		return 0;
 	while (words)
 	{
@@ -252,13 +252,13 @@ char *cleanWord(t_words *words, int size)
 		words = words->next;
 	}
 	tmp[++i] = 0;
-    if (tmp[0] != 0 && theres_empty(head))
+    /*if (tmp[0] != 0 && theres_empty(head))
     {
         ptr = tmp;
         tmp = ft_strjoin(&help, tmp);
         free(ptr);
     }else
-		free(help);
+		free(help);*/
 	return tmp;
 }
 

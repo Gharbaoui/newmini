@@ -32,16 +32,18 @@ int expand_one_cmdstrct(t_cmd **cmd, t_envs **exenvs)
     t_cmd *help;
 	t_words *neww;
 	t_words *head;
-
+	char *line;
 
     help = *cmd;
-	if (*cmd)
+/*	if (*cmd)
 	{
 		if ((*cmd)->txts)
 			expand_txts(&(*cmd)->txts, exenvs);
 		if ((*cmd)->command)
 			expand_commandtxt(cmd, exenvs);
-	}
+	}*/
+	line = get_full_expanded_line(*cmd, exenvs);
+	
     return SUCCESS;
 }
 
@@ -338,7 +340,7 @@ int get_var_name(char *line, char **key)
 		return SUCCESS;
 	}
     while (line[++i])
-        if (is_special(line[i]) || line[i] == ' ')
+        if (is_special(line[i]) || line[i] == ' ' || line[i] == '=')
             break ;
     *key = cutstring(line, 0, i);
     return SUCCESS;
@@ -346,7 +348,7 @@ int get_var_name(char *line, char **key)
 
 int is_special(char c)
 {
-    if (c == 92 || c == '>' || c == '<' || c == ' ')
+    if (c == 92 || c == '>' || c == '<')
         return 1;
     if (c == '$' || c == '"' || c == '&')
         return 1;

@@ -435,17 +435,21 @@ int calcfirst(char *line, char c, int *last, int *is_str)
 		dq++;
 	while (line[++i])
 	{
-		if (line[i] == '"' && sq % 2 == 0)
+		help = backslash(line, i);
+		if (help % 2 == 0 || sq % 2 != 0)
 		{
-			if (i > 0 && backslash(line, i) % 2 == 0)
-				dq++;
+			if (line[i] == '"' && sq % 2 == 0)
+			{
+				if (i > 0 && backslash(line, i) % 2 == 0)
+					dq++;
+			}
+			else if (line[i] == 39 && dq % 2 == 0) // 39 asci for ' single
+				sq++;
+			if (line[i] == c && (dq % 2 == 0 && sq % 2 == 0))
+				return i;
+			if (line[i] != ' ' && line[i] !=  '|') /// 92 for '\'
+				*is_str = 1;
 		}
-		else if (line[i] == 39 && dq % 2 == 0) // 39 asci for ' single
-			sq++;
-		if (line[i] == c && (dq % 2 == 0 && sq % 2 == 0) && (help = backslash(line, i)) % 2 == 0)
-			return i;
-		if (line[i] != ' ' && line[i] !=  '|') /// 92 for '\'
-			*is_str = 1;
 	}
 	*last = i;
 	return help_short_calcfirst(&i, &dq, &sq, 0);
@@ -521,6 +525,7 @@ int fill_words(t_words **words, char *str)
 {
 	int start;
 	int i;
+	int help;
 	int check;
 
 	i = -1;
@@ -533,7 +538,8 @@ int fill_words(t_words **words, char *str)
 			return MEMERROR;
 		while (str[++i])
 		{
-			if (str[i] == '"' || str[i] == 39)
+			help = backslash(str, i);
+			if (help % 2 == 0 && (str[i] == '"' || str[i] == 39))
 			{
 				check = valditadsq(str + i);
 				if (check < 0)
