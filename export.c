@@ -54,6 +54,7 @@ void export_print(t_fullvar *vars)
 
 	keys = vars->allkeys;
 	sort_words(&keys);
+	vars->allkeys = keys;
 	while (keys)
 	{
 		cur = get_env(&found, keys->txt, vars->exenvs);

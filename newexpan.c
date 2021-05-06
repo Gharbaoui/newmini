@@ -24,6 +24,7 @@ void get_full_expanded_line(t_cmd *cmd, t_envs **exenvs)
 	free_words(&cmd->txts);
 	cmd->txts = NULL;
 	cline = last_pars(line, &cmd->txts);
+	free(line);
 	free(cmd->command);
 	cmd->command = cline;
 }
@@ -320,7 +321,9 @@ char *last_pars(char *line, t_words **txts)
 			start = i;
 			i += get_next_nq(line + i);
 		}
-		mk_and_add_to_words(txts, cutstring(line, start, i + 1));
+		cmd  = cutstring(line, start, i + 1);
+		mk_and_add_to_words(txts, cmd);
+		free(cmd);
 		i = skip_spaces(line, i);
 	}
 	delete_backslachs(txts);

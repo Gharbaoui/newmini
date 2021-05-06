@@ -24,9 +24,9 @@ void real_work_sort(t_words **words)
 		return ;
 	split_words(head, &a, &b);
 	real_work_sort(&a);
-	real_work_sort(&b);
-	
+	real_work_sort(&b);	
 	*words = sortd_merg(a, b);
+	free_words(&head);
 }
 
 void split_words(t_words *words, t_words **a, t_words **b)
@@ -47,17 +47,6 @@ void split_words(t_words *words, t_words **a, t_words **b)
 		words = words->next;
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
 
 t_words *sortd_merg(t_words *w1, t_words *w2)
 {

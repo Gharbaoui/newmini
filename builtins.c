@@ -90,7 +90,9 @@ void set_pwd(t_fullvar **vars)
 int ft_env (t_fullvar *vars)
 {
 	t_envs *var;
+	struct stat fst;
 	t_words *help;
+	char *envpath;
 	int found;
 
 	help = vars->filledvar;
@@ -101,6 +103,11 @@ int ft_env (t_fullvar *vars)
 		printf("%s=%s\n", var->env_name, var->env_value);
 		help = help->next;
 	}
+	var = get_env(&found, "PATH", vars->exenvs);
+	if (found)
+		envpath = get_using_path("/env", var->env_value, &fst);
+	printf("_=%s\n", envpath);
+	free(envpath);
 	return 0;
 }
 //////
