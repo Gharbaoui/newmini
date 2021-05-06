@@ -32,7 +32,6 @@ int expand_one_cmdstrct(t_cmd **cmd, t_envs **exenvs)
     t_cmd *help;
 	t_words *neww;
 	t_words *head;
-	char *line;
 
     help = *cmd;
 /*	if (*cmd)
@@ -42,7 +41,7 @@ int expand_one_cmdstrct(t_cmd **cmd, t_envs **exenvs)
 		if ((*cmd)->command)
 			expand_commandtxt(cmd, exenvs);
 	}*/
-	line = get_full_expanded_line(*cmd, exenvs);
+	get_full_expanded_line(*cmd, exenvs);
 	
     return SUCCESS;
 }

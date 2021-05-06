@@ -1,12 +1,13 @@
 #include "minishell.h"
 
-char *get_full_expanded_line(t_cmd *cmd, t_envs **exenvs)
+void get_full_expanded_line(t_cmd *cmd, t_envs **exenvs)
 {
 	char *cline;
 	char *tline;
 	char *line;
 	t_words *txts;
-
+	if (cmd->command == NULL)
+		return ;
 	txts = cmd->txts;
 	cline = expand_one_word(cmd->command, exenvs);
 	while (txts)
@@ -17,11 +18,14 @@ char *get_full_expanded_line(t_cmd *cmd, t_envs **exenvs)
 		txts = txts->next;
 	}
 	tline = get_line_from_words(cmd->txts);
+	cline = ft_strjoin(&cline, " ");
 	line = ft_strjoin(&cline, tline);
 	free(tline);
 	free_words(&cmd->txts);
 	cmd->txts = NULL;
 	cline = last_pars(line, &cmd->txts);
+	free(cmd->command);
+	cmd->command = cline;
 }
 
 char *expand_one_word(char *str, t_envs **exenvs)
@@ -269,10 +273,14 @@ char *get_non_sdquot(char *str, int *index)
 char *last_pars(char *line, t_words **txts)
 {
 	int help;
+	t_words *next;
+	char *cmd;
 	int start;
 	int i;
 
 	i = -1;
+	while (*line == ' ')
+		line++;
 	while (line[++i])
 	{
 		help = backslash(line, i);
@@ -292,10 +300,137 @@ char *last_pars(char *line, t_words **txts)
 		mk_and_add_to_words(txts, cutstring(line, start, i + 1));
 		i = skip_spaces(line, i);
 	}
-
+	delete_backslachs(txts);
+	cmd = (*txts)->txt;
+	next = (*txts)->next;
+	free(*txts);
+	*txts = next;
 	//// i need after this to filter txts by removing quts and backslach usage
 	// after store in AA the first txts->txt and move txts to txts->next and free(txts)
 	// then return AA
+	return cmd;
+}
+
+
+void delete_backslachs(t_words **txts)
+{
+	t_words *help;
+	char *newstr;
+
+	help = *txts;
+	while (help)
+	{
+		newstr = remove_back_from_one(help->txt);
+		free(help->txt);
+		help->txt = newstr;
+		help = help->next;
+	}
+}
+
+
+char *remove_back_from_one(char *line)
+{
+	t_words *w;
+	t_words *head;
+	char *fin;
+
+	w = split_by_qout(line);
+	head = w;
+	while (w)
+	{
+		fin = finl_cost_back(w->txt);
+		free(w->txt);
+		w->txt = fin;
+		w = w->next;
+	}
+	fin = get_line_from_words(head);
+	free_words(&head);
+	return fin;
+}
+
+char *finl_cost_back(char *line)
+{
+	char c;
+
+	c = line[0];
+	if (c == 39 || c == '"'){
+		line++;
+		line[ft_strlen(line) - 1] = 0;
+	}
+	if (c == 39)
+		return ft_strdup(line);
+	else if (c == '"')
+	{
+		return double_quot_comp(line);
+	}
+	return none_qout_comp(line);
+}
+
+char *double_quot_comp(char *line)
+{
+	char *tmp;
+	int i;
+	int j;
+
+	j = -1;
+	i = -1;
+	tmp = malloc(ft_strlen(line) + 1);
+	while (line[++i])
+	{
+		if (line[i] == 92 && is_special_in_double(line[i + 1]))
+			i++;
+		tmp[++j] = line[i];
+	}
+	tmp[++j] = 0;
+	return tmp;
+}
+
+
+int is_special_in_double(char c)
+{
+	if (c == 92 || c == '`' || c == '"')
+		return 1;
+	if (c == '$')
+		return 1;
+	return 0;
+}
+
+
+int is_special_in_none(char c)
+{
+	if (is_special_in_double(c))
+		return 1;
+    if (c == '>' || c == '<' || c == '&' || c == '*')
+        return 1;
+    if (c == '|' || c == ']' || c == '[' || c == 39)
+        return 1;
+    if (c == '?' || c == '}' || c == '{')
+        return 1;
+    if (c == ';' || c == ':' || c == '/')
+        return 1;
+    if (c == '!' || c == '`' || c == '#')
+        return 1;
+	return 0;
+}
+
+
+char *none_qout_comp(char *line)
+{
+	int i;
+	int j;
+	char *tmp;
+
+	j = -1;
+	i = -1;
+	tmp = malloc(ft_strlen(line) + 1);
+	while (line[++i])
+	{
+		if (line[i] == 92 && is_special_in_none(line[i + 1]))
+			i++;
+		tmp[++j] = line[i];
+	}
+	tmp[++j] = 0;
+	return tmp;
 }
 
 int skip_spaces(char *line, int i)
@@ -318,12 +453,12 @@ int get_next_dqpos(char *line)
 	dqfound = 0;
 	while (line[++i])
 	{
+		help = backslash(line, i);
 		if (line[i] == '"')
 		{
-			help = backslash(line, i);
 			if (help % 2 == 0)
 				dqfound = 1;
-		}else if (dqfound && line[i] == ' ')
+		}else if (dqfound && line[i] == ' ' && help % 2 == 0)
 			break ;
 	}
 	return i - 1;
@@ -333,6 +468,7 @@ int get_next_sqpos(char *line)
 {
 	int i;
 	int sqfound;
+	int help;
 
 	i = 0;
 	sqfound = 0;
@@ -341,7 +477,11 @@ int get_next_sqpos(char *line)
 		if (line[i] == 39)
 			sqfound = 1;
 		else if (sqfound && line[i] == ' ')
-			break ;
+		{
+			help = backslash(line, i);
+			if (help % 2 == 0)
+				break ;
+		}
 	}
 	return i - 1;
 }
@@ -354,10 +494,14 @@ int get_next_nq(char *line)
 	i = 0;
 	while (line[++i])
 	{
-		if (line[i] == ' ')
+		help = backslash(line, i);
+		if (help % 2 == 0)
 		{
-			help = backslash(line, i);
-			if (help % 2 == 0)
+			if (line[i] == '"')
+				i+= get_next_dqpos(line + i);
+			else if (line[i] == 39)
+				i += get_next_sqpos(line + i);
+			else if (line[i] == ' ')
 				break ;
 		}
 	}
