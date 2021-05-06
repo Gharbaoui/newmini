@@ -391,6 +391,7 @@ char *get_squto_word(char *str, int *index);
 char *get_non_sdquot(char *str, int *index);
 int get_len_ofstrs_in_words(t_words *words);
 char *get_line_from_words(t_words *words);
+char *get_line_from_words_with_spaces(t_words *words);
 void var_expan(t_words *words, t_envs **exenvs);
 char *get_words_expaned(char *str, t_envs **expanded);
 char *double_qout_part(char *str, t_envs **exenvs);

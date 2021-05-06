@@ -17,7 +17,7 @@ void get_full_expanded_line(t_cmd *cmd, t_envs **exenvs)
 		txts->txt = tline;
 		txts = txts->next;
 	}
-	tline = get_line_from_words(cmd->txts);
+	tline = get_line_from_words_with_spaces(cmd->txts);
 	cline = ft_strjoin(&cline, " ");
 	line = ft_strjoin(&cline, tline);
 	free(tline);
@@ -169,6 +169,29 @@ char *get_line_from_words(t_words *words)
 	return tmp;
 }
 
+char *get_line_from_words_with_spaces(t_words *words)
+{
+	int size;
+	char *tmp;
+	int i;
+	int j;
+
+	i = -1;
+	size = get_len_ofstrs_in_words(words);
+	tmp = malloc(size + 1);
+	while (words)
+	{
+		j = -1;
+		while (words->txt[++j])
+			tmp[++i] = words->txt[j];
+		words = words->next;
+		if (words)
+			tmp[++i] = ' ';
+	}
+	tmp [++i] = 0;
+	return tmp;
+}
+
 int get_len_ofstrs_in_words(t_words *words)
 {
 	int total;
@@ -176,7 +199,7 @@ int get_len_ofstrs_in_words(t_words *words)
 	total = 0;
 	while (words)
 	{
-		total += ft_strlen(words->txt);
+		total += ft_strlen(words->txt) + 1; // 1 for for space i will need later
 		words = words->next;
 	}
 	return total;
