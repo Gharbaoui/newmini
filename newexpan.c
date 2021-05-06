@@ -10,6 +10,13 @@ void get_full_expanded_line(t_cmd *cmd, t_envs **exenvs)
 		return ;
 	txts = cmd->txts;
 	cline = expand_one_word(cmd->command, exenvs);
+	if (!cline[0])
+	{
+		free(cmd->command);
+		free(cline);
+		cmd->command = NULL;
+		return ;
+	}
 	while (txts)
 	{
 		tline = expand_one_word(txts->txt, exenvs);

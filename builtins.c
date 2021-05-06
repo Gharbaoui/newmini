@@ -1,9 +1,4 @@
-#include "./minishell.h"
-#include <string.h>
-#include <stdio.h>
-#include <unistd.h>
-
-
+#include "minishell.h"
 
 
 //////////////////////////// CD ////////////////////////////
@@ -112,19 +107,53 @@ int ft_env (t_fullvar *vars)
 }
 //////
 
+
+
 ////// exit
-int ft_exit(char **args)
+
+int is_digit(char c)
 {
-	glob_vars.exit = 1;
-	if (args[2] && args[3])
-	{
-		printf("bash: exit: too many arguments\n");
-	}else if (args[2])
-	{
-		// here i need to call atoi on args[2] and store it in glob_vars.exitstatus
-	}
+	if (c >= '0' && c <= '9')
+		return 1;
 	return 0;
 }
+
+int is_number(char *num)
+{
+	if (*num == '-' || *num == '+')
+		num++;
+	while (*num)
+	{
+		if (!is_digit(*num))
+			return 0;
+		num++;
+	}
+	return 1;
+}
+
+int ft_exit(char **args)
+{
+	int status;
+	glob_vars.exit = 1;
+	if (args[1])
+	{
+		if (is_number(args[1]) == 0)
+		{
+			printf("bash: exit: %s: numeric argument required\n", args[1]);
+			glob_vars.exitstatus = 2;
+		}else if (args[2])
+		{
+			printf("bash: exit: too many arguments\n");
+			glob_vars.exitstatus = 1;
+			glob_vars.exit = 0;
+		}else{
+			status = atoi(args[1]) & 255;    ///// atoi to ft_atoi here
+			glob_vars.exitstatus = status;
+		}
+	}
+	return glob_vars.exitstatus;
+}
+
 ///////
 //////////////////////////// echo ////////////////////////////
 int     _echo(char **args)
