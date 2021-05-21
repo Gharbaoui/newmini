@@ -29,45 +29,21 @@ int run_sim_cmd(t_onecmd cmd, t_fullvar **env_var)
 int run_built_in(t_onecmd cmd, t_fullvar **vars)
 {
 	char *lcmd;
-	
+	int ret;
+
 	lcmd = lower_str(cmd.cmd);
-	if (ft_strcmp(lcmd, "export") == 0)
+	ret = h1_r_built(lcmd, cmd, vars);
+	if (ret == -1999)
 	{
-		free(lcmd);
-		return ft_export(cmd.args, vars);
+		if (ft_strcmp(lcmd, "env") == 0)
+			ret = ft_env(*vars);
+		else if (ft_strcmp(lcmd, "pwd") == 0)
+			ret = pwd();
+		if (ft_strcmp(lcmd, "exit") == 0)
+			ret = ft_exit(cmd.args);
 	}
-	if (ft_strcmp(lcmd, "echo") == 0)
-	{
-		free(lcmd);
-		return _echo(cmd.args);
-	}
-	if (ft_strcmp(lcmd, "cd") == 0)
-	{
-		free(lcmd);
-		if (ft_strcmp(cmd.args[0], "cd") == 0)
-			return cd(cmd.args, vars);
-		return 0;
-	}
-	if (ft_strcmp(lcmd, "unset") == 0)
-	{
-		free(lcmd);
-		return ft_unset(cmd.args, vars);
-	}
-	if (ft_strcmp(lcmd, "env") == 0)
-	{
-		free(lcmd);
-		return ft_env(*vars);
-	}
-	if (ft_strcmp(lcmd, "pwd") == 0)
-	{
-		free(lcmd);
-		return  pwd();
-	}
-	if (ft_strcmp(lcmd, "exit") == 0)
-	{
-		free(lcmd);
-		return ft_exit(cmd.args);
-	}
+	free(lcmd);
+	return ret;
 }
 
 
@@ -139,9 +115,12 @@ int builtin(char *cmd, char *origin)
 	
 	ret = 0;
 	lcmd = lower_str(cmd);
-	if (ft_cmpstr(lcmd, "echo") || ft_cmpstr(lcmd, "export") || ft_cmpstr(lcmd, "cd"))
+	if (ft_cmpstr(lcmd, "echo") ||
+	ft_cmpstr(lcmd, "export") || ft_cmpstr(lcmd, "cd"))
     	ret = 2;
-	else if (ft_cmpstr(origin, "exit") || ft_cmpstr(lcmd, "unset") || ft_cmpstr(lcmd, "env") || ft_cmpstr(lcmd, "pwd"))
+	else if (ft_cmpstr(origin, "exit") ||
+	ft_cmpstr(lcmd, "unset") || ft_cmpstr(lcmd, "env") ||
+	ft_cmpstr(lcmd, "pwd"))
 		ret = 2;
 	free(lcmd);
     return ret;

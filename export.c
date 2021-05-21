@@ -2,13 +2,13 @@
 
 int sub_export(t_fullvar **vars, char *line)
 {
-	char *key, *tmp;
-	t_envs *cuvar;
+	char *key;
 	int help;
 	int ret;
 	
 	glob_vars.exitstatus = 0;	
-	if (line == NULL){
+	if (line == NULL)
+	{
 		export_print(*vars);
 		return 0;
 	}
@@ -16,34 +16,30 @@ int sub_export(t_fullvar **vars, char *line)
 		return glob_vars.exitstatus;
 	key = get_key(line);
 	ret = ft_strlen(key) - 1;
-	tmp = NULL;
 	glob_vars.envchanged = 1;
-	if (key[ret] == '+'){
-		tmp = ft_strdup(key);
-		tmp[ret] = 0;
-		cuvar = get_env(&help, tmp, (*vars)->exenvs);
-	}else
-		cuvar = get_env(&help, key, (*vars)->exenvs);
-	if (help && nlindex(line, '=') != -1)
-	{
-		if (tmp)
-			free(tmp);
-		tmp = split(line, 1, nlindex(line, '='));
-		if (key[ret] == '+')
-		{
-			cuvar->env_value = ft_strjoin(&cuvar->env_value, tmp);
-		}else
-		{
-			free(cuvar->env_value);
-			cuvar->env_value = ft_strdup(tmp); //// stops here
-		}
-	}else{
-		add_toenvtable(vars, line);
-	}
-	if (tmp)
-		free(tmp);
-	free(key);
+	h1_sub_export(key, vars, ret, line);
 	return 0;
+}
+
+char *origin_var(char *var)
+{
+	int i;
+	char *tmp;
+	int j;
+
+	j = var_length(var);
+	i = -1;
+	tmp = malloc(j + 1);
+	j =  -1;
+	while (var[++i])
+	{
+		if (is_special_in_double(var[i]))
+			tmp[++j] = '\\';
+		tmp[++j] = var[i];
+	}
+	tmp[++j] = 0;
+	free(var);
+	return tmp;
 }
 
 void export_print(t_fullvar *vars)
@@ -58,7 +54,8 @@ void export_print(t_fullvar *vars)
 	while (keys)
 	{
 		cur = get_env(&found, keys->txt, vars->exenvs);
-		if (!(keys->txt[0] == '_' && !keys->txt[1])){
+		if (!(keys->txt[0] == '_' && !keys->txt[1]))
+		{
 			if (found)
 				printf("declare -x %s=\"%s\"\n", keys->txt, cur->env_value);
 			else

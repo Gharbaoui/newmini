@@ -53,7 +53,6 @@ t_words *sortd_merg(t_words *w1, t_words *w2)
 	t_words *h1;
 	t_words *h2;
 	t_words *fin;
-	int ret;
 
 	if (w1 == NULL)
 		return w2;
@@ -64,18 +63,8 @@ t_words *sortd_merg(t_words *w1, t_words *w2)
 	h2 = w2;	
 	while (w1)
 	{
-		if (w1 == NULL || w2 == NULL)
+		if (h1_sortd_merg(&w1, &w2, &fin) == -2)
 			break ;
-		ret = ft_strcmp(w1->txt, w2->txt);  // ret == 0 means equal < 0 w1 smaller > o w1 bigger
-		if (ret < 0)
-		{
-			mk_and_add_to_words(&fin, w1->txt);
-			w1 = w1->next;
-		}else
-		{
-			mk_and_add_to_words(&fin, w2->txt);
-			w2 = w2->next;
-		}
 	}
 	if (w1)
 		fill_rest(&fin, w1);

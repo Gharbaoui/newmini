@@ -1,7 +1,4 @@
 #include "minishell.h"
-// ls ; cat -e >g; cat < g > l; ls | cat -e; ls > k
-//
-//  ls | cat | cat -e| export a=hello
 int fullexcute(t_completecmd **complete, t_fullvar **variables)
 {
 	t_pipcommand *pcmd;
@@ -10,17 +7,14 @@ int fullexcute(t_completecmd **complete, t_fullvar **variables)
 	comp = *complete;
 	while (comp)
 	{
-		if (glob_vars.envchanged){
+		if (glob_vars.envchanged)
+		{
 			glob_vars.envp  = update_env_var((*variables)->exenvs);
 			glob_vars.envchanged = 0;
 		}
 		pcmd = expand_current_command(comp, *variables);   ///// free here
 		excute_one_cmd(pcmd, variables);
-		if (glob_vars.envchanged)
-		{
-			free_dstr(glob_vars.envp);
-			free(glob_vars.envp);
-		}
+		h_fullexcute();
 		free_laststr(&pcmd);
 		if (glob_vars.exit)
 			break ;
@@ -91,9 +85,8 @@ void red_in_decide_files(char **fs, int **pipe, int append, t_iter nums)
 	int fd;
 
 	if (fs[1])
-	{
 		overwrite_or_append(append, fs);
-	}else
+	else
 	{
 		if (nums.index < nums.count)
 			dup2(pipe[nums.index][WRITE_END], 1);
@@ -103,7 +96,8 @@ void red_in_decide_files(char **fs, int **pipe, int append, t_iter nums)
 		fd = open (fs[0], O_RDONLY);
 		dup2(fd, 0);
 		close(fd);
-	}else if (nums.index > 0)
+	}
+	else if (nums.index > 0)
 	{
 		dup2(pipe[nums.index - 1][READ_END], 0);
 		close(pipe[nums.index - 1][READ_END]);
@@ -132,7 +126,8 @@ int cre_write_files(char ***fs, char *file, char *op, int *append)
 	int fd;
 
 	ret = 0;
-	if (ft_cmpstr(op, ">")){
+	if (ft_cmpstr(op, ">"))
+	{
 		ret = 1;
 		fd = open (file, O_WRONLY | O_TRUNC | O_CREAT, 0644);
 		(*fs)[1] = file;
@@ -157,4 +152,13 @@ void init_in_creat_wf(char ***fs, int *i, int *error)
 	*error = 0;
 	(*fs)[0] = NULL;
 	(*fs)[1] = NULL;
+}
+
+void h_fullexcute()
+{
+	if (glob_vars.envchanged)
+	{
+		free_dstr(glob_vars.envp);
+		free(glob_vars.envp);
+	}
 }

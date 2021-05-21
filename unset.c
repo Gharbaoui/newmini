@@ -73,6 +73,7 @@ void delete_exact_word(t_words **words, char *word)
 	if (next)
 	{
 		prv->next = next->next;
+		free(next->txt);
 		free(next);
 	}
 }

@@ -138,6 +138,7 @@ g_vars glob_vars;
 
 /// random.c
 char *cutstring(char *str, int start, int last);
+int		ft_atoi(const char *str);
 void free_dstr(char **str);
 char *ft_reverse(char *line);
 char* ft_itoa(int value);
@@ -207,6 +208,11 @@ int filter_check_envvar(t_words *txts);
 int filter_pipcmd1(t_pipcmd **pipcmd);
 int filter_cmd(t_cmd **cmd);
 int modify_str(char **str);
+t_words *h1_modify_str(char *line, int *s, int *check);
+void h_h1_mod_str(char *line, int *i, int *start, int *s);
+int h2_h1_mod_str(char *line, int *i, int *start, int *s);
+void h3_h1_mod_str(int *i, int *check, int *start);
+int help_in_modstr(char *line, int i, char c);
 int addtowords(t_words **words, char *str, int start, int end);
 void addtmptowords(t_words **words, t_words **word);
 int modify_ln(t_words **words);
@@ -236,6 +242,8 @@ int delete_exactfromln(t_envs **list, char *key, int *found);
 int delete_env(t_envs ***table, char *env_name, int *founded);
 int add_envvar_to_table(char *line, t_fullvar **variables);
 int add_to_words_str(t_words **hid_var, char *line);
+int h1_make_n_env(t_fullvar **vars, t_envs **cur_env, int eq_pos, char *line);
+void h2_make_n_env(t_fullvar **vars, t_envs **cur_env, char *line);
 
 
 int get_status(int st);
@@ -291,6 +299,7 @@ char *get_word(char *line, int *next);
 t_pipcommand *get_cmd_struct(t_pipcmd *cmd, t_envs **exenvs);
 int fill_onepipcmd(t_pipcommand *pipcmd, t_pipcmd *pip, t_envs **exenvs);
 int fill_one_cmd(t_onecmd *fcmd, t_cmd *pcmd, t_envs **exenvs);
+void h1_fill_one_cmd(t_onecmd *fcmd, t_cmd *pcmd, t_envs **exenvs);
 char **transfrm_ln_arr(t_words *words, char *cmd, int iscmd);
 int how_many_words(t_words *words);
 
@@ -308,6 +317,7 @@ char *lower_str(char *str);
 char lower_char(char c);
 /// EXCUTION ///
 int fullexcute(t_completecmd **complete, t_fullvar **variables);
+void h_fullexcute();
 int excute_one_cmd(t_pipcommand *pcmd, t_fullvar **variables);
 int get_num_subcmds(t_pipcommand *pcmd);
 void default_fds(int *stdo, int *stdi);
@@ -318,6 +328,7 @@ void close_pipes(int **pipes, int inex, int pipsize);
 void close_write_rest(int **pipes, int index, int pipsize);
 void close_read_rest(int **pipes, int index, int pipsize);
 int decide_in_out(int **pipes, char **files, char **ops, t_iter nums);
+void close_pipe(int **pipe, int index);
 int run_command(t_onecmd cmd);
 int close_in_parent(int **pipe, int pindex);
 int ex_mu_p_cmd(t_pipcommand *pcmd, int **pipe, t_fullvar **env_var, t_iter nums);
@@ -341,23 +352,30 @@ int get_hasht_size(t_envs **exenvs);
 char *get_key(char *line);
  int exc_one_built(t_onecmd cmd, t_fullvar **env_var);
 void export_print(t_fullvar *vars);
+char *origin_var(char *var);
 int ft_export(char **args, t_fullvar **vars);
 void update_exit_status(t_envs **exenvs);
 int sub_export(t_fullvar **vars, char *line);
+void h1_sub_export(char *key, t_fullvar **vars, int ret, char *line);
+void h_h1_sub_export(char **tmp, char *line, t_envs **cuvar, char *key);
 int check_exvar(char *line);
 //// echo
 int     _echo(char **args);
+//// cd /////
 int cd(char **paths, t_fullvar **vars);
+int h1_cd(char **home, char **paths, t_fullvar **vars);
+int h2_cd(char *home);
 void set_pwd(t_fullvar **vars);
 //// print_export 
 t_words *sortd_merg(t_words *w1, t_words *w2);
+int h1_sortd_merg(t_words **w1, t_words **w2, t_words **fin);
 int sort_words(t_words **words);
 void red_in_decide_files(char **fs, int **pipe, int append, t_iter nums);
 void red_in_decide_no_files(int **pipe, t_iter nums);
 void real_work_sort(t_words **words);
 int run_built_in(t_onecmd cmd, t_fullvar **vars);
+int h1_r_built(char *lcmd, t_onecmd cmd, t_fullvar **vars);
 void fill_rest(t_words **fin, t_words *w);
-int run_built_in(t_onecmd cmd, t_fullvar **vars);
 void split_words(t_words *words, t_words **a, t_words **b);
 void fill_unchaged(t_words **word, char *line);
 int var_founded(t_words **words, int kl, int counter);
@@ -409,5 +427,6 @@ char *double_quot_comp(char *line);
 char *none_qout_comp(char *line);
 int is_special_in_double(char c);
 int is_special_in_none(char c);
+int var_length(char *var);
 
 

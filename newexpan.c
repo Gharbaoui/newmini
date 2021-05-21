@@ -115,8 +115,11 @@ int fill_part_of_str(char *tmp, int *index, char *str, t_envs **exenvs)
 	var = get_env(&help, key, exenvs);
 	if (help)
 	{
-		while (var->env_value[++j])
+		while (var->env_value[++j]){
+		//	if (is_special_in_double(var->env_value[j]))
+		//		tmp[++i] = '\\';
 			tmp[++i] = var->env_value[j];
+		}
 	}
 	*index = i;
 	j = ft_strlen(key);
@@ -151,6 +154,19 @@ int get_len_double_qout(char *str, t_envs **exenvs)
 		}
 	}
 	return i + totalsize;
+}
+
+int var_length(char *var)
+{
+	int i;
+	int total;
+
+	total = 0;
+	i = -1;
+	while (var[++i])
+		if (is_special_in_double(var[i]))
+			total++;
+	return total + i;
 }
 
 /////////// var expand   /////////

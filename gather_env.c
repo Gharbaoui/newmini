@@ -8,7 +8,6 @@ int fill_envtable(t_fullvar **fullvar, char **env)
 	help = rest_envt(&(*fullvar)->exenvs);
 	if (help == MEMERROR)
 		return MEMERROR;
-	help = -1;
 	while (env[++help])
 	{
 		ret = add_toenvtable(fullvar, env[help]);
@@ -33,10 +32,14 @@ int add_toenvtable(t_fullvar **vars, char *line)
 {
 	int found;
 	t_envs *currentEnv;
+	char *help;
 	int index;
 	int ern;
 
-	currentEnv = make_node_env(&ern, line, vars); // MEMERROR or 
+	help = ft_strdup(line);
+	help = origin_var(help);
+	currentEnv = make_node_env(&ern, help, vars); // MEMERROR or
+   	free(help);	
 	if (currentEnv == NULL)
 		return SUCCESS;
 	if (ern != SUCCESS)
@@ -51,7 +54,6 @@ t_envs *make_node_env(int *ern, char *line, t_fullvar **vars)
 	t_envs *currentEnv;
 	int eq_pos;
 
-	// i need to chevck first if line is valid as env variable
 	*ern = SUCCESS;
 	if (!(currentEnv = malloc(sizeof(t_envs))))
 	{
@@ -61,39 +63,14 @@ t_envs *make_node_env(int *ern, char *line, t_fullvar **vars)
 	eq_pos = nlindex(line, '=');
 	if (eq_pos != -1)
 	{
-		currentEnv->env_name = split(line, 0, eq_pos);
-		if 	(currentEnv->env_name[eq_pos - 1] == '+')
-			currentEnv->env_name[eq_pos - 1] = '\0';
-		if (!currentEnv->env_name)
+		if (h1_make_n_env(vars, &currentEnv, eq_pos, line) == 0)
 		{
-			*ern = MEMERROR;
-			free (currentEnv->env_name);
-			free(currentEnv);
-			return NULL;
-		}
-		if (!(currentEnv->env_value = split(line, 1, eq_pos)))
-		{
-			free (currentEnv->env_name);
-			free(currentEnv);
 			*ern = MEMERROR;
 			return NULL;
 		}
-		currentEnv->next = NULL;
-		if (currentEnv->env_name[0] != '?'){
-			if (ft_exist((*vars)->allkeys, currentEnv->env_name) == 0)
-				add_to_words_str(&(*vars)->allkeys, currentEnv->env_name);
-			add_to_words_str(&(*vars)->filledvar, currentEnv->env_name);
-		}
-	}else
-	{	
-		eq_pos = ft_strlen(line) - 1;
-		if (line[eq_pos] == '+')
-			line[eq_pos] = 0;
-		if (ft_exist((*vars)->allkeys, line) == 0)
-			add_to_words_str(&(*vars)->allkeys, line);
-		free(currentEnv);
-		currentEnv = NULL;
 	}
+	else
+		h2_make_n_env(vars, &currentEnv, line);
 	return currentEnv;
 }
 
@@ -120,7 +97,8 @@ int check_envvar(char *line, int eq_pos)
 		if (!ft_isalpha(line[i]) && !ft_isdigit(line[i]) && line[i] != '_')
 			return ENVERROR;
 	}
-	if ((i < eq_pos) && !ft_isalpha(line[i]) && !ft_isdigit(line[i]) && line[i] != '_' && line[i] != '+')
+	if ((i < eq_pos) && !ft_isalpha(line[i]) &&
+	!ft_isdigit(line[i]) && line[i] != '_' && line[i] != '+')
 		return ENVERROR;
 	return SUCCESS;
 }	
@@ -149,64 +127,12 @@ t_envs *get_env(int *found, char *env_name, t_envs **table)
 	current = NULL;
 	index = hash_env_name(env_name);
 	if (table[index])
-	{
-		current = look_inln(found, env_name, table[index]); // if found 0 means that there's no key
-	}
-	else{
+		current = look_inln(found, env_name, table[index]);
+	else
 		*found = 0;
-	}
 	return current;
 }
-/*
-int add_envvar_to_table(char *line, t_fullvar **variables)
-{
-	int is_plus;
-	int help; // plays also as index of '=' and length of kry variable 
-	char *keyvalue; // sometimes plays as key and sometimes plays as value
-	int index;
-	t_envs *ptr;
-	
-	index = nlindex(line, '=');
-	is_plus = 0;
-	if (index != -1)
-	{
-		keyvalue = split(line, 0, index);
-		if (keyvalue[index  - 1] == '+')
-		{
-			keyvalue[index - 1] = 0;
-			is_plus = 1;
-		}
-		ptr = get_env(&help, keyvalue, (*variables)->exenvs);
-		free(keyvalue);
-	}else{
-		ptr = get_env(&help, line, (*variables)->exenvs);
-		if (help == 0)
-		{
-			help = add_to_words_str(&(*variables)->emptyvar, line);
-			if (help != SUCCESS)
-				return help;
-			help = add_to_words_str(&(*variables)->allkeys, line);
-		}
-		return SUCCESS;
-	}
-	if (help) // here check if you find already variable stored
-	{
-		keyvalue = split(line, 1, index);
-		if (is_plus){
-			ptr->env_value = ft_strjoin(&ptr->env_value, keyvalue);
-			free(keyvalue);
-		}else{
-			free (ptr->env_value);
-			ptr->env_value = keyvalue;
-		}
-	}else{
-		help = add_toenvtable(&(*variables)->exenvs, line, &(*variables)->allkeys);
-		if (help != SUCCESS)
-			return help;
-	}
-	return SUCCESS;
-}
-*/
+
 int add_to_words_str(t_words **hidden_var, char *line)
 {
 	t_words *current;
@@ -249,9 +175,7 @@ t_envs *look_inln(int *found, char *env_name, t_envs *lnenv)
 			next = lnenv->next;
 	}
 	if (*found == 1)
-	{
 		cur = lnenv;
-	}
 	return cur;
 }
 
@@ -277,21 +201,19 @@ int delete_exactfromln(t_envs **list, char *key, int *found)
 	if (next && ft_cmpstr(key, next->env_name))
 	{
 		*found = 1;
-		*list = next->next; 
+		*list = next->next;
+		free(next->env_name);
+		free(next->env_value);
 		free(next);
 		return SUCCESS;
 	}
-	
 	while (next && !ft_cmpstr(key, next->env_name))
 	{
 		prev = next;
 		next =  next->next;
 	}
 	if (!next)
-	{
 		return SUCCESS;
-	}
-
 	prev->next = next->next;
 	free(next);
 	return SUCCESS;
@@ -321,7 +243,7 @@ int rest_envt(t_envs ***envtable)
 	{
 		(*envtable)[i] = NULL;
 	}
-	return SUCCESS;
+	return -1;
 }
 
 int hash_env_name(char *env_name)

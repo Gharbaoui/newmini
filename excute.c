@@ -31,12 +31,12 @@ int prm_check(t_onecmd cmd)
 				printf("bash: %s: No such file or directory\n", fs[0]);
 				ret = 1;
 			}
-			else if (cmd.cmd && cmd.prem)
-			{
-				printf("bash: %s: Permission denied\n", cmd.cmd);
-				ret = 126;
-			}
 			free(fs);
+	}
+	else if (cmd.cmd && cmd.prem)
+	{
+		printf("bash: %s: Permission denied\n", cmd.cmd);
+		ret = 126;
 	}
 	return ret;	
 }
@@ -62,14 +62,15 @@ int decide_in_out(int **pipe, char **files, char **ops, t_iter nums)
 	else
 		red_in_decide_no_files(pipe, nums);
     if (nums.index < nums.count)
-    {
-        close(pipe[nums.index][WRITE_END]);
-        close(pipe[nums.index][READ_END]);
-    }
+		close_pipe(pipe, nums.index);
 	return 0;
 }
 
-
+void close_pipe(int **pipe, int index)
+{
+	close(pipe[index][WRITE_END]);
+	close(pipe[index][READ_END]);
+}
 
 char  **creat_w_files(char **files, char **ops, int *error, int *append) // returns last file
 {

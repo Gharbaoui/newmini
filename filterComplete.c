@@ -88,66 +88,28 @@ int help_in_modstr(char *line, int i, char c)
 
 int modify_str(char **str)
 {
-	t_words *words = NULL; // just store words in str splited by " or  '
+	t_words *words;
 	int size;
-	char *help;
 	int num;
 	int i;
-	char c;
-	int check, start;
+	int check;
 
-	help  = *str;
-    if (!help)
+	words = NULL;
+    if (!(*str))
         return 2;
 	i = -1;
 	size = 0;
-	while (help[++i])
-	{
-		num = backslash(help, i);
-		if (num % 2 == 0 && (help[i] == '"' || help[i] == 39)){ //  ""''ls''""
-			c = help[i];
-			start = i;
-			while (help[++i] && help_in_modstr(help, i, c))
-				check = 1;
-			if (i - start > 1)
-			{
-				start--;
-				i++;
-			}
-			size += (i - start);
-			size -= 1;
-		}
-		else {
-			start = i - 1; //// 
-			while (help[++i] && (help[i] != '"' && help[i] != 39)) /// run hello \"
-				check = 1;
-			size += i - start;
-			size -= 1;
-			check = 3;
-		}
-		if (!(addtowords(&words, help, start, i)))
-		{
-			check = 5; //means malloc error
-			break;
-		}
-		if (check == 3)
-		{
-			check = 0;
-			i--;
-		}
-		else if (i - start > 1)
-			i--;
-	}
+	words = h1_modify_str(*str, &size, &check);
 	free(*str);
-	if (check == 5 || !(*str = cleanWord(words, size))) // maloc error
+	if (check == 5 || !(*str = cleanWord(words, size)))
 	{
 		if (words)
 			free_w(&words);
-		return MEMERROR; // malloc error
+		return MEMERROR;
 	}
 	if (words)
 		free_w(&words);
-	return SUCCESS; // all good
+	return SUCCESS;
 }
 
 int addtowords(t_words **words, char *str, int start, int end){
@@ -235,16 +197,12 @@ int theres_empty(t_words *words)
 
 char *cleanWord(t_words *words, int size)
 {
-  //  t_words *head;
 	char *tmp;
-    char *ptr;
-    char *help;
 	int i;
 	int j;
 
 	i = -1;
-  //  head = words;
-	if (!(tmp = malloc(size + 1)) || !(help = ft_strdup("''")))
+	if (!(tmp = malloc(size + 1)))
 		return 0;
 	while (words)
 	{
@@ -254,13 +212,11 @@ char *cleanWord(t_words *words, int size)
 		words = words->next;
 	}
 	tmp[++i] = 0;
-    if (tmp[0] == 0 /*&& theres_empty(head)*/)
+    if (tmp[0] == 0)
     {
-        ptr = tmp;
-        tmp = help;
-        free(ptr);
-    }else
-		free(help);
+        free(tmp);
+        tmp = ft_strdup("''");
+    }
 	return tmp;
 }
 
