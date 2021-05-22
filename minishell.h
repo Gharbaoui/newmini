@@ -145,6 +145,7 @@ char* ft_itoa(int value);
 void print_pipes(t_words **pipes, int numofcmds);
 void print_words(t_words *words, int level, char *name);
 void printspaces(int n);
+int is_digit(char c);
 /// minishell.c ///
 void bash_loop(char **env);
 
@@ -308,6 +309,9 @@ void print_c(t_onecmd *cmd);
 void print_arr(char **str);
 
 char *get_command(char *cmd, char *PATH, int *prem, char *lcmd);
+int h1_get_command(int ret, char **command, char *cmd, char *b);
+int h2_get_command(char *cmd, char **b, char **lcmd);
+char	*h3_get_command(char *lcmd, char *command);
 int is_comcmd(char *cmd, char *lcmd); // if 1 means not look in PATH 0 look in PATH
 char *get_using_path(char *cmd, char *PATH, struct stat *fst);
 char *get_one_path(char *PATH, int *index);
@@ -336,6 +340,7 @@ int ex_mu_p_cmd(t_pipcommand *pcmd, int **pipe, t_fullvar **env_var, t_iter nums
 int exc_one_cmd(t_onecmd cmd, int **pipe, t_iter nums, t_fullvar **env_var);
 int prm_check(t_onecmd cmd);
 int run_exact_cmd(t_onecmd cmd, t_fullvar **env_var);
+void	overwrite_or_append(int append, char **fs);
 int run_cmd(t_onecmd cmd, t_fullvar **env_var);
 
 int cre_write_files(char ***fs, char *file, char *op, int *append);

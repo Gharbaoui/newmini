@@ -1,11 +1,11 @@
 #include "minishell.h"
 
-t_words *h1_modify_str(char *line, int *s, int *check)
+t_words	*h1_modify_str(char *line, int *s, int *check)
 {
-	int i;
-	int start;
-	int num;
-	t_words *words;
+	int		i;
+	int		start;
+	int		num;
+	t_words	*words;
 
 	words = NULL;
 	i = -1;
@@ -20,21 +20,21 @@ t_words *h1_modify_str(char *line, int *s, int *check)
 		if (!(addtowords(&words, line, start, i)))
 		{
 			*check = 5;
-			break;
+			break ;
 		}
 		h3_h1_mod_str(&i, check, &start);
 	}
-	return words;
+	return (words);
 }
 
-void h_h1_mod_str(char *line, int *i, int *start, int *s)
+void	h_h1_mod_str(char *line, int *i, int *start, int *s)
 {
-	int check;
+	int	check;
 
 	check = 0;
 	*start = *i;
 	while (line[++(*i)] && help_in_modstr(line, *i, line[*i]))
-		check = 1; // number has no meaning
+		check = 1;
 	if (*i - *start > 1)
 	{
 		(*start)--;
@@ -43,19 +43,19 @@ void h_h1_mod_str(char *line, int *i, int *start, int *s)
 	*s += *i - *start - 1;
 }
 
-int h2_h1_mod_str(char *line, int *i, int *start, int *s)
+int	h2_h1_mod_str(char *line, int *i, int *start, int *s)
 {
-	int check;
+	int	check;
 
 	*start = *i - 1;
 	while (line[++(*i)] && (line[*i] != '"' && line[*i] != 39))
 		check = 1;
 	*s += *i - *start - 1;
 	check = 3;
-	return check;
+	return (check);
 }
 
-void h3_h1_mod_str(int *i, int *check, int *start)
+void	h3_h1_mod_str(int *i, int *check, int *start)
 {
 	if (*check == 3)
 	{

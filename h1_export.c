@@ -1,11 +1,11 @@
 #include "minishell.h"
 
-void h1_sub_export(char *key, t_fullvar **vars, int ret, char *line)
+void	h1_sub_export(char *key, t_fullvar **vars, int ret, char *line)
 {
-	char *tmp;
-	int help;
-	t_envs *cuvar;
-	
+	char	*tmp;
+	int		help;
+	t_envs	*cuvar;
+
 	tmp = NULL;
 	if (key[ret] == '+')
 	{
@@ -24,10 +24,9 @@ void h1_sub_export(char *key, t_fullvar **vars, int ret, char *line)
 	free(key);
 }
 
-
-void h_h1_sub_export(char **tmp, char *line, t_envs **cuvar, char *key)
+void	h_h1_sub_export(char **tmp, char *line, t_envs **cuvar, char *key)
 {
-	int ret;
+	int	ret;
 
 	ret = ft_strlen(key) - 1;
 	if (*tmp)
@@ -39,6 +38,6 @@ void h_h1_sub_export(char **tmp, char *line, t_envs **cuvar, char *key)
 	else
 	{
 		free((*cuvar)->env_value);
-		(*cuvar)->env_value = ft_strdup(*tmp); //// stops here
+		(*cuvar)->env_value = ft_strdup(*tmp);
 	}
 }

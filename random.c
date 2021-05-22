@@ -217,33 +217,19 @@ void free_onecmd(t_onecmd *cmd)
 	}
 }
 
-///  printing
-void print_words(t_words *words, int level, char *name)
+int	is_special(char c)
 {
-	if (words)
-	{
-		printspaces(level);
-		printf("%s => %s|\n", name, words->txt);
-		print_words(words->next, level + 1, name);
-	}
-}
-
-
-void printspaces(int n)
-{
-	n *= 2;
-	while (n-- > 0)
-		write(1, " ", 1);
-}
-
-void print_pipes(t_words **pipes, int numofcmds)
-{
-	int i;
-	
-	i = -1;
-	while (++i < numofcmds)
-	{
-		print_words(pipes[i], 0, "pipes");
-		printf("--------------------------\n");
-	}
+	if (c == 92 || c == '>' || c == '<')
+		return (1);
+	if (c == '$' || c == '"' || c == '&')
+		return (1);
+	if (c == '|' || c == ']' || c == '[')
+		return (1);
+	if (c == '?' || c == '}' || c == '{')
+		return (1);
+	if (c == ';' || c == ':' || c == '/')
+		return (1);
+	if (c == '!' || c == '`' || c == '#')
+		return (1);
+	return (0);
 }

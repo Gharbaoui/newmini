@@ -1,36 +1,36 @@
 #include "minishell.h"
 
-int sub_export(t_fullvar **vars, char *line)
+int	sub_export(t_fullvar **vars, char *line)
 {
-	char *key;
-	int help;
-	int ret;
-	
-	glob_vars.exitstatus = 0;	
+	char	*key;
+	int		help;
+	int		ret;
+
+	glob_vars.exitstatus = 0;
 	if (line == NULL)
 	{
 		export_print(*vars);
-		return 0;
+		return (0);
 	}
 	if (check_exvar(line) != SUCCESS)
-		return glob_vars.exitstatus;
+		return (glob_vars.exitstatus);
 	key = get_key(line);
 	ret = ft_strlen(key) - 1;
 	glob_vars.envchanged = 1;
 	h1_sub_export(key, vars, ret, line);
-	return 0;
+	return (0);
 }
 
-char *origin_var(char *var)
+char	*origin_var(char *var)
 {
-	int i;
-	char *tmp;
-	int j;
+	int		i;
+	char	*tmp;
+	int		j;
 
 	j = var_length(var);
 	i = -1;
 	tmp = malloc(j + 1);
-	j =  -1;
+	j = -1;
 	while (var[++i])
 	{
 		if (is_special_in_double(var[i]))
@@ -39,14 +39,14 @@ char *origin_var(char *var)
 	}
 	tmp[++j] = 0;
 	free(var);
-	return tmp;
+	return (tmp);
 }
 
-void export_print(t_fullvar *vars)
+void	export_print(t_fullvar *vars)
 {
-	t_envs *cur;
-	t_words *keys;
-	int found;
+	t_envs	*cur;
+	t_words	*keys;
+	int		found;
 
 	keys = vars->allkeys;
 	sort_words(&keys);
@@ -65,9 +65,9 @@ void export_print(t_fullvar *vars)
 	}	
 }
 
-int check_exvar(char *line)
+int	check_exvar(char *line)
 {
-	int help;
+	int	help;
 
 	help = nlindex(line, '=');
 	if (help == -1)
@@ -77,17 +77,17 @@ int check_exvar(char *line)
 	{
 		printf("bash: export: `%s': not a valid identifier\n", line);
 		glob_vars.exitstatus = 1;
-		return ENVERROR; // for error
+		return (ENVERROR);
 	}
-	return SUCCESS;
+	return (SUCCESS);
 }
 
-char *get_key(char *line)
+char	*get_key(char *line)
 {
-	int eq_pos;
+	int	eq_pos;
 
 	eq_pos = nlindex(line, '=');
 	if (eq_pos == -1)
 		eq_pos = ft_strlen(line);
-	return cutstring(line, 0, eq_pos);
+	return (cutstring(line, 0, eq_pos));
 }

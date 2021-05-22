@@ -1,8 +1,8 @@
 #include "minishell.h"
 
-int h1_r_built(char *lcmd, t_onecmd cmd, t_fullvar **vars)
+int	h1_r_built(char *lcmd, t_onecmd cmd, t_fullvar **vars)
 {
-	int ret;
+	int	ret;
 
 	ret = -1999;
 	if (ft_strcmp(lcmd, "export") == 0)
@@ -18,5 +18,5 @@ int h1_r_built(char *lcmd, t_onecmd cmd, t_fullvar **vars)
 	}
 	else if (ft_strcmp(lcmd, "unset") == 0)
 		ret = ft_unset(cmd.args, vars);
-	return ret;	
+	return (ret);
 }

@@ -12,6 +12,6 @@ int main(int argc, char **argv, char **env)
 	c[1] = 'l';
 	c[2] = 0;
 
-	char *arg[] = {"touch", c, 0};
-	execve("/usr/bin/touch", arg, 0);
+	char *arg[] = {"rm", c, 0};
+	printf("called\n");
 }

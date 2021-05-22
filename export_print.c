@@ -1,38 +1,37 @@
 #include "minishell.h"
 
-
-int sort_words(t_words **words)
+int	sort_words(t_words **words)
 {
-	t_words *head;
+	t_words	*head;
 
 	head = *words;
 	real_work_sort(&head);
 	*words = head;
-	return SUCCESS;
+	return (SUCCESS);
 }
 
-void real_work_sort(t_words **words)
+void	real_work_sort(t_words **words)
 {
-	t_words *head;
-	t_words *a;
-	t_words *b;
-	head = *words;
+	t_words	*head;
+	t_words	*a;
+	t_words	*b;
 
+	head = *words;
 	a = NULL;
 	b = NULL;
 	if (head == NULL || head->next == NULL)
 		return ;
 	split_words(head, &a, &b);
 	real_work_sort(&a);
-	real_work_sort(&b);	
+	real_work_sort(&b);
 	*words = sortd_merg(a, b);
 	free_words(&head);
 }
 
-void split_words(t_words *words, t_words **a, t_words **b)
+void	split_words(t_words *words, t_words **a, t_words **b)
 {
-	int half;
-	int i;
+	int	half;
+	int	i;
 
 	i = -1;
 	half = countnumberofcmds(words) / 2;
@@ -48,19 +47,19 @@ void split_words(t_words *words, t_words **a, t_words **b)
 	}
 }
 
-t_words *sortd_merg(t_words *w1, t_words *w2)
+t_words	*sortd_merg(t_words *w1, t_words *w2)
 {
-	t_words *h1;
-	t_words *h2;
-	t_words *fin;
+	t_words	*h1;
+	t_words	*h2;
+	t_words	*fin;
 
 	if (w1 == NULL)
-		return w2;
+		return (w2);
 	if (w2 == NULL)
-		return w1;
+		return (w1);
 	fin = NULL;
 	h1 = w1;
-	h2 = w2;	
+	h2 = w2;
 	while (w1)
 	{
 		if (h1_sortd_merg(&w1, &w2, &fin) == -2)
@@ -72,10 +71,10 @@ t_words *sortd_merg(t_words *w1, t_words *w2)
 		fill_rest(&fin, w2);
 	free_words(&h1);
 	free_words(&h2);
-	return fin;
+	return (fin);
 }
 
-void fill_rest(t_words **fin, t_words *w)
+void	fill_rest(t_words **fin, t_words *w)
 {
 	while (w)
 	{
@@ -83,9 +82,3 @@ void fill_rest(t_words **fin, t_words *w)
 		w = w->next;
 	}
 }
-
-
-
-
-
-

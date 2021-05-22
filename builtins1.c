@@ -1,4 +1,4 @@
-#include "Minishell.h"
+#include "minishell.h"
 
 int	cd(char **paths, t_fullvar **vars)
 {

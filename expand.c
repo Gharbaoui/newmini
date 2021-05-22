@@ -1,82 +1,66 @@
 #include "minishell.h"
 
-t_pipcommand *expand_current_command(t_completecmd *cucmd, t_fullvar *envs)
+t_pipcommand	*expand_current_command(t_completecmd *cucmd, t_fullvar *envs)
 {
-	t_pipcommand *pc;
+	t_pipcommand	*pc;
 
-	if (cucmd){
-    	expand_full_pipcmd(&cucmd->splcommand, envs->exenvs);
-        return get_cmd_struct(cucmd->splcommand, envs->exenvs);
+	if (cucmd)
+	{
+		expand_full_pipcmd(&cucmd->splcommand, envs->exenvs);
+		return (get_cmd_struct(cucmd->splcommand, envs->exenvs));
 	}
-    return NULL;
+	return (NULL);
 }
 
-
-int expand_full_pipcmd(t_pipcmd **pipcmd, t_envs **exenvs)
+int	expand_full_pipcmd(t_pipcmd **pipcmd, t_envs **exenvs)
 {
-    t_pipcmd *cupipcmd;
+	t_pipcmd	*cupipcmd;
 
-    cupipcmd = *pipcmd;
-    while (cupipcmd)
-    {
-        expand_one_cmdstrct(&cupipcmd->cmd, exenvs);
-        cupipcmd = cupipcmd->next;
-    }
-    return SUCCESS;
+	cupipcmd = *pipcmd;
+	while (cupipcmd)
+	{
+		expand_one_cmdstrct(&cupipcmd->cmd, exenvs);
+		cupipcmd = cupipcmd->next;
+	}
+	return (SUCCESS);
 }
 
-int expand_one_cmdstrct(t_cmd **cmd, t_envs **exenvs)
-{   
-    int ret;
-    t_cmd *help;
-	t_words *neww;
-	t_words *head;
+int	expand_one_cmdstrct(t_cmd **cmd, t_envs **exenvs)
+{
+	int		ret;
+	t_cmd	*help;
+	t_words	*neww;
+	t_words	*head;
 
-    help = *cmd;
+	help = *cmd;
 	get_full_expanded_line(*cmd, exenvs);
-    return SUCCESS;
+	return (SUCCESS);
 }
 
-int mk_and_add_to_words(t_words **words, char *line)
+int	mk_and_add_to_words(t_words **words, char *line)
 {
-	t_words *cuw;
+	t_words	*cuw;
 
 	cuw = malloc(sizeof(t_words));
 	cuw->txt = ft_strdup(line);
 	cuw->next = NULL;
 	addtmptowords(words, &cuw);
-	return SUCCESS;
+	return (SUCCESS);
 }
 
-int get_var_name(char *line, char **key)
+int	get_var_name(char *line, char **key)
 {
-    int i;
-    
-    i = -1;
-	if (line[0] == '?'){
+	int	i;
+
+	i = -1;
+	if (line[0] == '?')
+	{
 		*key = ft_strdup("?");
-		return SUCCESS;
+		return (SUCCESS);
 	}
-    while (line[++i])
-        if (is_special(line[i]) || line[i] == ' ' || line[i] == '=')
-            break ;
-    *key = cutstring(line, 0, i);
-    return SUCCESS;
-}
-
-int is_special(char c)
-{
-    if (c == 92 || c == '>' || c == '<')
-        return 1;
-    if (c == '$' || c == '"' || c == '&')
-        return 1;
-    if (c == '|' || c == ']' || c == '[')
-        return 1;
-    if (c == '?' || c == '}' || c == '{')
-        return 1;
-    if (c == ';' || c == ':' || c == '/')
-        return 1;
-    if (c == '!' || c == '`' || c == '#')
-        return 1;
-    return 0;
+	while (line[++i])
+		if (is_special(line[i]) || line[i] == ' ' || line[i] == '=')
+			break ;
+	*key = cutstring(line, 0, i);
+	return (SUCCESS);
 }
