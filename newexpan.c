@@ -437,7 +437,7 @@ int is_special_in_none(char c)
         return 1;
     if (c == '|' || c == ']' || c == '[' || c == 39)
         return 1;
-    if (c == '?' || c == '}' || c == '{')
+    if (c == '?' || c == '}' || c == '{' || c == ' ')
         return 1;
     if (c == ';' || c == ':' || c == '/')
         return 1;
