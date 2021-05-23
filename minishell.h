@@ -383,6 +383,7 @@ int get_status(int st);
 //
 ////////////////////  newexpan.c
 void get_full_expanded_line(t_cmd *cmd, t_envs **exenvs);
+int is_export(char *cmd);
 char *expand_one_word(char *str, t_envs **exenvs);
 t_words *split_by_qout(char *str);
 char *get_quot_word(char *str, int *index);
@@ -397,16 +398,16 @@ char *get_words_expaned(char *str, t_envs **expanded);
 char *double_qout_part(char *str, t_envs **exenvs);
 int get_len_double_qout(char *str, t_envs **exenvs);
 int fill_part_of_str(char *tmp, int *index, char *str, t_envs **exenvs);
-char *last_pars(char *line, t_words **txts);
+char *last_pars(char *line, t_words **txts, int exp);
 int get_next_dqpos(char *line);
 int get_next_sqpos(char *line);
 int get_next_nq(char *line);
 int skip_spaces(char *line, int i);
-void delete_backslachs(t_words **txts);
-char *remove_back_from_one(char *line);
-char *finl_cost_back(char *line);
-char *double_quot_comp(char *line);
-char *none_qout_comp(char *line);
+void delete_backslachs(t_words **txts, int exp);
+char *remove_back_from_one(char *line, int exp);
+char *finl_cost_back(char *line, int exp);
+char *double_quot_comp(char *line, int exp);
+char *none_qout_comp(char *line, int exp);
 int is_special_in_double(char c);
 int is_special_in_none(char c);
 

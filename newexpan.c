@@ -5,6 +5,9 @@ void get_full_expanded_line(t_cmd *cmd, t_envs **exenvs)
 	char *cline;
 	char *tline;
 	char *line;
+	int exp;
+
+	exp = 0;
 	t_words *txts;
 	if (cmd->command == NULL)
 		return ;
@@ -17,6 +20,8 @@ void get_full_expanded_line(t_cmd *cmd, t_envs **exenvs)
 		cmd->command = NULL;
 		return ;
 	}
+	if (is_export(cline))
+		exp = 1;
 	while (txts)
 	{
 		tline = expand_one_word(txts->txt, exenvs);
@@ -30,10 +35,23 @@ void get_full_expanded_line(t_cmd *cmd, t_envs **exenvs)
 	free(tline);
 	free_words(&cmd->txts);
 	cmd->txts = NULL;
-	cline = last_pars(line, &cmd->txts);
+	cline = last_pars(line, &cmd->txts, exp);
 	free(line);
 	free(cmd->command);
 	cmd->command = cline;
+}
+
+int is_export(char *cmd)
+{
+	char *c;
+
+	c = lower_str(cmd);
+	if (ft_strcmp(c, "export") == 0)
+	{
+		free(c);
+		return 1;
+	}
+	return 0;
 }
 
 char *expand_one_word(char *str, t_envs **exenvs)
@@ -301,7 +319,7 @@ char *get_non_sdquot(char *str, int *index)
 
 //////////////// last pars ////////////////
 
-char *last_pars(char *line, t_words **txts)
+char *last_pars(char *line, t_words **txts, int exp)
 {
 	int help;
 	t_words *next;
@@ -333,7 +351,7 @@ char *last_pars(char *line, t_words **txts)
 		free(cmd);
 		i = skip_spaces(line, i);
 	}
-	delete_backslachs(txts);
+	delete_backslachs(txts, exp);
 	cmd = (*txts)->txt;
 	next = (*txts)->next;
 	free(*txts);
@@ -345,7 +363,7 @@ char *last_pars(char *line, t_words **txts)
 }
 
 
-void delete_backslachs(t_words **txts)
+void delete_backslachs(t_words **txts, int exp)
 {
 	t_words *help;
 	char *newstr;
@@ -353,7 +371,7 @@ void delete_backslachs(t_words **txts)
 	help = *txts;
 	while (help)
 	{
-		newstr = remove_back_from_one(help->txt);
+		newstr = remove_back_from_one(help->txt, exp);
 		free(help->txt);
 		help->txt = newstr;
 		help = help->next;
@@ -361,7 +379,7 @@ void delete_backslachs(t_words **txts)
 }
 
 
-char *remove_back_from_one(char *line)
+char *remove_back_from_one(char *line, int exp)
 {
 	t_words *w;
 	t_words *head;
@@ -371,7 +389,7 @@ char *remove_back_from_one(char *line)
 	head = w;
 	while (w)
 	{
-		fin = finl_cost_back(w->txt);
+		fin = finl_cost_back(w->txt, exp);
 		free(w->txt);
 		w->txt = fin;
 		w = w->next;
@@ -381,7 +399,7 @@ char *remove_back_from_one(char *line)
 	return fin;
 }
 
-char *finl_cost_back(char *line)
+char *finl_cost_back(char *line, int exp)
 {
 	char c;
 
@@ -394,12 +412,12 @@ char *finl_cost_back(char *line)
 		return ft_strdup(line);
 	else if (c == '"')
 	{
-		return double_quot_comp(line);
+		return double_quot_comp(line, exp);
 	}
-	return none_qout_comp(line);
+	return none_qout_comp(line, exp);
 }
 
-char *double_quot_comp(char *line)
+char *double_quot_comp(char *line, int exp)
 {
 	char *tmp;
 	int i;
@@ -410,7 +428,7 @@ char *double_quot_comp(char *line)
 	tmp = malloc(ft_strlen(line) + 1);
 	while (line[++i])
 	{
-		if (line[i] == 92 && is_special_in_double(line[i + 1]))
+		if (line[i] == 92 && is_special_in_double(line[i + 1]) && !exp)
 			i++;
 		tmp[++j] = line[i];
 	}
@@ -447,7 +465,7 @@ int is_special_in_none(char c)
 }
 
 
-char *none_qout_comp(char *line)
+char *none_qout_comp(char *line, int exp)
 {
 	int i;
 	int j;
@@ -459,7 +477,10 @@ char *none_qout_comp(char *line)
 	while (line[++i])
 	{
 		if (line[i] == 92 && is_special_in_none(line[i + 1]))
-			i++;
+		{
+			if (!(exp && line[i + 1] == '$'))
+				i++;
+		}
 		tmp[++j] = line[i];
 	}
 	tmp[++j] = 0;
