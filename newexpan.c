@@ -480,7 +480,8 @@ char *none_qout_comp(char *line, int exp)
 		{
 			if (!(exp && line[i + 1] == '$'))
 				i++;
-		}
+		}else if (line[i] == 92)
+			i++;
 		tmp[++j] = line[i];
 	}
 	tmp[++j] = 0;

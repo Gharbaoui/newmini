@@ -412,4 +412,5 @@ char *none_qout_comp(char *line, int exp);
 int is_special_in_double(char c);
 int is_special_in_none(char c);
 
-
+////// sig
+int level_of_bash(t_envs **exenvs);

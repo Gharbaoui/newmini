@@ -1,4 +1,5 @@
 #include "minishell.h"
+
 int main(int argc, char **argv, char **env)
 {
 	bash_loop(env);
@@ -14,7 +15,6 @@ void bash_loop(char **env)
 	int ret;
 	t_envs **envtable;
 	t_completecmd *complete;
-	glob_vars.envchanged = 1;
 	variables = malloc(sizeof(t_fullvar));
 	variables->exenvs = NULL;
 	variables->filledvar = NULL;
@@ -23,9 +23,11 @@ void bash_loop(char **env)
 	
 	add_toenvtable(&variables, "?=0");
 	status = 1;
+	glob_vars.envchanged = 1;
 	glob_vars.line = malloc(1);
 	glob_vars.childruning = 0;
 	glob_vars.exenvs = &variables->exenvs;
+	level_of_bash(variables->exenvs);
 	while (status)
 	{
 		free(glob_vars.line);

@@ -176,7 +176,6 @@ int     _echo(char **args)
 	}
     if (new_line == 1 || !(args[1]))
         printf("\n");
-	fflush(stdout);
     return (0);
 }
 //-------------------------------------------------------

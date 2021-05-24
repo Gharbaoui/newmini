@@ -26,7 +26,7 @@ void handl_sig(int signum)
 			{
 				free(glob_vars.line);
 			}
-			write(1, "\nminishell=>", 13);
+			write(1, "\nminishell > ", 14);
 		}
 		else{
 			write(1, "\n", 1);	
