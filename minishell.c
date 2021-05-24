@@ -30,6 +30,7 @@ void bash_loop(char **env)
 	level_of_bash(variables->exenvs);
 	while (status)
 	{
+		fflush(stdout);
 		free(glob_vars.line);
 		glob_vars.line = NULL;
 		write(1, "minishell > ", 12);

@@ -411,6 +411,7 @@ char *double_quot_comp(char *line, int exp);
 char *none_qout_comp(char *line, int exp);
 int is_special_in_double(char c);
 int is_special_in_none(char c);
-
+////////
+void file_creation(char **files, char **ops);
 ////// sig
 int level_of_bash(t_envs **exenvs);

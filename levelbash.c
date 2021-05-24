@@ -3,6 +3,7 @@
 int level_of_bash(t_envs **exenvs)
 {
 	int found;
+	char *help;
 	t_envs *var;
 
 	var = get_env(&found, "SHLVL", exenvs);
@@ -10,7 +11,9 @@ int level_of_bash(t_envs **exenvs)
 	{
 		found = ft_atoi(var->env_value) + 1;
 		free(var->env_value);
-		var->env_value = ft_strdup(ft_itoa(found));
+		help = ft_itoa(found);
+		var->env_value = ft_strdup(help);
+		free(help);
 		return found;
 	}
 	return 1;

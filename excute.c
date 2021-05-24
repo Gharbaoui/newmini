@@ -96,6 +96,26 @@ char  **creat_w_files(char **files, char **ops, int *error, int *append) // retu
 	return fs;
 }
 
+void file_creation(char **files, char **ops)
+{
+	int i;
+	int fd;
+
+	i = -1;
+	if (files)
+	{
+		while (files[++i])
+		{
+			if (ft_strcmp(ops[i], "<"))
+			{
+				fd = open (files[i], O_WRONLY | O_TRUNC | O_CREAT, 0644);
+				if (fd > 0)
+					close(fd);
+			}
+		}
+	}
+}
+
 void alloc_pipes(int ***pipes, int count)
 {
     int i;

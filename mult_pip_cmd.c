@@ -65,7 +65,7 @@ int ex_mu_p_cmd(t_pipcommand *pcmd, int **pipe, t_fullvar **env_var, t_iter nums
 		cmd = pcmd->cmd;
 		close_in_parent(pipe, nums.index);
 		glob_vars.childruning = 1;
-		free (creat_w_files(cmd.files, cmd.ops, &pid, &pid));
+		//file_creation(cmd.files, cmd.ops);
 		pid = fork();
 		if (pid == 0)
 			run_child(cmd, pipe, nums, env_var);

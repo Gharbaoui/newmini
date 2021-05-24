@@ -29,7 +29,7 @@ void get_full_expanded_line(t_cmd *cmd, t_envs **exenvs)
 		txts->txt = tline;
 		txts = txts->next;
 	}
-	tline = get_line_from_words_with_spaces(cmd->txts);
+	tline = get_line_from_words_with_spaces(cmd->txts); // go in for unknown leak
 	cline = ft_strjoin(&cline, " ");
 	line = ft_strjoin(&cline, tline);
 	free(tline);
