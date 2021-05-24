@@ -30,7 +30,7 @@ void bash_loop(char **env)
 	{
 		free(glob_vars.line);
 		glob_vars.line = NULL;
-		write(1, "minishell=>", 11);
+		write(1, "minishell > ", 12);
 		ret = get_next_line(&glob_vars.line);
 		// here i need to handel inputs to my bash
 		if (ret > 0)

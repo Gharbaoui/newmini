@@ -139,6 +139,7 @@ g_vars glob_vars;
 /// random.c
 char *cutstring(char *str, int start, int last);
 void free_dstr(char **str);
+int ft_atoi(char *str);
 char *ft_reverse(char *line);
 char* ft_itoa(int value);
 void print_pipes(t_words **pipes, int numofcmds);

@@ -33,6 +33,34 @@ void free_dstr(char **str)
 		free(str[i]);
 }
 
+int		ft_atoi(char *str)
+{
+	long	result;
+	int		np;
+	long	max;
+
+	np = 1;
+	result = 0;
+	max = 9223372036854775807;
+	while (*str == ' ' || (*str >= 9 && *str <= 13))
+		str++;
+	if (*str == '-' || *str == '+')
+		np = (*str++ == '-') ? -1 : 1;
+	while (ft_isdigit(*str))
+	{
+		if (result <= (max - (*str - '0')) / 10)
+			result = (result * 10) + *str - '0';
+		else
+		{
+			result = (np == -1) ? 0 : -1;
+			break ;
+		}
+		str++;
+	}
+	return (result * np);
+}
+
+
 int ft_strcmp(char *s1, char *s2)
 {
 	int i;

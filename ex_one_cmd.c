@@ -98,7 +98,9 @@ int handl_red(t_onecmd cmd)
 int actual_exec_one(t_onecmd cmd, t_fullvar **env_var)
 {
     int origin[2];
-	
+	int ret;
+
+	ret = 0;
 	origin[0] = prm_check(cmd);
 	if (origin[0] != 0)
 		return origin[0];
@@ -115,9 +117,11 @@ int actual_exec_one(t_onecmd cmd, t_fullvar **env_var)
             printf("bash: %s: No such file or directory\n", cmd.cmd);
         else
             printf("%s: command not found\n", cmd.args[0]);
-        return 127; // for command not found
+        ret = 127; // for command not found
     }
-    return 0;
+	close(origin[1]);
+	close(origin[0]);
+    return ret;
 }
 
 

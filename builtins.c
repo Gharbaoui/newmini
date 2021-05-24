@@ -147,7 +147,7 @@ int ft_exit(char **args)
 			glob_vars.exitstatus = 1;
 			glob_vars.exit = 0;
 		}else{
-			status = atoi(args[1]) & 255;    ///// atoi to ft_atoi here
+			status = ft_atoi(args[1]) & 255;    ///// atoi to ft_atoi here
 			glob_vars.exitstatus = status;
 		}
 	}

@@ -22,6 +22,8 @@ int run_sim_ifcmd(t_onecmd cmd, t_fullvar **env_var)
        	waitpid(pid, &status, 0);
 		glob_vars.childruning = 0;
 		glob_vars.exitstatus = get_status(status);
+		close(def[1]);
+		close(def[0]);
        	return status;
     }
 	else
@@ -29,6 +31,8 @@ int run_sim_ifcmd(t_onecmd cmd, t_fullvar **env_var)
 		exc_one_built(cmd, env_var);
         dup2(def[1], 1);
         dup2(def[0], 0);
+		close(def[1]);
+		close(def[0]);
 	}
 	return -1999;
 }
