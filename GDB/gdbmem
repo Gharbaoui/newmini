@@ -1,0 +1,16 @@
+  set pagination off
+  set breakpoint pending on
+  set logging file gdbcmd1.out
+  set logging on
+  break malloc
+  commands
+  frame
+  printf "malloc(%lld) = %p\n", $rdi, $rax
+  continue
+  end
+  break free
+  commands
+  printf "free(0x%016llx)\n", (unsigned long long) $rdi
+  continue
+  end
+  continue

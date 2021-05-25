@@ -28,15 +28,15 @@ int prm_check(t_onecmd cmd)
 			fs = creat_w_files(cmd.files, cmd.ops, &error, &append);	
 			if (error)
 			{
-				printf("bash: %s: No such file or directory\n", fs[0]);
+				ft_printf(3, "bash: ", fs[0], ": No such file or directory\n");
 				ret = 1;
 			}
-			else if (cmd.cmd && cmd.prem)
-			{
-				printf("bash: %s: Permission denied\n", cmd.cmd);
-				ret = 126;
-			}
 			free(fs);
+	}
+	if (cmd.cmd && cmd.prem)
+	{
+		ft_printf(3, "bash: ", cmd.cmd, ": Permission denied\n");
+		ret = 126;
 	}
 	return ret;	
 }
@@ -55,7 +55,7 @@ int decide_in_out(int **pipe, char **files, char **ops, t_iter nums)
 		else
 		{
 			free(fs);
-            printf("bash: %s: No such file or directory\n", fs[0]);
+            ft_printf(3, "bash: ", fs[0], ": No such file or directory\n");
 			return 1;
 		}
 	}
@@ -90,6 +90,8 @@ char  **creat_w_files(char **files, char **ops, int *error, int *append) // retu
 				else
 					close(fd);
 				fs[0] = files[i];
+				if (*error)
+					break ;
 			}
 		}
 	}
@@ -111,6 +113,13 @@ void file_creation(char **files, char **ops)
 				fd = open (files[i], O_WRONLY | O_TRUNC | O_CREAT, 0644);
 				if (fd > 0)
 					close(fd);
+			}
+			else
+			{
+				fd = open(files[i], O_RDONLY);
+				if (fd < 0)
+					break ;	
+				close(fd);
 			}
 		}
 	}

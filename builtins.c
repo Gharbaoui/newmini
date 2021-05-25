@@ -13,7 +13,7 @@ int cd(char **paths, t_fullvar **vars)
 	if (paths[1] && paths[2])
 	{
 		glob_vars.exitstatus = 1;
-		printf("bash: cd: too many arguments\n");
+		ft_printf(1, "bash: cd: too many arguments\n");
 		return 1;
 	}
 	var = get_env(&i, "HOME", (*vars)->exenvs);
@@ -21,7 +21,7 @@ int cd(char **paths, t_fullvar **vars)
 		home = var->env_value;
 	if (paths[1] == NULL && home == NULL) // TODO: to change getenv to the builtin export
 	{
-		printf("Minishell: cd: HOME not set\n");
+		ft_printf(1, "Minishell: cd: HOME not set\n");
 		glob_vars.exitstatus = 1;
 		return (1);
 	}
@@ -95,13 +95,13 @@ int ft_env (t_fullvar *vars)
 	while (help)
 	{
 		var = get_env(&found, help->txt, vars->exenvs);
-		printf("%s=%s\n", var->env_name, var->env_value);
+		ft_printf(3, var->env_name, var->env_value, "\n");
 		help = help->next;
 	}
 	var = get_env(&found, "PATH", vars->exenvs);
 	if (found)
 		envpath = get_using_path("/env", var->env_value, &fst);
-	printf("_=%s\n", envpath);
+	ft_printf(3, "_=", envpath, "\n");
 	free(envpath);
 	return 0;
 }
@@ -139,11 +139,11 @@ int ft_exit(char **args)
 	{
 		if (is_number(args[1]) == 0)
 		{
-			printf("bash: exit: %s: numeric argument required\n", args[1]);
+			ft_printf(3, "bash: exit: ", args[1], ": numeric argument required\n");
 			glob_vars.exitstatus = 2;
 		}else if (args[2])
 		{
-			printf("bash: exit: too many arguments\n");
+			ft_printf(1, "bash: exit: too many arguments\n");
 			glob_vars.exitstatus = 1;
 			glob_vars.exit = 0;
 		}else{
@@ -169,14 +169,13 @@ int     _echo(char **args)
 	new_line = i;
 	while (args[i])
 	{
-    	printf("%s", args[i]);
+    	ft_printf(1, args[i]);
 		i++;
 		if(args[i])
-			printf(" ");
+			ft_printf(1, " ");
 	}
     if (new_line == 1 || !(args[1]))
-        printf("\n");
-	fflush(stdout);
+        ft_printf(1, "\n");
     return (0);
 }
 //-------------------------------------------------------
@@ -187,11 +186,11 @@ int		pwd()
 	char cwd[128];
 	glob_vars.exitstatus = 0;
 	if (getcwd(cwd, sizeof(cwd)))
-		printf("%s\n", cwd);
+		ft_printf(2, cwd, "\n");
 	else
 	{
 		// get env variable(PWD), and print it
-		printf("PWD");
+		ft_printf(1, "PWD");
 	}
 	return (0);
 }

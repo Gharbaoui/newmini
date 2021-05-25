@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdarg.h>
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/uio.h>
@@ -138,6 +139,7 @@ g_vars glob_vars;
 
 /// random.c
 char *cutstring(char *str, int start, int last);
+void ft_printf(int count, ...);
 void free_dstr(char **str);
 int ft_atoi(char *str);
 char *ft_reverse(char *line);

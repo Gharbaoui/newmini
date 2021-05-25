@@ -18,7 +18,7 @@ int run_sim_cmd(t_onecmd cmd, t_fullvar **env_var)
 		if (error)
 		{
 			free(fs);
-        	printf("bash: %s: No such file or directory\n", fs[0]);
+        	ft_printf(3, "bash: ", fs[0], ": No such file or directory\n");
 			glob_vars.exitstatus = 1;
         	return 1; // error happend
 		}
@@ -86,9 +86,8 @@ int handl_red(t_onecmd cmd)
         else
 		{
 			free(fs);
-            printf("bash: %s: No such file or directory\n", fs[0]);
+            ft_printf(3, "bash: ", fs[0], ": No such file or directory\n");
 			glob_vars.exitstatus = 1;
-			fflush(stdout); //// need to be remved
             return 1; // error happend
         }
     }
@@ -114,9 +113,9 @@ int actual_exec_one(t_onecmd cmd, t_fullvar **env_var)
         dup2(origin[1], 1);
         dup2(origin[0], 0);
         if (cmd.cmd[0] == '/' || cmd.cmd[0] == '~' || cmd.cmd[0] == '.')
-            printf("bash: %s: No such file or directory\n", cmd.cmd);
+           ft_printf(3, "bash: ", cmd.cmd, ": No such file or directory\n");
         else
-            printf("%s: command not found\n", cmd.args[0]);
+            ft_printf(2, cmd.args[0], ": command not found\n");
         ret = 127; // for command not found
     }
 	close(origin[1]);

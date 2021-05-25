@@ -1,5 +1,13 @@
 #include "minishell.h"
 
+void help_mem(t_cmd *cmd, char *cline, char *tline, char *line)
+{
+	printf("cmd %p\n", cmd);
+	printf("tline %p\n", tline);
+	printf("cline %p\n", cline);
+	printf("line %p\n", line);
+}
+
 void get_full_expanded_line(t_cmd *cmd, t_envs **exenvs)
 {
 	char *cline;
@@ -51,6 +59,7 @@ int is_export(char *cmd)
 		free(c);
 		return 1;
 	}
+	free(c);
 	return 0;
 }
 
@@ -176,29 +185,29 @@ int get_len_double_qout(char *str, t_envs **exenvs)
 ///// *    from words to line    *////////
 char *get_line_from_words(t_words *words)
 {
+	char *new_str;
 	int size;
-	char *tmp;
 	int i;
 	int j;
 
 	i = -1;
 	size = get_len_ofstrs_in_words(words);
-	tmp = malloc(size + 1);
+	new_str = malloc(size + 1);
 	while (words)
 	{
 		j = -1;
 		while (words->txt[++j])
-			tmp[++i] = words->txt[j];
+			new_str[++i] = words->txt[j];
 		words = words->next;
 	}
-	tmp [++i] = 0;
-	return tmp;
+	new_str [++i] = 0;
+	return new_str;
 }
 
 char *get_line_from_words_with_spaces(t_words *words)
 {
-	int size;
 	char *tmp;
+	int size;
 	int i;
 	int j;
 

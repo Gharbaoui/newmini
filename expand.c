@@ -34,15 +34,7 @@ int expand_one_cmdstrct(t_cmd **cmd, t_envs **exenvs)
 	t_words *head;
 
     help = *cmd;
-/*	if (*cmd)
-	{
-		if ((*cmd)->txts)
-			expand_txts(&(*cmd)->txts, exenvs);
-		if ((*cmd)->command)
-			expand_commandtxt(cmd, exenvs);
-	}*/
 	get_full_expanded_line(*cmd, exenvs);
-	
     return SUCCESS;
 }
 
