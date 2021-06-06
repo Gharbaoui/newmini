@@ -26,6 +26,7 @@ void bash_loop(char **env)
 	glob_vars.envchanged = 1;
 	glob_vars.line = malloc(1);
 	glob_vars.childruning = 0;
+	glob_vars.fdout = dup(1);
 	glob_vars.exenvs = &variables->exenvs;
 	level_of_bash(variables->exenvs);
 	while (status)
@@ -56,6 +57,7 @@ void bash_loop(char **env)
 			status = 0;
 		}
 	}
+	close(glob_vars.fdout);
 }
 
 

@@ -127,6 +127,7 @@ typedef struct {
 	char **envp;
 	int exitstatus;
 	int lastpid;
+	int fdout;
 	int exit;
 	int childruning;
 } g_vars;
@@ -139,6 +140,7 @@ g_vars glob_vars;
 
 /// random.c
 char *cutstring(char *str, int start, int last);
+int is_number(char *num);
 void ft_printf(int count, ...);
 void free_dstr(char **str);
 int ft_atoi(char *str);
@@ -294,6 +296,7 @@ char *get_word(char *line, int *next);
 t_pipcommand *get_cmd_struct(t_pipcmd *cmd, t_envs **exenvs);
 int fill_onepipcmd(t_pipcommand *pipcmd, t_pipcmd *pip, t_envs **exenvs);
 int fill_one_cmd(t_onecmd *fcmd, t_cmd *pcmd, t_envs **exenvs);
+void	help_fill_one_cmd(t_onecmd *fcmd, t_cmd *pcmd);
 char **transfrm_ln_arr(t_words *words, char *cmd, int iscmd);
 int how_many_words(t_words *words);
 
@@ -351,6 +354,7 @@ int check_exvar(char *line);
 //// echo
 int     _echo(char **args);
 int cd(char **paths, t_fullvar **vars);
+int	help_cd(char **paths, t_fullvar **vars, char *home);
 void set_pwd(t_fullvar **vars);
 //// print_export 
 t_words *sortd_merg(t_words *w1, t_words *w2);
@@ -358,9 +362,9 @@ int sort_words(t_words **words);
 void red_in_decide_files(char **fs, int **pipe, int append, t_iter nums);
 void red_in_decide_no_files(int **pipe, t_iter nums);
 void real_work_sort(t_words **words);
-int run_built_in(t_onecmd cmd, t_fullvar **vars);
 void fill_rest(t_words **fin, t_words *w);
 int run_built_in(t_onecmd cmd, t_fullvar **vars);
+int	help_run_built_in(t_onecmd cmd, t_fullvar **vars, char *lcmd);
 void split_words(t_words *words, t_words **a, t_words **b);
 void fill_unchaged(t_words **word, char *line);
 int var_founded(t_words **words, int kl, int counter);
@@ -373,6 +377,7 @@ int unset_one_var(char *key, t_fullvar **vars);
 void delete_exact_word(t_words **words, char *word);
 /// exit
 int ft_exit(char **args);
+void	help_ft_exit(int status, char **args);
 // ENV
 int ft_env (t_fullvar *vars);
 int		pwd();

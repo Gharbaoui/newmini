@@ -17,6 +17,25 @@ char *cutstring(char *str, int start, int last)
 	return tmp;
 }
 
+int is_digit(char c)
+{
+	if (c >= '0' && c <= '9')
+		return (1);
+	return (0);
+}
+
+int is_number(char *num)
+{
+	if (*num == '-' || *num == '+')
+		num++;
+	while (*num)
+	{
+		if (!is_digit(*num))
+			return (0);
+		num++;
+	}
+	return (1);
+}
 
 void ft_printf(int count, ...)
 {
