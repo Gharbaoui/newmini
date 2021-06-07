@@ -179,6 +179,23 @@ int ft_cmpstr(char *s1, char *s2){ // if the same returns 1 if not return 0
 
 }
 
+int	is_special(char c)
+{
+	if (c == 92 || c == '>' || c == '<' || c == '\'')
+		return (1);
+	if (c == '$' || c == '"' || c == '&')
+		return (1);
+	if (c == '|' || c == ']' || c == '[')
+		return (1);
+	if (c == '?' || c == '}' || c == '{')
+		return (1);
+	if (c == ';' || c == ':' || c == '/')
+		return (1);
+	if (c == '!' || c == '`' || c == '#')
+		return (1);
+	return (0);
+}
+
 int reset_command(t_cmd **command)
 {
 	if (!(*command))

@@ -51,7 +51,6 @@ t_envs *make_node_env(int *ern, char *line, t_fullvar **vars)
 	t_envs *currentEnv;
 	int eq_pos;
 
-	// i need to chevck first if line is valid as env variable
 	*ern = SUCCESS;
 	if (!(currentEnv = malloc(sizeof(t_envs))))
 	{

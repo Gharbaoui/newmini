@@ -305,6 +305,8 @@ void print_c(t_onecmd *cmd);
 void print_arr(char **str);
 
 char *get_command(char *cmd, char *PATH, int *prem, char *lcmd);
+int	help_get_command(char *cmd, int ret, char **command);
+int	help2_get_command(char *lcmd, char **command, char *path);
 int is_comcmd(char *cmd, char *lcmd); // if 1 means not look in PATH 0 look in PATH
 char *get_using_path(char *cmd, char *PATH, struct stat *fst);
 char *get_one_path(char *PATH, int *index);
@@ -324,12 +326,14 @@ void close_pipes(int **pipes, int inex, int pipsize);
 void close_write_rest(int **pipes, int index, int pipsize);
 void close_read_rest(int **pipes, int index, int pipsize);
 int decide_in_out(int **pipes, char **files, char **ops, t_iter nums);
+int	help_decide_in_out(char **fs);
 int run_command(t_onecmd cmd);
 int close_in_parent(int **pipe, int pindex);
 int ex_mu_p_cmd(t_pipcommand *pcmd, int **pipe, t_fullvar **env_var, t_iter nums);
 
 int exc_one_cmd(t_onecmd cmd, int **pipe, t_iter nums, t_fullvar **env_var);
 int prm_check(t_onecmd cmd);
+void	help_prem_check(char *cmd, int *ret);
 int run_exact_cmd(t_onecmd cmd, t_fullvar **env_var);
 int run_cmd(t_onecmd cmd, t_fullvar **env_var);
 
@@ -337,6 +341,7 @@ int cre_write_files(char ***fs, char *file, char *op, int *append);
 void init_in_creat_wf(char ***fs, int *i, int *error);
 int run_sim_cmd(t_onecmd cmd, t_fullvar **env_var);
 int run_sim_ifcmd(t_onecmd cmd, t_fullvar **env_var);
+int	help_run_sim_ifcmd(t_onecmd cmd, t_fullvar **env_var, int *def);
 int handl_red(t_onecmd cmd);
 void help_handl_red(char **fs, int append);
 int actual_exec_one(t_onecmd cmd, t_fullvar **env_var);
@@ -350,6 +355,9 @@ void export_print(t_fullvar *vars);
 int ft_export(char **args, t_fullvar **vars);
 void update_exit_status(t_envs **exenvs);
 int sub_export(t_fullvar **vars, char *line);
+int	help1_sub_export(t_fullvar **vars, char *line, char **key, char **tmp);
+int	help2_sub_export(t_fullvar **vars, char *key, char **tmp1, t_envs **cuvar1);
+void	help3_sub_export(char *line, char *key, char **tmp1, t_envs **cuvar);
 int check_exvar(char *line);
 //// echo
 int     _echo(char **args);
@@ -358,8 +366,10 @@ int	help_cd(char **paths, t_fullvar **vars, char *home);
 void set_pwd(t_fullvar **vars);
 //// print_export 
 t_words *sortd_merg(t_words *w1, t_words *w2);
+int	help_sortd_merg(t_words **w1, t_words **w2, t_words **fin);
 int sort_words(t_words **words);
 void red_in_decide_files(char **fs, int **pipe, int append, t_iter nums);
+void	overwrite_or_append(int append, char **fs);
 void red_in_decide_no_files(int **pipe, t_iter nums);
 void real_work_sort(t_words **words);
 void fill_rest(t_words **fin, t_words *w);

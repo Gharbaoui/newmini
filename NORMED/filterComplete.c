@@ -56,7 +56,6 @@ int	modify_str(char **str)
 	words = split_by_qout(*str);
 	free(*str);
 	*str = get_line_from_words(words);
-	free_words(&words);
 	return (SUCCESS);
 }
 
