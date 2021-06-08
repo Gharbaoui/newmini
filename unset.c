@@ -62,6 +62,7 @@ void delete_exact_word(t_words **words, char *word)
 	if (next && !ft_strcmp(word, next->txt))
 	{
 		*words = next->next;
+		free(next->txt);
 		free(next);
 		return ;
 	}
@@ -73,6 +74,7 @@ void delete_exact_word(t_words **words, char *word)
 	if (next)
 	{
 		prv->next = next->next;
+		free(next->txt);
 		free(next);
 	}
 }

@@ -1,22 +1,14 @@
 #include "minishell.h"
 
-void help_mem(t_cmd *cmd, char *cline, char *tline, char *line)
+void	get_full_expanded_line(t_cmd *cmd, t_envs **exenvs)
 {
-	printf("cmd %p\n", cmd);
-	printf("tline %p\n", tline);
-	printf("cline %p\n", cline);
-	printf("line %p\n", line);
-}
-
-void get_full_expanded_line(t_cmd *cmd, t_envs **exenvs)
-{
-	char *cline;
-	char *tline;
-	char *line;
-	int exp;
+	t_words *txts;
+	char	*cline;
+	char	*tline;
+	char	*line;
+	int		exp;
 
 	exp = 0;
-	t_words *txts;
 	if (cmd->command == NULL)
 		return ;
 	txts = cmd->txts;
@@ -28,8 +20,7 @@ void get_full_expanded_line(t_cmd *cmd, t_envs **exenvs)
 		cmd->command = NULL;
 		return ;
 	}
-	if (is_export(cline))
-		exp = 1;
+	exp = is_export(cline);
 	while (txts)
 	{
 		tline = expand_one_word(txts->txt, exenvs);
@@ -37,7 +28,7 @@ void get_full_expanded_line(t_cmd *cmd, t_envs **exenvs)
 		txts->txt = tline;
 		txts = txts->next;
 	}
-	tline = get_line_from_words_with_spaces(cmd->txts); // go in for unknown leak
+	tline = get_line_from_words_with_spaces(cmd->txts);
 	cline = ft_strjoin(&cline, " ");
 	line = ft_strjoin(&cline, tline);
 	free(tline);
@@ -119,7 +110,7 @@ char *double_qout_part(char *str, t_envs **exenvs)
 	while (str[++i])
 	{
 		help = backslash(str, i);
-		if (help % 2 == 0 && str[i] == '$')
+		if (help % 2 == 0 && str[i] == '$' && str[i + 1])
 			i+= fill_part_of_str(tmp, &j, str + i, exenvs);
 		else
 			tmp[++j] = str[i];
@@ -365,9 +356,6 @@ char *last_pars(char *line, t_words **txts, int exp)
 	next = (*txts)->next;
 	free(*txts);
 	*txts = next;
-	//// i need after this to filter txts by removing quts and backslach usage
-	// after store in AA the first txts->txt and move txts to txts->next and free(txts)
-	// then return AA
 	return cmd;
 }
 

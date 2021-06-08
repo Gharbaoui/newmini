@@ -13,7 +13,7 @@ int	ft_env (t_fullvar *vars)
 	while (help)
 	{
 		var = get_env(&found, help->txt, vars->exenvs);
-		ft_printf(3, var->env_name, var->env_value, "\n");
+		ft_printf(4, var->env_name,"=" ,var->env_value, "\n");
 		help = help->next;
 	}
 	var = get_env(&found, "PATH", vars->exenvs);
