@@ -43,10 +43,12 @@ int	fill_cmd_objs(t_words **txts, char *str)
 
 	if (!(*txts))
 	{
-		if (!(*txts = malloc(sizeof(t_words))))
-			return (MEMERROR); // memory failure
+		*txts = malloc(sizeof(t_words));
+		if (!(*txts))
+			return (MEMERROR);
 		(*txts)->next = NULL;
-		if (!((*txts)->txt = ft_strdup(str)))
+		(*txts)->txt = ft_strdup(str);
+		if (!(*txts)->txt)
 			return (0);
 	}
 	else
@@ -54,10 +56,12 @@ int	fill_cmd_objs(t_words **txts, char *str)
 		help  = *txts;
 		while (help->next)
 			help = help->next;
-		if (!(help->next = malloc(sizeof(t_words))))
+		help->next = malloc(sizeof(t_words));
+		if (!(help)->next)
 			return (0);
 		help = help->next;
-		if (!(help->txt = ft_strdup(str)))
+		help->txt = ft_strdup(str);
+		if (!(help)->txt)
 			return (0);
 		help->next = NULL;
 	}
