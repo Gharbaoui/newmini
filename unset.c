@@ -1,10 +1,10 @@
 #include "minishell.h"
 
-int ft_unset(char **args, t_fullvar **vars)
+int	ft_unset(char **args, t_fullvar **vars)
 {
-	int i;
-	int ret;
-	int err;
+	int	i;
+	int	ret;
+	int	err;
 
 	i = 0;
 	ret = 0;
@@ -12,7 +12,7 @@ int ft_unset(char **args, t_fullvar **vars)
 	if (args == NULL || (args[0] && !args[1]))
 	{
 		glob_vars.exitstatus = 0;
-		return 0;
+		return (0);
 	}
 	while (args[++i])
 	{
@@ -21,20 +21,19 @@ int ft_unset(char **args, t_fullvar **vars)
 			err = 1;
 	}
 	glob_vars.exitstatus = err;
-	return err;
+	return (err);
 }
 
-
-int unset_one_var(char *key, t_fullvar **vars)
+int	unset_one_var(char *key, t_fullvar **vars)
 {
-	t_envs *var;
-	int help;
-	
+	t_envs	*var;
+	int		help;
+
 	glob_vars.exitstatus = 0;
 	if (check_unsetvar(key))
 	{
 		glob_vars.exitstatus = 1;
-		return 1;
+		return (1);
 	}
 	var = get_env(&help, key, (*vars)->exenvs);
 	if (help)
@@ -42,21 +41,20 @@ int unset_one_var(char *key, t_fullvar **vars)
 		delete_env(&(*vars)->exenvs, key, &help);
 		delete_exact_word(&(*vars)->allkeys, key);
 		delete_exact_word(&(*vars)->filledvar, key);
-		return 0;
+		return (0);
 	}
-	if (ft_exist((*vars)->allkeys ,key))
+	if (ft_exist((*vars)->allkeys, key))
 	{
 		delete_exact_word(&(*vars)->allkeys, key);
 		delete_exact_word(&(*vars)->filledvar, key);
 	}
-	return 0;
+	return (0);
 }
 
-
-void delete_exact_word(t_words **words, char *word)
+void	delete_exact_word(t_words **words, char *word)
 {
-	t_words *prv;
-	t_words *next;
+	t_words	*prv;
+	t_words	*next;
 
 	next = *words;
 	if (next && !ft_strcmp(word, next->txt))
@@ -79,15 +77,9 @@ void delete_exact_word(t_words **words, char *word)
 	}
 }
 
-
-
-
-
-
-
-int check_unsetvar(char *line)
+int	check_unsetvar(char *line)
 {
-	int help;
+	int	help;
 
 	help = nlindex(line, '=');
 	if (help == -1)
@@ -95,14 +87,18 @@ int check_unsetvar(char *line)
 	help = check_envvar(line, help);
 	if (help != SUCCESS)
 	{
+		dup2(2, 1);
 		printf("bash: unset: `%s': not a valid identifier\n", line);
-		return 1;
+		dup2(glob_vars.fdout, 1);
+		return (1);
 	}
 	help = ft_strlen(line) - 1;
 	if (line[help] == '+')
 	{
+		dup2(2, 1);
 		printf("bash: unset: `%s': not a valid identifier\n", line);
-		return 1;
+		dup2(glob_vars.fdout, 1);
+		return (1);
 	}
-	return 0;
+	return (0);
 }

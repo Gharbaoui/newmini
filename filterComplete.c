@@ -52,7 +52,8 @@ int	filter_cmd(t_cmd **cmd)
 int	modify_str(char **str)
 {
 	t_words	*words;
-
+	if (*str == NULL)
+		return (SUCCESS);
 	words = split_by_qout(*str);
 	free(*str);
 	*str = get_line_from_words(words);

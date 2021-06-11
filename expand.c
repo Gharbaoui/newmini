@@ -48,7 +48,7 @@ int	get_var_name(char *line, char **key)
 		return (SUCCESS);
 	}
 	while (line[++i])
-		if (is_special(line[i]) || line[i] == ' ' || line[i] == '=')
+		if (is_special(line[i]) || line[i] == ' ' || line[i] == '\t' || line[i] == '=')
 			break ;
 	*key = cutstring(line, 0, i);
 	return (SUCCESS);

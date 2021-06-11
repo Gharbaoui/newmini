@@ -408,6 +408,8 @@ int get_status(int st);
 //
 ////////////////////  newexpan.c
 void get_full_expanded_line(t_cmd *cmd, t_envs **exenvs);
+int	help1_get_full_expanded(t_cmd *cmd, t_envs **exenvs, char **cline, int *exp);
+void	help2_get_full_exp(char *line, char **cmd, char **cline);
 int is_export(char *cmd);
 char *expand_one_word(char *str, t_envs **exenvs);
 t_words *split_by_qout(char *str);
@@ -422,8 +424,10 @@ void var_expan(t_words *words, t_envs **exenvs);
 char *get_words_expaned(char *str, t_envs **expanded);
 char *double_qout_part(char *str, t_envs **exenvs);
 int get_len_double_qout(char *str, t_envs **exenvs);
+void	sim_h1_get_len(int *tot, int *i);
 int fill_part_of_str(char *tmp, int *index, char *str, t_envs **exenvs);
 char *last_pars(char *line, t_words **txts, int exp);
+int	help1_last_pars(char *line, int i);
 int get_next_dqpos(char *line);
 int get_next_sqpos(char *line);
 int get_next_nq(char *line);
