@@ -12,7 +12,7 @@ void	file_creation(char **files, char **ops)
 		{
 			if (ft_strcmp(ops[i], "<"))
 			{
-				fd = open (files[i], O_WRONLY | O_TRUNC | O_CREAT, 0644);
+				fd = open (files[i], O_WRONLY | O_APPEND | O_CREAT, 0644);
 				if (fd > 0)
 					close(fd);
 			}
