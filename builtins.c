@@ -28,9 +28,33 @@ int	pwd(void)
 	char	cwd[128];
 
 	glob_vars.exitstatus = 0;
-	if (getcwd(cwd, sizeof(cwd)))
+	if (glob_vars._pwd)
+		ft_printf(2, glob_vars._pwd, "\n");
+	else if (getcwd(cwd, sizeof(cwd)))
 		ft_printf(2, cwd, "\n");
 	else
 		ft_printf(1, "PWD");
 	return (0);
+}
+
+void	update_pwd(t_envs **exenvs)
+{
+	int		found;
+	t_envs	*var;
+
+	var = get_env(&found, "PWD", exenvs);
+	if (found)
+	{
+		if (glob_vars._pwd)
+			free(glob_vars._pwd);
+		glob_vars._pwd = ft_strdup(var->env_value);
+	}
+	else
+	{
+		if (glob_vars._pwd)
+		{
+			free(glob_vars._pwd);
+		}
+		glob_vars._pwd = NULL;
+	}
 }

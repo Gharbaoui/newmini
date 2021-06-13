@@ -24,6 +24,7 @@ int	help_cd(char **paths, t_fullvar **vars, char *home)
 		return (ret);
 	}
 	set_pwd(vars);
+	update_pwd((*vars)->exenvs);
 	return (0);
 }
 
@@ -35,23 +36,19 @@ int	cd(char **paths, t_fullvar **vars)
 
 	home = NULL;
 	glob_vars.exitstatus = 0;
-	if (paths[1] && paths[2])
+	if (paths[1])
+		home = paths[1];
+	else
 	{
-		glob_vars.exitstatus = 1;
-		dup2(2, 1);
-		ft_printf(1, "bash: cd: too many arguments\n");
-		dup2(1, glob_vars.fdout);
-		return (1);
+		var = get_env(&i, "HOME", (*vars)->exenvs);
+		if (i)
+			home = var->env_value;
 	}
-	var = get_env(&i, "HOME", (*vars)->exenvs);
-	if (i)
-		home = var->env_value;
 	return (help_cd(paths, vars, home));
 }
 
 void	change_pwd_old_pwd(t_fullvar **vars, char *opwd)
 {
-	t_envs	*var;
 	char	*help;
 	char	**oldpwd_newpwd;
 	char	*path;

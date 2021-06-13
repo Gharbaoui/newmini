@@ -52,7 +52,6 @@ t_words	*sortd_merg(t_words *w1, t_words *w2)
 	t_words	*h1;
 	t_words	*h2;
 	t_words	*fin;
-	int		ret;
 
 	if (w1 == NULL)
 		return (w2);

@@ -50,7 +50,7 @@ int	handl_red(t_onecmd cmd)
 	return (0);
 }
 
-int	actual_exec_one(t_onecmd cmd, t_fullvar **env_var)
+int	actual_exec_one(t_onecmd cmd)
 {
 	int	ret;
 

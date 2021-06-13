@@ -42,7 +42,6 @@ typedef struct envs{
 }t_envs;
 
 typedef struct txts{
-	int head;
 	char *txt;
 	struct txts *next;
 } t_words;
@@ -70,12 +69,6 @@ typedef struct completecmd{
 	t_pipcmd *splcommand;
 	struct completecmd *next;
 } t_completecmd;
-
-typedef struct s_isdollar
-{
-	int isd; // if comes from dollar will have value of 1 otherwise 0
-	struct s_isdollar *next;
-}t_dollar;
 
 typedef struct iter{
 	int i;
@@ -123,6 +116,7 @@ typedef struct multcmd
 typedef struct {
 	t_envs ***exenvs;
 	char *line;
+	char *_pwd;
 	int envchanged;
 	char **envp;
 	int exitstatus;
@@ -140,6 +134,7 @@ g_vars glob_vars;
 
 /// random.c
 char *cutstring(char *str, int start, int last);
+void	update_pwd(t_envs **exenvs);
 int is_number(char *num);
 void ft_printf(int count, ...);
 void free_dstr(char **str);
@@ -173,13 +168,11 @@ void rest_txt_next(char **str, t_words **next);
 int calcfirst(char *line, char c, int *last, int *is_str);
 int	h1_calcfirst(int i);
 int backslash(char *line, int index);
-void addstr_ints(t_dollar **head, t_dollar **newint);
 int help_short_calcfirst(int *i, int *dq, int *sq, int is_first);
 int countnumberofcmds(t_words *commands);
 int simplecheck(char *line);
 int check_errors(int ern, t_words **words);
 void free_words(t_words **words);
-void free_ints(t_dollar *d);
 void free_pipes(int **pipes, int count);
 void free_wcmd(t_workingcmds **wcmd, int numofcmds);
 void help_short_count(char *help, int *i);
@@ -279,7 +272,6 @@ int expand_commandtxt(t_cmd **cmd, t_envs **exenvs);
 int expand_txts(t_words **txts, t_envs **exenvs);
 int expand_txtsh2(int len, t_words **all);
 int backs_filter_str(char **str, t_envs **exenvs, t_words **newwords);
-int local_words(t_words **words, char *line, int i, t_dollar **strdol);
 int work_on_words(t_words **mod_words, t_words *words, t_envs **exenvs, int order);
 int filter_string(t_words **words, t_words *w, t_envs **exenvs, int order);
 int get_var_name(char *line, char **key);
@@ -292,7 +284,6 @@ int mk_and_add_to_words(t_words **words, char *line);
 int fill_from_words(char *tmp, int index, t_words *words);
 void	ft_remove_q_tmp(char **tmp, int start);
 int fill_normal(char *tmp, int index, char *value);
-int orgniz_mod_words(t_words *words, t_words **nw, t_dollar *strdol);
 int first_one(t_words **help, char *line);
 int get_words(char *line, t_words **help);
 int last_word(t_words **nw, char *line);
@@ -356,10 +347,10 @@ int cre_write_files(char ***fs, char *file, char *op, int *append);
 void init_in_creat_wf(char ***fs, int *i, int *error);
 int run_sim_cmd(t_onecmd cmd, t_fullvar **env_var);
 int run_sim_ifcmd(t_onecmd cmd, t_fullvar **env_var);
-int	help_run_sim_ifcmd(t_onecmd cmd, t_fullvar **env_var, int *def);
+int	help_run_sim_ifcmd(t_onecmd cmd, int *def);
 int handl_red(t_onecmd cmd);
 void help_handl_red(char **fs, int append);
-int actual_exec_one(t_onecmd cmd, t_fullvar **env_var);
+int actual_exec_one(t_onecmd cmd);
 int builtin(char *cmd, char *origin);
 char **update_env_var(t_envs **exenvs);
 int get_hasht_size(t_envs **exenvs);

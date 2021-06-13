@@ -36,7 +36,6 @@ int	filter_cmd(t_cmd **cmd)
 {
 	t_cmd	*help;
 	int		check;
-	int		ret;
 
 	check = 0;
 	help = *cmd;
@@ -52,6 +51,7 @@ int	filter_cmd(t_cmd **cmd)
 int	modify_str(char **str)
 {
 	t_words	*words;
+
 	if (*str == NULL)
 		return (SUCCESS);
 	words = split_by_qout(*str);

@@ -2,13 +2,11 @@
 
 int	run_sim_ifcmd(t_onecmd cmd, t_fullvar **env_var)
 {
-	int	status;
-	int	pid;
 	int	def[2];
 
 	default_fds(&def[1], &def[0]);
 	if (!builtin(cmd.cmd, cmd.args[0]))
-		return (help_run_sim_ifcmd(cmd, env_var, def));
+		return (help_run_sim_ifcmd(cmd, def));
 	else
 	{
 		exc_one_built(cmd, env_var);
@@ -20,7 +18,7 @@ int	run_sim_ifcmd(t_onecmd cmd, t_fullvar **env_var)
 	return (-1999);
 }
 
-int	help_run_sim_ifcmd(t_onecmd cmd, t_fullvar **env_var, int *def)
+int	help_run_sim_ifcmd(t_onecmd cmd, int *def)
 {
 	int	pid;
 	int	status;
@@ -31,7 +29,7 @@ int	help_run_sim_ifcmd(t_onecmd cmd, t_fullvar **env_var, int *def)
 	{
 		signal(SIGINT, SIG_DFL);
 		signal(SIGQUIT, SIG_DFL);
-		status = actual_exec_one(cmd, env_var);
+		status = actual_exec_one(cmd);
 		exit(status);
 	}
 	waitpid(pid, &status, 0);

@@ -11,11 +11,12 @@ int	fill_pips(t_words **pip, char *line)
 	*pip = malloc(sizeof(t_words));
 	if (!(*pip))
 		return (MEMERROR);
+	(*pip)->txt = NULL;
+	(*pip)->next = NULL;
 	if (!is_str || len == PARSERROR)
 		return (PARSERROR);
 	if (len >= 0)
 	{
-		(*pip)->next = NULL;
 		if (help_fill_pipes(pip, line, len) != SUCCESS)
 			return (MEMERROR);
 		ret = fill_pips(&(*pip)->next, line + len + 1);

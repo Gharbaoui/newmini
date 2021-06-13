@@ -5,10 +5,10 @@ int	fill_words(t_words **words, char *str)
 	int	start;
 	int	i;
 	int	help;
-	int	check;
 
 	i = -1;
 	start = 0;
+	help = 0;
 	while (*str && *str == ' ')
 		str++;
 	if (str[0])

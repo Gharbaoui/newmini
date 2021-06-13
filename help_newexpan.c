@@ -29,13 +29,13 @@ void	help2_get_full_exp(char *line, char **cmd, char **cline)
 
 int	help1_last_pars(char *line, int i)
 {
-	int help;
+	int	help;
 
 	help = backslash(line, i);
 	if (help % 2 == 0 && line[i] == '"')
-		i+= get_next_dqpos(line + i);
+		i += get_next_dqpos(line + i);
 	else if (help % 2 == 0 && line[i] == 39)
-		i+= get_next_sqpos(line + i);
+		i += get_next_sqpos(line + i);
 	else
 		i += get_next_nq(line + i);
 	return (i);

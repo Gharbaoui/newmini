@@ -69,11 +69,8 @@ void	var_expan(t_words *words, t_envs **exenvs)
 
 char	*get_words_expaned(char *str, t_envs **exenvs)
 {
-	t_envs	*var;
 	int		totalsize;
 	int		i;
-	char	*key;
-	int		help;
 
 	i = -1;
 	totalsize = 0;

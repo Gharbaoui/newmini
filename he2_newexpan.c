@@ -83,4 +83,3 @@ int	is_special_in_none(char c)
 		return (1);
 	return (0);
 }
-

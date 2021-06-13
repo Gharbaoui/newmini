@@ -30,7 +30,6 @@ int	fill_envtable(t_fullvar **fullvar, char **env)
 
 int	add_toenvtable(t_fullvar **vars, char *line)
 {
-	int		found;
 	t_envs	*current_env;
 	int		index;
 	int		ern;

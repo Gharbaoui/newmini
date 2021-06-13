@@ -14,9 +14,7 @@ int	fill_wcmd(t_workingcmds **wcmd, t_words *commands, int numofcmds)
 		ret = fill_pips(&pip, commands->txt);
 		if (ret != SUCCESS)
 		{
-			if (pip->txt)
-				free(pip->txt);
-			free(pip);
+			free_words(&pip);
 			(*wcmd)->cmds[i] = NULL;
 			return (ret);
 		}
@@ -35,6 +33,7 @@ int	help_short_fill_wcmd(t_workingcmds **wcmd, int numofcmds, t_words **pipe)
 	*wcmd = malloc(sizeof(t_workingcmds));
 	if (!(*wcmd))
 		return (MEMERROR);
+	(*wcmd)->next = NULL;
 	(*wcmd)->cmds = malloc(sizeof(t_words *) * (numofcmds + 1));
 	if (!(*wcmd)->cmds)
 	{
@@ -55,14 +54,14 @@ int	fill_completecmd(t_completecmd **compcmd, t_words **pips, int pipindex)
 		if (!(*compcmd))
 			return (0);
 		(*compcmd)->splcommand = NULL;
+		(*compcmd)->next = NULL;
 		ret = fill_pipcmd(&(*compcmd)->splcommand, pips[pipindex]);
 		if (ret != SUCCESS)
 		{
-			free(*compcmd);
+			free_comp(compcmd);
 			*compcmd = NULL;
 			return (ret);
 		}
-		(*compcmd)->next = NULL;
 		ret = fill_completecmd(&(*compcmd)->next, pips, pipindex + 1);
 		if (ret != SUCCESS)
 			return (ret);
@@ -80,13 +79,13 @@ int	fill_pipcmd(t_pipcmd **pipcmd, t_words *pip)
 		if (!(*pipcmd))
 			return (MEMERROR);
 		(*pipcmd)->cmd = NULL;
+		(*pipcmd)->next = NULL;
 		ret = splitlinetowords(pip->txt, &(*pipcmd)->cmd);
 		if (ret != SUCCESS)
 		{
 			free_pipcmd(pipcmd);
 			return (ret);
 		}
-		(*pipcmd)->next = NULL;
 		ret = fill_pipcmd(&(*pipcmd)->next, pip->next);
 		if (ret != SUCCESS)
 			return (ret);

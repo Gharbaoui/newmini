@@ -22,6 +22,7 @@ int	ft_exit(char **args)
 	int	status;
 
 	glob_vars.exit = 1;
+	status = 0;
 	if (args[1])
 	{
 		if (is_number(args[1]) == 0)

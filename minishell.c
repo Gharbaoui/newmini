@@ -2,6 +2,8 @@
 
 int main(int argc, char **argv, char **env)
 {
+	argc = 0;
+	argv = NULL;
 	bash_loop(env);
 }
 
@@ -10,10 +12,8 @@ void bash_loop(char **env)
 	signal(SIGINT, handl_sig);
 	signal(SIGQUIT, handl_sig);
 	t_fullvar *variables;
-    t_prstatus prstatus;
 	int status;
 	int ret;
-	t_envs **envtable;
 	t_completecmd *complete;
 	variables = malloc(sizeof(t_fullvar));
 	variables->exenvs = NULL;
@@ -28,6 +28,8 @@ void bash_loop(char **env)
 	glob_vars.childruning = 0;
 	glob_vars.fdout = dup(1);
 	glob_vars.exenvs = &variables->exenvs;
+	glob_vars._pwd = NULL;
+	update_pwd(variables->exenvs);
 	level_of_bash(variables->exenvs);
 	while (status)
 	{

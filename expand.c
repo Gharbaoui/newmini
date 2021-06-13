@@ -2,8 +2,6 @@
 
 t_pipcommand	*expand_current_command(t_completecmd *cucmd, t_fullvar *envs)
 {
-	t_pipcommand	*pc;
-
 	if (cucmd)
 	{
 		expand_full_pipcmd(&cucmd->splcommand, envs->exenvs);
@@ -27,12 +25,6 @@ int	expand_full_pipcmd(t_pipcmd **pipcmd, t_envs **exenvs)
 
 int	expand_one_cmdstrct(t_cmd **cmd, t_envs **exenvs)
 {
-	int		ret;
-	t_cmd	*help;
-	t_words	*neww;
-	t_words	*head;
-
-	help = *cmd;
 	get_full_expanded_line(*cmd, exenvs);
 	return (SUCCESS);
 }
@@ -48,7 +40,8 @@ int	get_var_name(char *line, char **key)
 		return (SUCCESS);
 	}
 	while (line[++i])
-		if (is_special(line[i]) || line[i] == ' ' || line[i] == '\t' || line[i] == '=')
+		if (is_special(line[i]) || line[i] == ' '
+			|| line[i] == '\t' || line[i] == '=')
 			break ;
 	*key = cutstring(line, 0, i);
 	return (SUCCESS);

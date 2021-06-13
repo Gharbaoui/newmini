@@ -42,8 +42,6 @@ int	h1_check_newlines(char **line, char *backup, int *i)
 
 int	is_empty(char *line)
 {
-	int	i;
-
 	if (line[0])
 		return (0);
 	return (1);
