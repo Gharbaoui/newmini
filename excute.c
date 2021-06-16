@@ -30,7 +30,7 @@ int	prm_check(t_onecmd cmd)
 		{
 			dup2(2, 1);
 			ft_printf(3, "bash: ", fs[0], ": No such file or directory\n");
-			dup2(glob_vars.fdout, 1);
+			dup2(g_vars.fdout, 1);
 			ret = 1;
 		}
 		free(fs);
@@ -44,7 +44,7 @@ void	help_prem_check(char *cmd, int *ret)
 {
 	dup2(2, 1);
 	ft_printf(3, "bash: ", cmd, ": Permission denied\n");
-	dup2(glob_vars.fdout, 1);
+	dup2(g_vars.fdout, 1);
 	*ret = 126;
 }
 

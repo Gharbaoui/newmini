@@ -9,7 +9,7 @@ int	ft_env (t_fullvar *vars)
 	int			found;
 
 	help = vars->filledvar;
-	glob_vars.exitstatus = 0;
+	g_vars.exitstatus = 0;
 	found = 0;
 	envpath = NULL;
 	while (help)

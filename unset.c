@@ -11,7 +11,7 @@ int	ft_unset(char **args, t_fullvar **vars)
 	err = 0;
 	if (args == NULL || (args[0] && !args[1]))
 	{
-		glob_vars.exitstatus = 0;
+		g_vars.exitstatus = 0;
 		return (0);
 	}
 	while (args[++i])
@@ -20,7 +20,7 @@ int	ft_unset(char **args, t_fullvar **vars)
 		if (ret)
 			err = 1;
 	}
-	glob_vars.exitstatus = err;
+	g_vars.exitstatus = err;
 	return (err);
 }
 
@@ -29,10 +29,10 @@ int	unset_one_var(char *key, t_fullvar **vars)
 	t_envs	*var;
 	int		help;
 
-	glob_vars.exitstatus = 0;
+	g_vars.exitstatus = 0;
 	if (check_unsetvar(key))
 	{
-		glob_vars.exitstatus = 1;
+		g_vars.exitstatus = 1;
 		return (1);
 	}
 	var = get_env(&help, key, (*vars)->exenvs);
@@ -89,7 +89,7 @@ int	check_unsetvar(char *line)
 	{
 		dup2(2, 1);
 		printf("bash: unset: `%s': not a valid identifier\n", line);
-		dup2(glob_vars.fdout, 1);
+		dup2(g_vars.fdout, 1);
 		return (1);
 	}
 	help = ft_strlen(line) - 1;
@@ -97,7 +97,7 @@ int	check_unsetvar(char *line)
 	{
 		dup2(2, 1);
 		printf("bash: unset: `%s': not a valid identifier\n", line);
-		dup2(glob_vars.fdout, 1);
+		dup2(g_vars.fdout, 1);
 		return (1);
 	}
 	return (0);

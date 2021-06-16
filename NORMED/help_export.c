@@ -2,17 +2,17 @@
 
 int	help1_sub_export(t_fullvar **vars, char *line, char **key, char **tmp)
 {
-	glob_vars.exitstatus = 0;
+	g_vars.exitstatus = 0;
 	if (line == NULL)
 	{
 		export_print(*vars);
 		return (0);
 	}
 	if (check_exvar(line) != SUCCESS)
-		return (glob_vars.exitstatus);
+		return (g_vars.exitstatus);
 	*key = get_key(line);
 	*tmp = NULL;
-	glob_vars.envchanged = 1;
+	g_vars.envchanged = 1;
 	return (-3);
 }
 

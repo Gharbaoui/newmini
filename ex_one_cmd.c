@@ -20,8 +20,8 @@ int	run_sim_cmd(t_onecmd cmd, t_fullvar **env_var)
 			dup2(2, 1);
 			free(fs);
 			ft_printf(3, "bash: ", fs[0], ": No such file or directory\n");
-			glob_vars.exitstatus = 1;
-			dup2(1, glob_vars.fdout);
+			g_vars.exitstatus = 1;
+			dup2(1, g_vars.fdout);
 			return (1);
 		}
 		free(fs);
@@ -44,7 +44,7 @@ int	handl_red(t_onecmd cmd)
 		{
 			free(fs);
 			ft_printf(3, "bash: ", fs[0], ": No such file or directory\n");
-			glob_vars.exitstatus = 1;
+			g_vars.exitstatus = 1;
 			return (1);
 		}
 	}
@@ -62,14 +62,14 @@ int	actual_exec_one(t_onecmd cmd)
 		return (1);
 	if (cmd.cmd)
 	{
-		execve(cmd.cmd, cmd.args, glob_vars.envp);
+		execve(cmd.cmd, cmd.args, g_vars.envp);
 		dup2(2, 1);
 		if (cmd.cmd[0] == '/' || cmd.cmd[0] == '~' || cmd.cmd[0] == '.')
 			ft_printf(3, "bash: ", cmd.cmd, ": No such file or directory\n");
 		else
 			ft_printf(2, cmd.args[0], ": command not found\n");
 		ret = 127;
-		dup2(1, glob_vars.fdout);
+		dup2(1, g_vars.fdout);
 	}
 	return (ret);
 }

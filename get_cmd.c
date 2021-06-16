@@ -6,7 +6,7 @@
 /*   By: aez-zaou <aez-zaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/16 11:20:47 by aez-zaou          #+#    #+#             */
-/*   Updated: 2021/06/16 17:20:58 by aez-zaou         ###   ########.fr       */
+/*   Updated: 2021/06/16 18:35:31 by aez-zaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,28 +18,28 @@ void	ctrl_return(void)
 	char	*s;
 
 	i = -1;
-	while (++i < ft_strlen(glob_vars.line))
+	while (++i < ft_strlen(g_vars.line))
 	{
 		s = tgetstr("le", NULL);
 		write(1, s, ft_strlen(s));
 	}
 	s = tgetstr("ce", NULL);
 	write(1, s, ft_strlen(s));
-	free(glob_vars.line);
-	glob_vars.line = ft_strdup("");
+	free(g_vars.line);
+	g_vars.line = ft_strdup("");
 }
 
 void	key_erase(void)
 {
 	char	*s;
 
-	if (ft_strlen(glob_vars.line))
+	if (ft_strlen(g_vars.line))
 	{
 		s = tgetstr("le", NULL);
 		write(1, s, ft_strlen(s));
 		s = tgetstr("ce", NULL);
 		write(1, s, ft_strlen(s));
-		glob_vars.line[ft_strlen(glob_vars.line) - 1] = '\0';
+		g_vars.line[ft_strlen(g_vars.line) - 1] = '\0';
 	}
 }
 
@@ -48,25 +48,25 @@ int	key_down(void)
 	char	*s;
 	int		i;
 
-	if (!glob_vars.navigate2->prev)
+	if (!g_vars.navigate2->prev)
 		return (0);
 	else
 	{
 		i = -1;
-		while (++i < ft_strlen(glob_vars.line))
+		while (++i < ft_strlen(g_vars.line))
 		{
 			s = tgetstr("le", NULL);
 			write(1, s, ft_strlen(s));
 		}
 		s = tgetstr("ce", NULL);
 		write(1, s, ft_strlen(s));
-		glob_vars.navigate = glob_vars.navigate2;
-		glob_vars.navigate2 = glob_vars.navigate2->prev;
-		write(1, glob_vars.navigate2->line,
-			ft_strlen(glob_vars.navigate2->line));
-		if (glob_vars.line)
-			free(glob_vars.line);
-		glob_vars.line = ft_strdup(glob_vars.navigate2->line);
+		g_vars.navigate = g_vars.navigate2;
+		g_vars.navigate2 = g_vars.navigate2->prev;
+		write(1, g_vars.navigate2->line,
+			ft_strlen(g_vars.navigate2->line));
+		if (g_vars.line)
+			free(g_vars.line);
+		g_vars.line = ft_strdup(g_vars.navigate2->line);
 		return (1);
 	}
 }
@@ -77,7 +77,7 @@ int	key_up(void)
 	int		i;
 
 	i = -1;
-	while (++i < ft_strlen(glob_vars.line))
+	while (++i < ft_strlen(g_vars.line))
 	{
 		s = tgetstr("le", NULL);
 		write(1, s, ft_strlen(s));
@@ -85,16 +85,16 @@ int	key_up(void)
 	i = 1;
 	s = tgetstr("ce", NULL);
 	write(1, s, ft_strlen(s));
-	write(1, glob_vars.navigate->line, ft_strlen(glob_vars.navigate->line));
-	if (glob_vars.line)
-		free(glob_vars.line);
-	glob_vars.line = ft_strdup(glob_vars.navigate->line);
-	if (glob_vars.navigate != glob_vars.history)
-		glob_vars.navigate2 = glob_vars.navigate;
-	if (!glob_vars.navigate->next)
+	write(1, g_vars.navigate->line, ft_strlen(g_vars.navigate->line));
+	if (g_vars.line)
+		free(g_vars.line);
+	g_vars.line = ft_strdup(g_vars.navigate->line);
+	if (g_vars.navigate != g_vars.history)
+		g_vars.navigate2 = g_vars.navigate;
+	if (!g_vars.navigate->next)
 		i = 0;
 	else
-		glob_vars.navigate = glob_vars.navigate->next;
+		g_vars.navigate = g_vars.navigate->next;
 	return (i);
 }
 
@@ -102,10 +102,10 @@ void	key_enter(t_completecmd **complete, t_fullvar **variables)
 {
 	int	ret;
 
-	if (check_history(glob_vars.line))
-		push_to_history(&glob_vars.history, glob_vars.line);
+	if (check_history(g_vars.line))
+		push_to_history(&g_vars.history, g_vars.line);
 	write(1, "\n", 1);
-	ret = workon_line(glob_vars.line, complete, 0, 0);
+	ret = workon_line(g_vars.line, complete, 0, 0);
 	if (ret == PARSERROR)
 	{
 		ft_printf(1, "Parsing Error\n");
@@ -114,10 +114,10 @@ void	key_enter(t_completecmd **complete, t_fullvar **variables)
 	else
 	{
 		fullexcute(complete, variables);
-		if (glob_vars.exit)
+		if (g_vars.exit)
 		{
-			free(glob_vars.line);
-			exit(glob_vars.exitstatus);
+			free(g_vars.line);
+			exit(g_vars.exitstatus);
 		}
 	}
 	key_enter2();

@@ -56,7 +56,7 @@ int	check_exvar(char *line)
 	if (help != SUCCESS)
 	{
 		printf("bash: export: `%s': not a valid identifier\n", line);
-		glob_vars.exitstatus = 1;
+		g_vars.exitstatus = 1;
 		return (ENVERROR);
 	}
 	return (SUCCESS);

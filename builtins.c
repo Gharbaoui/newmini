@@ -5,7 +5,7 @@ int	_echo(char **args)
 	int	new_line;
 	int	i;
 
-	glob_vars.exitstatus = 0;
+	g_vars.exitstatus = 0;
 	new_line = 0;
 	i = 1;
 	while (args[i] && ft_strcmp(args[i], "-n") == 0)
@@ -27,9 +27,9 @@ int	pwd(void)
 {
 	char	cwd[128];
 
-	glob_vars.exitstatus = 0;
-	if (glob_vars._pwd)
-		ft_printf(2, glob_vars._pwd, "\n");
+	g_vars.exitstatus = 0;
+	if (g_vars._pwd)
+		ft_printf(2, g_vars._pwd, "\n");
 	else if (getcwd(cwd, sizeof(cwd)))
 		ft_printf(2, cwd, "\n");
 	else
@@ -45,16 +45,16 @@ void	update_pwd(t_envs **exenvs)
 	var = get_env(&found, "PWD", exenvs);
 	if (found)
 	{
-		if (glob_vars._pwd)
-			free(glob_vars._pwd);
-		glob_vars._pwd = ft_strdup(var->env_value);
+		if (g_vars._pwd)
+			free(g_vars._pwd);
+		g_vars._pwd = ft_strdup(var->env_value);
 	}
 	else
 	{
-		if (glob_vars._pwd)
+		if (g_vars._pwd)
 		{
-			free(glob_vars._pwd);
+			free(g_vars._pwd);
 		}
-		glob_vars._pwd = NULL;
+		g_vars._pwd = NULL;
 	}
 }
