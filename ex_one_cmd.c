@@ -12,7 +12,7 @@ int	run_sim_cmd(t_onecmd cmd, t_fullvar **env_var)
 		if (status != -1999)
 			return (status);
 	}
-	else
+	else if (cmd.ops)
 	{
 		fs = creat_w_files(cmd.files, cmd.ops, &error, &status);
 		if (error)
@@ -24,6 +24,7 @@ int	run_sim_cmd(t_onecmd cmd, t_fullvar **env_var)
 			dup2(1, glob_vars.fdout);
 			return (1);
 		}
+		free(fs);
 	}
 	return (0);
 }
