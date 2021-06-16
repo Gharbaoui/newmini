@@ -21,7 +21,10 @@ void	handl_sig(int signum)
 			update_exit_status(*glob_vars.exenvs);
 			if (glob_vars.line)
 				free(glob_vars.line);
-			write(1, "\nminishell > ", 14);
+			glob_vars.line = NULL;
+			glob_vars.line = ft_strdup("");
+			write(1, "\n", 1);
+			prompt();
 		}
 		else
 			write(1, "\n", 1);

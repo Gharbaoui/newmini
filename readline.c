@@ -123,6 +123,26 @@ int nlindex(char *str, char c)
 	return -1;
 }
 
+// char *ft_strjoin(char **rest, char *current) // free rest and not current and return other memory (tmp, current) return memory
+// {
+// 	char *tmp;
+// 	int len;
+// 	int i;
+
+// 	i = -1;
+// 	len = ft_strlen (*rest) + ft_strlen(current) + 1;
+// 	if (!(tmp = malloc(len)))
+// 		return 0;
+// 	while ((*rest)[++i])
+// 		tmp[i] = (*rest)[i];
+// 	len = -1;
+// 	while (current[++len])
+// 		tmp[i + len] = current[len];
+// 	free (*rest);
+// 	tmp[i + len] = 0;
+// 	return tmp;
+// }
+
 char *ft_strjoin(char **rest, char *current) // free rest and not current and return other memory (tmp, current) return memory
 {
 	char *tmp;

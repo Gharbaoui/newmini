@@ -1,14 +1,30 @@
-#include <stdio.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/uio.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <sys/wait.h>
+# include <stdio.h>
+# include <stdarg.h>
+# include <stdlib.h>
+# include <sys/types.h>
+# include <sys/uio.h>
+# include <sys/stat.h>
+# include <unistd.h>
+# include <fcntl.h>
+# include <sys/wait.h>
+# include <termios.h>
+# include <termcap.h>
+# include <signal.h>
+# include <sys/ioctl.h>
+# include <readline/readline.h>
 #define READ_END 0
 #define WRITE_END 1
+
+# define KEY_UP 183
+# define KEY_DOWN 184
+# define KEY_RIGHT 185
+# define KEY_LEFT 186
+# define KEY_ERASE 127
+# define ENTER 10
+# define CTRL_RETURN 21
+# define CTRL_D 4
+
+
 
 #define BUFFER_SIZE 15
 #define ENVSIZE 50
@@ -30,10 +46,17 @@
 
 // structres
 ///// look for fflush and remove it
-typedef struct strlen{
-	char *line;
-	int len;
-} t_strlen;
+// typedef struct strlen{
+// 	char *line;
+// 	int len;/
+// } t_strlen;
+
+typedef struct s_history
+{
+	char				*line;
+	struct s_history	*next;
+	struct s_history	*prev;
+}						t_history;
 
 typedef struct envs{
 	char *env_name;
@@ -259,7 +282,7 @@ void print_completecmd(t_completecmd *complete);
 t_words **expand_txtsh1(t_words *words, int *l);
 t_words *local_wordsh1(int *index, int start,char *line);
 t_words *get_last_wordstruct(t_words *words);
-t_words *collect_strs(t_words *keys, t_envs **exenv, t_strlen info, int order);
+// t_words *collect_strs(t_words *keys, t_envs **exenv, t_strlen info, int order);
 t_words *split_by_spaces(char *line, int status);
 t_words *first_case(char *line);
 t_words *second_case(char *line);
@@ -277,7 +300,7 @@ int filter_string(t_words **words, t_words *w, t_envs **exenvs, int order);
 int get_var_name(char *line, char **key);
 int is_special(char c);
 int loop_in_filter_stringh1(int *index, char *line, t_words **keys, t_envs **exenvs); /// return variable size
-t_strlen loop_in_filter_string(char *line, t_envs **exenv, t_words **keys);
+// t_strlen loop_in_filter_string(char *line, t_envs **exenv, t_words **keys);
 int fill_all_var(char *tmp, char *value, int index);
 int fill_first(char *tmp, int index, char *value);
 int mk_and_add_to_words(t_words **words, char *line);
@@ -290,7 +313,7 @@ int last_word(t_words **nw, char *line);
 int modify_prev(char *prv, char *cur);
 int nonequt(char c);
 void collect_strs_h1(t_collstrs *vars, t_words **keys, t_envs **exenv, int order); //// returns status;;
-void  help_fill_collstrs(t_strlen info, t_collstrs *vars);
+// void  help_fill_collstrs(t_strlen info, t_collstrs *vars);
 void add_word_tofront(t_words **words, t_words **cuw);
 void add_words(t_words **orgin, t_words **forien);
 
@@ -442,3 +465,8 @@ int is_special_in_none(char c);
 void file_creation(char **files, char **ops);
 ////// sig
 int level_of_bash(t_envs **exenvs);
+
+int	get_char(void);
+int prompt();
+int	push_to_history(t_history **h, char *line);
+int check_history(char *line);
