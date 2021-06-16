@@ -143,10 +143,12 @@ typedef struct {
 	int envchanged;
 	char **envp;
 	int exitstatus;
-	int lastpid;
 	int fdout;
 	int exit;
 	int childruning;
+	t_history *history;
+	t_history *navigate;
+	t_history *navigate2;
 } g_vars;
 typedef struct prstatus
 {
@@ -168,7 +170,7 @@ void print_pipes(t_words **pipes, int numofcmds);
 void print_words(t_words *words, int level, char *name);
 void printspaces(int n);
 /// minishell.c ///
-void bash_loop(char **env);
+void bash_loop(char **env, int ret, int i, int d);
 
 /// readline.c
 int get_next_line(char **line);
@@ -470,3 +472,9 @@ int	get_char(void);
 int prompt();
 int	push_to_history(t_history **h, char *line);
 int check_history(char *line);
+
+void	ctrl_return();
+void	key_erase();
+int key_down();
+int key_up();
+// int	key_enter();

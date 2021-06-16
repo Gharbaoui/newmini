@@ -6,7 +6,7 @@
 /*   By: aez-zaou <aez-zaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/16 11:15:53 by aez-zaou          #+#    #+#             */
-/*   Updated: 2021/06/16 13:10:28 by aez-zaou         ###   ########.fr       */
+/*   Updated: 2021/06/16 13:50:36 by aez-zaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,9 +64,6 @@ int	push_to_history(t_history **h, char *line)
 int check_history(char *line)
 {
 	if (ft_strcmp(line, "") == 0)
-	{
-		// write(1, "HOLA\n", 5);
 		return 0;
-	}
 	return (1);
 }
