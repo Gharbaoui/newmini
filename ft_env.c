@@ -21,7 +21,8 @@ int	ft_env (t_fullvar *vars)
 	var = get_env(&found, "PATH", vars->exenvs);
 	if (found)
 		envpath = get_using_path("/env", var->env_value, &fst);
-	ft_printf(3, "_=", envpath, "\n");
+	if (envpath && *envpath)
+		ft_printf(3, "_=", envpath, "\n");
 	free(envpath);
 	return (0);
 }

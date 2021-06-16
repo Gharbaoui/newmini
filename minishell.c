@@ -46,30 +46,7 @@ void bash_loop(char **env, int ret, int i, int d)
 			write(1, &d, 1);
 		}
 		else if (d == ENTER)		
-		{
-			if (check_history(glob_vars.line))
-				push_to_history(&glob_vars.history, glob_vars.line);
-			write(1, "\n", 1);
-			ret =  workon_line(glob_vars.line, &complete, 0, 0);
-			if (ret == PARSERROR)
-			{
-				printf("Parsing Error\n");
-                free_comp(&complete);
-            }else{
-                fullexcute(&complete, &variables);
-				if (glob_vars.exit)
-				{
-					free(glob_vars.line);
-					exit(glob_vars.exitstatus);
-				}
-            }
-			prompt();
-			if (glob_vars.line)
-				free(glob_vars.line);
-			glob_vars.line = ft_strdup("");
-			glob_vars.navigate = glob_vars.history;
-			glob_vars.navigate2 = glob_vars.history;
-		}
+			key_enter(&complete, &variables);
 		else if (d == KEY_UP && i && glob_vars.navigate)
 			i = key_up();
 		else if (d == KEY_DOWN && i && glob_vars.navigate2)

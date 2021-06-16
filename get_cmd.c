@@ -6,7 +6,7 @@
 /*   By: aez-zaou <aez-zaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/16 11:20:47 by aez-zaou          #+#    #+#             */
-/*   Updated: 2021/06/16 14:35:05 by aez-zaou         ###   ########.fr       */
+/*   Updated: 2021/06/16 15:26:13 by aez-zaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,4 +95,34 @@ int key_up()
 	else
 		glob_vars.navigate = glob_vars.navigate->next;
 	return (i);
+}
+
+void	key_enter(t_completecmd **complete, t_fullvar **variables)
+{
+	int ret;
+
+	if (check_history(glob_vars.line))
+		push_to_history(&glob_vars.history, glob_vars.line);
+	write(1, "\n", 1);
+	ret =  workon_line(glob_vars.line, complete, 0, 0);
+	if (ret == PARSERROR)
+	{
+		ft_printf(1, "Parsing Error\n");
+		free_comp(complete);
+	}
+	else
+	{
+		fullexcute(complete, variables);
+		if (glob_vars.exit)
+		{
+			free(glob_vars.line);
+			exit(glob_vars.exitstatus);
+		}
+	}
+	prompt();
+	if (glob_vars.line)
+		free(glob_vars.line);
+	glob_vars.line = ft_strdup("");
+	glob_vars.navigate = glob_vars.history;
+	glob_vars.navigate2 = glob_vars.history;
 }

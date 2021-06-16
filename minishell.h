@@ -476,5 +476,5 @@ int check_history(char *line);
 void	ctrl_return();
 void	key_erase();
 int key_down();
-int key_up();
-// int	key_enter();
+int	key_up();
+void	key_enter(t_completecmd **complete, t_fullvar **variables);
