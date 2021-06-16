@@ -6,13 +6,13 @@
 /*   By: aez-zaou <aez-zaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/16 11:20:47 by aez-zaou          #+#    #+#             */
-/*   Updated: 2021/06/16 15:26:13 by aez-zaou         ###   ########.fr       */
+/*   Updated: 2021/06/16 17:20:58 by aez-zaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	ctrl_return()
+void	ctrl_return(void)
 {
 	int		i;
 	char	*s;
@@ -29,11 +29,11 @@ void	ctrl_return()
 	glob_vars.line = ft_strdup("");
 }
 
-void	key_erase()
+void	key_erase(void)
 {
 	char	*s;
 
-	if (ft_strlen(glob_vars.line)) // to stop at the prompt if we delete all the line
+	if (ft_strlen(glob_vars.line))
 	{
 		s = tgetstr("le", NULL);
 		write(1, s, ft_strlen(s));
@@ -43,7 +43,7 @@ void	key_erase()
 	}
 }
 
-int key_down()
+int	key_down(void)
 {
 	char	*s;
 	int		i;
@@ -62,7 +62,8 @@ int key_down()
 		write(1, s, ft_strlen(s));
 		glob_vars.navigate = glob_vars.navigate2;
 		glob_vars.navigate2 = glob_vars.navigate2->prev;
-		write(1, glob_vars.navigate2->line, ft_strlen(glob_vars.navigate2->line));
+		write(1, glob_vars.navigate2->line,
+			ft_strlen(glob_vars.navigate2->line));
 		if (glob_vars.line)
 			free(glob_vars.line);
 		glob_vars.line = ft_strdup(glob_vars.navigate2->line);
@@ -70,10 +71,10 @@ int key_down()
 	}
 }
 
-int key_up()
+int	key_up(void)
 {
 	char	*s;
-	int 	i;
+	int		i;
 
 	i = -1;
 	while (++i < ft_strlen(glob_vars.line))
@@ -99,12 +100,12 @@ int key_up()
 
 void	key_enter(t_completecmd **complete, t_fullvar **variables)
 {
-	int ret;
+	int	ret;
 
 	if (check_history(glob_vars.line))
 		push_to_history(&glob_vars.history, glob_vars.line);
 	write(1, "\n", 1);
-	ret =  workon_line(glob_vars.line, complete, 0, 0);
+	ret = workon_line(glob_vars.line, complete, 0, 0);
 	if (ret == PARSERROR)
 	{
 		ft_printf(1, "Parsing Error\n");
@@ -119,10 +120,5 @@ void	key_enter(t_completecmd **complete, t_fullvar **variables)
 			exit(glob_vars.exitstatus);
 		}
 	}
-	prompt();
-	if (glob_vars.line)
-		free(glob_vars.line);
-	glob_vars.line = ft_strdup("");
-	glob_vars.navigate = glob_vars.history;
-	glob_vars.navigate2 = glob_vars.history;
+	key_enter2();
 }

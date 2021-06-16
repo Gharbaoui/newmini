@@ -17,8 +17,6 @@
 
 # define KEY_UP 183
 # define KEY_DOWN 184
-# define KEY_RIGHT 185
-# define KEY_LEFT 186
 # define KEY_ERASE 127
 # define ENTER 10
 # define CTRL_RETURN 21
@@ -170,7 +168,7 @@ void print_pipes(t_words **pipes, int numofcmds);
 void print_words(t_words *words, int level, char *name);
 void printspaces(int n);
 /// minishell.c ///
-void bash_loop(char **env, int ret, int i, int d);
+void bash_loop(char **env, int ret, int i);
 
 /// readline.c
 int get_next_line(char **line);
@@ -469,12 +467,16 @@ void file_creation(char **files, char **ops);
 int level_of_bash(t_envs **exenvs);
 
 int	get_char(void);
-int prompt();
+int prompt(void);
 int	push_to_history(t_history **h, char *line);
 int check_history(char *line);
 
-void	ctrl_return();
-void	key_erase();
-int key_down();
-int	key_up();
+void	ctrl_return(void);
+void	key_erase(void);
+int		key_down(void);
+int		key_up(void);
 void	key_enter(t_completecmd **complete, t_fullvar **variables);
+void	history_loop(t_completecmd **complete, t_fullvar **variables, char *c, int i);
+void	ctrl_d(void);
+void	key_enter2(void);
+char	*beg_str(char *current, int index);
