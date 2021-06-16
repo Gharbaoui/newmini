@@ -121,7 +121,10 @@ void bash_loop(char **env)
 			s = tgetstr("ce", NULL);
 			write(1, s, ft_strlen(s));
 			write(1, navigate->line, ft_strlen(navigate->line));
-			glob_vars.line = navigate->line;
+			if (glob_vars.line)
+				free(glob_vars.line);
+
+			glob_vars.line = ft_strdup(navigate->line);
 			if (navigate != history)
 				navigate2 = navigate;
 			if (!navigate->next)
@@ -146,7 +149,9 @@ void bash_loop(char **env)
 				navigate = navigate2;
 				navigate2 = navigate2->prev;
 				write(1, navigate2->line, ft_strlen(navigate2->line));
-				glob_vars.line = navigate2->line;
+				if (glob_vars.line)
+					free(glob_vars.line);
+				glob_vars.line = ft_strdup(navigate2->line);
 			}
 		}
 		else if (d == KEY_ERASE)
