@@ -1,3 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aez-zaou <aez-zaou@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/06/16 18:18:01 by aez-zaou          #+#    #+#             */
+/*   Updated: 2021/06/16 18:32:48 by aez-zaou         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#ifndef MINISHELL_H
+# define MINISHELL_H
+
 # include <stdio.h>
 # include <stdarg.h>
 # include <stdlib.h>
@@ -12,42 +27,29 @@
 # include <signal.h>
 # include <sys/ioctl.h>
 # include <readline/readline.h>
-#define READ_END 0
-#define WRITE_END 1
 
+# define READ_END 0
+# define WRITE_END 1
 # define KEY_UP 183
 # define KEY_DOWN 184
 # define KEY_ERASE 127
 # define ENTER 10
 # define CTRL_RETURN 21
 # define CTRL_D 4
-
-
-
-#define BUFFER_SIZE 15
-#define ENVSIZE 50
-
-#define SINGLEQUOTES 5   /// single quotes
-#define DOUBLEQUOTES 6
-#define NONEQUOTE 7
-#define ENVERROR 4
-#define EMPTYENV 3
-#define SUCCESS 2
-#define PARSERROR -1
-#define MEMERROR 0
-
-#define APPEND 1 // append to the file
-#define OVERWRITE 0  // overwrite in file
-
-#define FOLDER 8
-#define NEX 9 // NOT EXCUTABLE
-
-// structres
-///// look for fflush and remove it
-// typedef struct strlen{
-// 	char *line;
-// 	int len;/
-// } t_strlen;
+# define BUFFER_SIZE 15
+# define ENVSIZE 50
+# define SINGLEQUOTES 5   /// single quotes
+# define DOUBLEQUOTES 6
+# define NONEQUOTE 7
+# define ENVERROR 4
+# define EMPTYENV 3
+# define SUCCESS 2
+# define PARSERROR -1
+# define MEMERROR 0
+# define APPEND 1 // append to the file
+# define OVERWRITE 0  // overwrite in file
+# define FOLDER 8
+# define NEX 9 // NOT EXCUTABLE
 
 typedef struct s_history
 {
@@ -56,104 +58,100 @@ typedef struct s_history
 	struct s_history	*prev;
 }						t_history;
 
-typedef struct envs{
-	char *env_name;
-	char *env_value;
-	struct envs *next;
+typedef struct s_envs{
+	char			*env_name;
+	char			*env_value;
+	struct s_envs	*next;
 }t_envs;
 
-typedef struct txts{
-	char *txt;
-	struct txts *next;
-} t_words;
-
-typedef struct full_env_var
+typedef struct s_txts
 {
-	t_envs **exenvs;
-	t_words *filledvar;
-	t_words *allkeys;
+	char			*txt;
+	struct s_txts	*next;
+}t_words;
+
+typedef struct s_full_env_var
+{
+	t_envs	**exenvs;
+	t_words	*filledvar;
+	t_words	*allkeys;
 }t_fullvar;
 
-typedef struct cmd{
-	char *command;
-	t_words *txts;
-	t_words *files;
-	t_words *ops;
-} t_cmd;
+typedef struct s_cmd{
+	char	*command;
+	t_words	*txts;
+	t_words	*files;
+	t_words	*ops;
+}t_cmd;
 
-typedef struct pipcmd{
-	t_cmd *cmd;
-	struct pipcmd *next;
-} t_pipcmd;
+typedef struct s_pipcmd{
+	t_cmd			*cmd;
+	struct s_pipcmd	*next;
+}t_pipcmd;
 
-typedef struct completecmd{
-	t_pipcmd *splcommand;
-	struct completecmd *next;
-} t_completecmd;
+typedef struct s_completecmd{
+	t_pipcmd				*splcommand;
+	struct s_completecmd	*next;
+}t_completecmd;
 
-typedef struct iter{
-	int i;
-	int j;
-	int help;
-	int count;
-	int error;
-	int status;
-	int index;
-} t_iter;
+typedef struct s_iter{
+	int	i;
+	int	j;
+	int	help;
+	int	count;
+	int	error;
+	int	status;
+	int	index;
+}t_iter;
 
-typedef struct collstrs{
-	char *tmp;
-	char *line;
-	t_iter nums;
-} t_collstrs;
+typedef struct s_collstrs{
+	char	*tmp;
+	char	*line;
+	t_iter	nums;
+}t_collstrs;
 
-
-typedef struct workingcmds
+typedef struct s_workingcmds
 {
-	t_words **cmds;
-	struct workingcmds *next;
+	t_words					**cmds;
+	struct s_workingcmds	*next;
 }t_workingcmds;
 
 ///////
-typedef struct onecmd{
-	int prem; /// if 0 excutable other not
-	char *cmd;
-	char **args;
-	char **files;
-	char **ops;
-} t_onecmd;
+typedef struct s_onecmd{
+	int		prem;
+	char	*cmd;
+	char	**args;
+	char	**files;
+	char	**ops;
+}t_onecmd;
 
-typedef struct pipcommand{
-	t_onecmd cmd;
-	struct pipcommand *next;
-} t_pipcommand;
+typedef struct s_pipcommand{
+	t_onecmd			cmd;
+	struct s_pipcommand	*next;
+}t_pipcommand;
 
-typedef struct multcmd
+typedef struct s_multcmd
 {
-	t_pipcommand pipcmd;
-	struct multcmd *next;
-} t_multcmd;
-/////////
-typedef struct {
-	t_envs ***exenvs;
-	char *line;
-	char *_pwd;
-	int envchanged;
-	char **envp;
-	int exitstatus;
-	int fdout;
-	int exit;
-	int childruning;
-	t_history *history;
-	t_history *navigate;
-	t_history *navigate2;
-} g_vars;
-typedef struct prstatus
-{
-    int exitecode;
-}t_prstatus;
+	t_pipcommand		pipcmd;
+	struct s_multcmd	*next;
+}t_multcmd;
 
-g_vars glob_vars;
+typedef struct s_vars{
+	t_envs		***exenvs;
+	char		*line;
+	char		*_pwd;
+	int			envchanged;
+	char		**envp;
+	int			exitstatus;
+	int			fdout;
+	int			exit;
+	int			childruning;
+	t_history	*history;
+	t_history	*navigate;
+	t_history	*navigate2;
+}t_vars;
+
+t_vars	g_glob_vars;
 
 /// random.c
 char *cutstring(char *str, int start, int last);
@@ -180,7 +178,6 @@ int error(char **line, char **rest, char **current);
 int  ft_strlen(char *str);
 char *ft_strjoin(char **rest, char *current) ;
 int nlindex(char *str, char c);
-
 /// workonline.c
 int workon_line(char *line, t_completecmd **complete, int numofcmds, int help);
 int	workon_line_part2(t_workingcmds **wcmd, t_words **commands, int numofcmds, t_completecmd **complete);
@@ -480,3 +477,5 @@ void	history_loop(t_completecmd **complete, t_fullvar **variables, char *c, int 
 void	ctrl_d(void);
 void	key_enter2(void);
 char	*beg_str(char *current, int index);
+
+#endif
