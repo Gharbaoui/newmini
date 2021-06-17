@@ -6,7 +6,7 @@
 /*   By: aez-zaou <aez-zaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/16 17:20:18 by aez-zaou          #+#    #+#             */
-/*   Updated: 2021/06/17 12:29:12 by mel-ghar         ###   ########.fr       */
+/*   Updated: 2021/06/17 12:46:47 by aez-zaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,9 @@ void	history_loop(t_completecmd **complete, t_fullvar **variables,
 			h1_history_loop(&cur, d, c);
 		else if (d == ENTER)
 			key_enter(complete, variables, &cur);
-		else if (d == KEY_UP && i && glob_vars.navigate)
+		else if (d == KEY_UP && i && g_vars.navigate)
 			i = key_up();
-		else if (d == KEY_DOWN && i && glob_vars.navigate2)
+		else if (d == KEY_DOWN && i && g_vars.navigate2)
 			i = key_down(cur);
 		else if (d == KEY_ERASE)
 			key_erase();
@@ -43,27 +43,27 @@ void	history_loop(t_completecmd **complete, t_fullvar **variables,
 
 void	h1_history_loop(char **cur, int d, char *c)
 {
-	glob_vars.line = ft_strjoin(&glob_vars.line, c);
+	g_vars.line = ft_strjoin(&g_vars.line, c);
 	free(*cur);
-	*cur = ft_strdup(glob_vars.line);
+	*cur = ft_strdup(g_vars.line);
 	write(1, &d, 1);
 }
 
 void	key_enter2(void)
 {
 	prompt();
-	if (glob_vars.line)
-		free(glob_vars.line);
-	glob_vars.line = ft_strdup("");
-	glob_vars.navigate = glob_vars.history;
-	glob_vars.navigate2 = glob_vars.history;
+	if (g_vars.line)
+		free(g_vars.line);
+	g_vars.line = ft_strdup("");
+	g_vars.navigate = g_vars.history;
+	g_vars.navigate2 = g_vars.history;
 }
 
 void	ctrl_d(void)
 {
-	if (*glob_vars.line == 0)
+	if (*g_vars.line == 0)
 	{
 		write(1, "exit\n", 5);
-		exit(glob_vars.exitstatus);
+		exit(g_vars.exitstatus);
 	}
 }

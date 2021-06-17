@@ -8,8 +8,8 @@ int	help_cd(char **paths, t_fullvar **vars, char *home)
 	{
 		dup2(2, 1);
 		ft_printf(1, "Minishell: cd: HOME not set\n");
-		dup2(1, glob_vars.fdout);
-		glob_vars.exitstatus = 1;
+		dup2(1, g_vars.fdout);
+		g_vars.exitstatus = 1;
 		return (1);
 	}
 	else if (paths[1])
@@ -19,7 +19,7 @@ int	help_cd(char **paths, t_fullvar **vars, char *home)
 	ret = chdir(home);
 	if (ret)
 	{
-		glob_vars.exitstatus = 1;
+		g_vars.exitstatus = 1;
 		perror("minishell: cd");
 		return (ret);
 	}
@@ -34,13 +34,13 @@ int	cd(char **paths, t_fullvar **vars)
 	char	*home;
 
 	home = NULL;
-	glob_vars.exitstatus = 0;
+	g_vars.exitstatus = 0;
 	if (paths[1] && paths[2])
 	{
-		glob_vars.exitstatus = 1;
+		g_vars.exitstatus = 1;
 		dup2(2, 1);
 		ft_printf(1, "bash: cd: too many arguments\n");
-		dup2(1, glob_vars.fdout);
+		dup2(1, g_vars.fdout);
 		return (1);
 	}
 	var = get_env(&i, "HOME", (*vars)->exenvs);

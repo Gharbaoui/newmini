@@ -5,7 +5,7 @@ int	_echo(char **args)
 	int	new_line;
 	int	i;
 
-	glob_vars.exitstatus = 0;
+	g_vars.exitstatus = 0;
 	new_line = 0;
 	i = 1;
 	while (args[i] && ft_strcmp(args[i], "-n") == 0)
@@ -27,7 +27,7 @@ int	pwd(void)
 {
 	char	cwd[128];
 
-	glob_vars.exitstatus = 0;
+	g_vars.exitstatus = 0;
 	if (getcwd(cwd, sizeof(cwd)))
 		ft_printf(2, cwd, "\n");
 	else

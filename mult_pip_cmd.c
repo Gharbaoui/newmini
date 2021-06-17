@@ -28,7 +28,7 @@ int	exc_one_cmd(t_onecmd cmd, int **pipe, t_iter nums, t_fullvar **env_var)
 			printf("bash: %s: No such file or directory\n", cmd.cmd);
 		else
 			printf("%s: command not found\n", cmd.args[0]);
-		dup2(glob_vars.fdout, 1);
+		dup2(g_vars.fdout, 1);
 		return (127);
 	}
 	return (0);
@@ -40,7 +40,7 @@ int	help_ex_mu(int pid, int **pipe, int numindex)
 
 	close(pipe[numindex - 1][READ_END]);
 	waitpid(pid, &status, 0);
-	glob_vars.exitstatus = WEXITSTATUS(status);
+	g_vars.exitstatus = WEXITSTATUS(status);
 	return (status);
 }
 
@@ -69,14 +69,14 @@ int	ex_mu_p_cmd(t_pipcommand *pcmd, int **pipe,
 			return (-1999);
 		}
 	}
-	glob_vars.childruning = 0;
+	g_vars.childruning = 0;
 	return (-1999);
 }
 
 t_onecmd	help_short_ex_mu(t_pipcommand *pcmd, int **pipe, t_iter nums)
 {
 	close_in_parent(pipe, nums.index);
-	glob_vars.childruning = 1;
+	g_vars.childruning = 1;
 	file_creation(pcmd->cmd.files, pcmd->cmd.ops);
 	return (pcmd->cmd);
 }

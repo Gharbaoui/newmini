@@ -15,14 +15,14 @@ void	handl_sig(int signum)
 {
 	if (signum == SIGINT)
 	{
-		if (glob_vars.childruning == 0)
+		if (g_vars.childruning == 0)
 		{
-			glob_vars.exitstatus = 1;
-			update_exit_status(*glob_vars.exenvs);
-			if (glob_vars.line)
-				free(glob_vars.line);
-			glob_vars.line = NULL;
-			glob_vars.line = ft_strdup("");
+			g_vars.exitstatus = 1;
+			update_exit_status(*g_vars.exenvs);
+			if (g_vars.line)
+				free(g_vars.line);
+			g_vars.line = NULL;
+			g_vars.line = ft_strdup("");
 			write(1, "\n", 1);
 			prompt();
 		}
@@ -30,6 +30,6 @@ void	handl_sig(int signum)
 			write(1, "\n", 1);
 	}
 	if (signum == SIGQUIT)
-		if (glob_vars.childruning)
+		if (g_vars.childruning)
 			write(1, "QUIT 3\n", 7);
 }

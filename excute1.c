@@ -8,20 +8,20 @@ int	fullexcute(t_completecmd **complete, t_fullvar **variables)
 	comp = *complete;
 	while (comp)
 	{
-		if (glob_vars.envchanged)
+		if (g_vars.envchanged)
 		{
-			glob_vars.envp = update_env_var((*variables)->exenvs);
-			glob_vars.envchanged = 0;
+			g_vars.envp = update_env_var((*variables)->exenvs);
+			g_vars.envchanged = 0;
 		}
 		pcmd = expand_current_command(comp, *variables);
 		excute_one_cmd(pcmd, variables);
-		if (glob_vars.envchanged)
+		if (g_vars.envchanged)
 		{
-			free_dstr(glob_vars.envp);
-			free(glob_vars.envp);
+			free_dstr(g_vars.envp);
+			free(g_vars.envp);
 		}
 		free_laststr(&pcmd);
-		if (glob_vars.exit)
+		if (g_vars.exit)
 			break ;
 		comp = comp->next;
 	}
@@ -34,7 +34,7 @@ int	excute_one_cmd (t_pipcommand *pcmd, t_fullvar **variables)
 	int		**pipes;
 	t_iter	nums;
 
-	glob_vars.exit = 0;
+	g_vars.exit = 0;
 	nums.count = get_num_subcmds(pcmd) - 1;
 	if (nums.count > 0)
 	{
@@ -56,14 +56,14 @@ void	update_exit_status(t_envs **exenvs)
 
 	cvar = get_env(&found, "?", exenvs);
 	free(cvar->env_value);
-	cvar->env_value = ft_itoa(glob_vars.exitstatus);
+	cvar->env_value = ft_itoa(g_vars.exitstatus);
 }
 
 int	run_exact_cmd(t_onecmd cmd, t_fullvar **env_var)
 {
 	if (!builtin(cmd.cmd, cmd.args[0]))
 	{
-		execve(cmd.cmd, cmd.args, glob_vars.envp);
+		execve(cmd.cmd, cmd.args, g_vars.envp);
 		return (-1);
 	}
 	return (run_built_in(cmd, env_var));

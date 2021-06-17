@@ -25,7 +25,7 @@ int	help_run_sim_ifcmd(t_onecmd cmd, t_fullvar **env_var, int *def)
 	int	pid;
 	int	status;
 
-	glob_vars.childruning = 1;
+	g_vars.childruning = 1;
 	pid = fork();
 	if (pid == 0)
 	{
@@ -35,8 +35,8 @@ int	help_run_sim_ifcmd(t_onecmd cmd, t_fullvar **env_var, int *def)
 		exit(status);
 	}
 	waitpid(pid, &status, 0);
-	glob_vars.childruning = 0;
-	glob_vars.exitstatus = get_status(status);
+	g_vars.childruning = 0;
+	g_vars.exitstatus = get_status(status);
 	close(def[1]);
 	close(def[0]);
 	return (status);
