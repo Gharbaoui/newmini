@@ -1,8 +1,7 @@
 #include "minishell.h"
-//// new file
+
 void	expan_files(t_words **files, t_envs **exenvs)
 {
-	int		ret;
 	t_words	*txts;
 	char	*file;
 
@@ -46,8 +45,8 @@ int	is_not_valid(char *line)
 	int		i;
 	int		start;
 	char	*cmd;
-	t_words *txts;
-	
+	t_words	*txts;
+
 	i = -1;
 	txts = NULL;
 	while (*line == ' ')
@@ -71,7 +70,7 @@ int	is_not_valid(char *line)
 
 char	*change_file_according(char *origin, char *file, int *ern)
 {
-	int ret;
+	int	ret;
 
 	free(file);
 	ret = is_pure_var(origin);
@@ -88,23 +87,12 @@ char	*change_file_according(char *origin, char *file, int *ern)
 	return (file);
 }
 
-int	is_pure_var(char *str)
-{
-	int	i;
-
-	i = -1;
-	while (str[++i])
-		if (str[i] == 39 || str[i] == '"')
-			return (0);
-	return (1);
-}
-
 char	*remove_spaces(char *filename)
 {
 	int		j;
 	int		i;
 	char	*file;
-	
+
 	i = -1;
 	j = ft_strlen(filename);
 	while (filename[++i])

@@ -22,19 +22,6 @@ int	run_sim_cmd(t_onecmd cmd, t_fullvar **env_var)
 	return (0);
 }
 
-int	file_error(int err, char **fs)
-{//// new function
-	dup2(2, 1);
-	if (err == 3)
-		ft_printf(3, "bash: ", fs[0], ": ambiguous redirect\n");
-	else
-		ft_printf(3, "bash: ", fs[0], ": No such file or directory\n");
-	g_vars.exitstatus = 1;
-	dup2(1, g_vars.fdout);
-	free(fs);
-	return (1);
-}
-
 int	handl_red(t_onecmd cmd)
 {
 	char	**fs;

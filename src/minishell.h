@@ -6,7 +6,7 @@
 /*   By: aez-zaou <aez-zaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/16 18:18:01 by aez-zaou          #+#    #+#             */
-/*   Updated: 2021/06/18 18:48:02 by aez-zaou         ###   ########.fr       */
+/*   Updated: 2021/06/18 20:42:16 by mel-ghar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -349,6 +349,7 @@ int				exec_multi_pipe(t_pipcommand *pcmd, int **pipe,
 					t_fullvar **variables, t_iter nums);
 char			**creat_w_files(char **files, char **ops, int *error,
 					int *append);
+int				short_creat_w(int *error, char **fs, char *file);
 void			close_pipes(int **pipes, int inex, int pipsize);
 void			close_write_rest(int **pipes, int index, int pipsize);
 void			close_read_rest(int **pipes, int index, int pipsize);

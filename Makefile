@@ -6,7 +6,7 @@
 #    By: aez-zaou <aez-zaou@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/06/17 13:15:07 by aez-zaou          #+#    #+#              #
-#    Updated: 2021/06/18 15:06:21 by aez-zaou         ###   ########.fr        #
+#    Updated: 2021/06/18 20:56:45 by mel-ghar         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -75,6 +75,9 @@ SRCS			= src/minishell.c				\
 				src/unset.c					\
 				src/update_env_variables.c	\
 				src/workonline.c			\
+				src/fileexpan.c				\
+				src/h_fileexpan.c			\
+				src/h_sublibft.c			\
 
 
 all : $(NAME)

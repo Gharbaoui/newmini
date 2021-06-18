@@ -83,24 +83,3 @@ int	how_many_words(t_words *words)
 	}
 	return (i);
 }
-
-char	*mod_ft_strdup(char *str, int ern)
-{   ////// new function
-	char *tmp;
-	int len;
-	int i;
-
-	i = -1;
-	len = ft_strlen(str) + 2;
-	tmp = malloc(len);
-	while (str[++i])
-		tmp[i] = str[i];
-	tmp[i] = 0;
-	if (ern == 0)
-		tmp[i + 1] = 't';
-	else if (ern == 2)
-		tmp[i + 1] = 'n';
-	else
-		tmp[i + 1] = 'a';
-	return (tmp);
-}

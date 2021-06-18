@@ -26,10 +26,10 @@ int	prm_check(t_onecmd cmd)
 	if (cmd.files)
 	{	
 		fs = creat_w_files(cmd.files, cmd.ops, &error, &append);
-		if (error)//// change here
+		if (error)
 		{
-			ret = file_error(error, fs);/////change herre
-			fs = malloc(sizeof(char *));/// change here
+			ret = file_error(error, fs);
+			fs = malloc(sizeof(char *));
 		}
 		free(fs);
 	}
@@ -77,12 +77,8 @@ char	**creat_w_files(char **files, char **ops, int *error, int *append)
 	init_in_creat_wf(&fs, &i, error);
 	while (files && files[++i])
 	{
-		*error = check_name_file(files[i]); //// here change
-		if (*error)
-		{	//change here
-			fs[0] = files[i];
-			break ; ///change here
-		}
+		if (short_creat_w(error, &fs[0], files[i]))
+			break ;
 		if (cre_write_files(&fs, files[i], ops[i], append) == 0)
 		{
 			if (*error == 0)
@@ -99,16 +95,4 @@ char	**creat_w_files(char **files, char **ops, int *error, int *append)
 		}
 	}
 	return (fs);
-}
-
-int	check_name_file(char *file)
-{
-	int index;
-
-	index = ft_strlen(file) + 1;
-	if (file[index] == 'n')
-		return (2);
-	else if (file[index] == 'a')
-		return (3);
-	return (0);
 }
