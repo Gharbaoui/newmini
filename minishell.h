@@ -442,3 +442,14 @@ int is_special_in_none(char c);
 void file_creation(char **files, char **ops);
 ////// sig
 int level_of_bash(t_envs **exenvs);
+
+
+void	expan_files(t_words **files, t_envs **exenvs);
+void	edit_file_name(char **file, char *origin);
+char	*remove_spaces(char *filename);
+int	is_pure_var(char *str);
+char	*change_file_according(char *origin, char *file);
+int	is_not_valid(char *origin);
+char	*wrap_name(char *name);
+int	nameing_check(char *name);
+int	file_error(int error, char **fs);

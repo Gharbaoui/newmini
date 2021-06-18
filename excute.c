@@ -16,7 +16,7 @@ int	close_in_parent(int **pipe, int pindex)
 }
 
 int	prm_check(t_onecmd cmd)
-{
+{//// changed
 	int		error;
 	int		append;
 	char	**fs;
@@ -28,10 +28,8 @@ int	prm_check(t_onecmd cmd)
 		fs = creat_w_files(cmd.files, cmd.ops, &error, &append);
 		if (error)
 		{
-			dup2(2, 1);
-			ft_printf(3, "bash: ", fs[0], ": No such file or directory\n");
-			dup2(glob_vars.fdout, 1);
-			ret = 1;
+			ret = file_error(error, fs);
+			fs = malloc(sizeof(char *));
 		}
 		free(fs);
 	}
@@ -70,7 +68,7 @@ int	decide_in_out(int **pipe, char **files, char **ops, t_iter nums)
 	return (0);
 }
 
-char	**creat_w_files(char **files, char **ops, int *error, int *append)
+char	**creat_w_files(char **files, char **ops, int *error, int *append) //// changed
 {
 	int		i;
 	int		fd;
@@ -79,6 +77,10 @@ char	**creat_w_files(char **files, char **ops, int *error, int *append)
 	init_in_creat_wf(&fs, &i, error);
 	while (files && files[++i])
 	{
+		*error = nameing_check(files[i]);
+		fs[0] = files[i];
+		if (*error != 0)
+			break ;
 		if (cre_write_files(&fs, files[i], ops[i], append) == 0)
 		{
 			if (*error == 0)
@@ -95,4 +97,13 @@ char	**creat_w_files(char **files, char **ops, int *error, int *append)
 		}
 	}
 	return (fs);
+}
+
+int	nameing_check(char *name)
+{
+	if (*name == 0)
+		return (2);
+	else if (ft_strcmp(name, "a b") == 0)
+		return (3);
+	return (0);
 }

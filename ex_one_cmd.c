@@ -1,7 +1,7 @@
 #include "minishell.h"
 
 int	run_sim_cmd(t_onecmd cmd, t_fullvar **env_var)
-{
+{//// changed
 	char	**fs;
 	int		status;
 	int		error;
@@ -16,20 +16,27 @@ int	run_sim_cmd(t_onecmd cmd, t_fullvar **env_var)
 	{
 		fs = creat_w_files(cmd.files, cmd.ops, &error, &status);
 		if (error)
-		{
-			dup2(2, 1);
-			free(fs);
-			ft_printf(3, "bash: ", fs[0], ": No such file or directory\n");
-			glob_vars.exitstatus = 1;
-			dup2(1, glob_vars.fdout);
-			return (1);
-		}
+			return (file_error(error, fs));
 	}
 	return (0);
 }
 
+int	file_error(int error, char **fs)
+{////// new function here
+	dup2(2, 1);
+	glob_vars.exitstatus = 1;
+	if (error == 1 || error == 2)
+		ft_printf(3, "bash: ", fs[0], ": No such file or directory\n");
+	else
+		ft_printf(1, "bash: ambiguous redirect\n");
+	free(fs);
+	dup2(1, glob_vars.fdout);
+	return (1);
+}
+
 int	handl_red(t_onecmd cmd)
 {
+	//// changed
 	char	**fs;
 	int		error;
 	int		append;
@@ -40,12 +47,7 @@ int	handl_red(t_onecmd cmd)
 		if (error == 0)
 			help_handl_red(fs, append);
 		else
-		{
-			free(fs);
-			ft_printf(3, "bash: ", fs[0], ": No such file or directory\n");
-			glob_vars.exitstatus = 1;
-			return (1);
-		}
+			return (file_error(error, fs));
 	}
 	return (0);
 }

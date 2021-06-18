@@ -34,11 +34,15 @@ void	red_in_decide_no_files(int **pipe, t_iter nums)
 	}
 }
 
-int	cre_write_files(char ***fs, char *file, char *op, int *append)
+int	cre_write_files(char ***fs, char *fileor, char *op, int *append) ///// changed
 {
-	int	ret;
-	int	fd;
+	int		ret;
+	int		fd;
+	char	*file;
 
+	file = fileor;
+	file++;
+	file[ft_strlen(file) - 1] = 0;
 	ret = 0;
 	if (ft_cmpstr(op, ">"))
 	{
