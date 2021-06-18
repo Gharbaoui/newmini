@@ -6,7 +6,7 @@
 /*   By: aez-zaou <aez-zaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/16 18:18:01 by aez-zaou          #+#    #+#             */
-/*   Updated: 2021/06/17 13:51:04 by aez-zaou         ###   ########.fr       */
+/*   Updated: 2021/06/18 18:48:02 by aez-zaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -463,16 +463,15 @@ int				push_to_history(t_history **h, char *line);
 int				check_history(char *line);
 void			ctrl_return(void);
 void			key_erase(void);
-int				key_down(char *cur);
-int				h1_key_down(char *cur);
-int				key_up(void);
-void			key_enter(t_completecmd **complete, t_fullvar **variables,
-					char **cur);
+int				key_down(char **tmp);
+int				key_down2(void);
+int				key_up(char **tmp);
+void			key_enter(t_completecmd **complete, t_fullvar **variables);
 void			history_loop(t_completecmd **complete, t_fullvar **variables,
 					char *c, int i);
 void			ctrl_d(void);
 void			key_enter2(void);
 char			*beg_str(char *current, int index);
-void			h1_history_loop(char **cur, int d, char *c);
+void			join_and_print(char *c, int d);
 
 #endif

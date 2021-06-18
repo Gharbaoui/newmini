@@ -6,7 +6,7 @@
 #    By: aez-zaou <aez-zaou@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/06/17 13:15:07 by aez-zaou          #+#    #+#              #
-#    Updated: 2021/06/17 14:33:07 by mel-ghar         ###   ########.fr        #
+#    Updated: 2021/06/18 15:06:21 by aez-zaou         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -31,7 +31,6 @@ SRCS			= src/minishell.c				\
 				src/gather_env.c			\
 				src/get_cmd.c				\
 				src/get_cmd2.c				\
-				src/get_cmd3.c				\
 				src/h10_workonline.c		\
 				src/h1_gather_env.c			\
 				src/h1_sublibft.c			\
