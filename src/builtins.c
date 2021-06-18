@@ -1,5 +1,21 @@
 #include "minishell.h"
 
+int	my_compare(char *str)
+{
+	int	i;
+
+	i = 1;
+	if (str[0] != '-')
+		return (0);
+	while (str[i])
+	{
+		if (str[i] != 'n')
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
 int	_echo(char **args)
 {
 	int	new_line;
@@ -8,7 +24,7 @@ int	_echo(char **args)
 	g_vars.exitstatus = 0;
 	new_line = 0;
 	i = 1;
-	while (args[i] && ft_strcmp(args[i], "-n") == 0)
+	while (args[i] && (ft_strcmp(args[i], "-n") == 0 || my_compare(args[i])))
 		i++;
 	new_line = i;
 	while (args[i])

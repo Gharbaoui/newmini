@@ -66,6 +66,7 @@ typedef struct s_envs{
 
 typedef struct s_txts
 {
+	int				file_er;
 	char			*txt;
 	struct s_txts	*next;
 }t_words;
@@ -473,5 +474,17 @@ void			ctrl_d(void);
 void			key_enter2(void);
 char			*beg_str(char *current, int index);
 void			join_and_print(char *c, int d);
+
+void			expan_files(t_words **files, t_envs **exenvs);
+void			edit_file_name(char **file, char *origin, int *ern);
+int				is_not_valid(char *line);
+char			*change_file_according(char *origin, char *file, int *ern);
+int				is_pure_var(char *str);
+char			*remove_spaces(char *filename);
+char			*mod_ft_strdup(char *str, int ern);
+int				file_error(int err, char **fs);
+int				file_error(int err, char **fs);
+int				check_name_file(char *file);
+int				my_compare(char *str);
 
 #endif

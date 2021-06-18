@@ -5,6 +5,8 @@ int	help1_get_full_expanded(t_cmd *cmd, t_envs **exenvs, char **cline, int *exp)
 	char	*help;
 
 	*exp = 0;
+	if (cmd->files)
+		expan_files(&cmd->files, exenvs);
 	if (cmd->command == NULL)
 		return (1);
 	help = expand_one_word(cmd->command, exenvs);

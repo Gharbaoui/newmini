@@ -26,12 +26,10 @@ int	prm_check(t_onecmd cmd)
 	if (cmd.files)
 	{	
 		fs = creat_w_files(cmd.files, cmd.ops, &error, &append);
-		if (error)
+		if (error)//// change here
 		{
-			dup2(2, 1);
-			ft_printf(3, "bash: ", fs[0], ": No such file or directory\n");
-			dup2(g_vars.fdout, 1);
-			ret = 1;
+			ret = file_error(error, fs);/////change herre
+			fs = malloc(sizeof(char *));/// change here
 		}
 		free(fs);
 	}
@@ -79,6 +77,12 @@ char	**creat_w_files(char **files, char **ops, int *error, int *append)
 	init_in_creat_wf(&fs, &i, error);
 	while (files && files[++i])
 	{
+		*error = check_name_file(files[i]); //// here change
+		if (*error)
+		{	//change here
+			fs[0] = files[i];
+			break ; ///change here
+		}
 		if (cre_write_files(&fs, files[i], ops[i], append) == 0)
 		{
 			if (*error == 0)
@@ -95,4 +99,16 @@ char	**creat_w_files(char **files, char **ops, int *error, int *append)
 		}
 	}
 	return (fs);
+}
+
+int	check_name_file(char *file)
+{
+	int index;
+
+	index = ft_strlen(file) + 1;
+	if (file[index] == 'n')
+		return (2);
+	else if (file[index] == 'a')
+		return (3);
+	return (0);
 }

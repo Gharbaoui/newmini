@@ -115,6 +115,8 @@ void	key_enter(t_completecmd **complete, t_fullvar **variables)
 	if (ret == PARSERROR)
 	{
 		ft_printf(1, "Parsing Error\n");
+		g_vars.exitstatus = 258;
+		update_exit_status((*variables)->exenvs);
 		free_comp(complete);
 	}
 	else

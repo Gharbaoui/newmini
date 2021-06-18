@@ -31,7 +31,7 @@ int	ft_exit(char **args)
 			ft_printf(3, "bash: exit: ", args[1],
 				": numeric argument required\n");
 			dup2(1, g_vars.fdout);
-			g_vars.exitstatus = 2;
+			g_vars.exitstatus = 255;
 		}
 		else
 			help_ft_exit(status, args);

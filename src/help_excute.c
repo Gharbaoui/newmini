@@ -10,6 +10,8 @@ void	file_creation(char **files, char **ops)
 	{
 		while (files[++i])
 		{
+			if (check_name_file(files[i])) ////added
+				break ;////added
 			if (ft_strcmp(ops[i], "<"))
 			{
 				fd = open (files[i], O_WRONLY | O_APPEND | O_CREAT, 0644);
